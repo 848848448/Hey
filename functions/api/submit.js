@@ -21,26 +21,29 @@ export async function onRequestPost(context) {
       'INSERT INTO submissions (id, full_name, phone, email, language, preferred_time, consent, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
     ).bind(id, fullName, phone, email, language, preferredTime, consent, timestamp).run();
 
+    let emailResult = null;
     try {
-      await sendNotificationEmail(env, { fullName, phone, email, language, preferredTime, timestamp });
-    } catch (e) {}
+      emailResult = await sendNotificationEmail(env, { fullName, phone, email, language, preferredTime, timestamp });
+    } catch (e) {
+      emailResult = { error: e.message || 'unknown error' };
+    }
 
-    return json({ status: 'ok', id });
+    return json({ status: 'ok', id, email_status: emailResult });
   } catch (e) {
     return json({ error: 'Server error: ' + (e.message || 'unknown') }, 500);
   }
 }
 
 async function sendNotificationEmail(env, sub) {
-  if (!env.RESEND_API_KEY) return;
+  if (!env.RESEND_API_KEY) return { skipped: 'no RESEND_API_KEY env var' };
 
   let notifEmail;
   try {
     const row = await env.DB.prepare("SELECT value FROM site_settings WHERE key = 'notification_email'").first();
     notifEmail = row?.value;
-  } catch (e) { return; }
+  } catch (e) { return { skipped: 'db error: ' + e.message }; }
 
-  if (!notifEmail || !notifEmail.trim()) return;
+  if (!notifEmail || !notifEmail.trim()) return { skipped: 'no notification_email in settings' };
 
   let companyName = 'GoldsteinCare';
   try {
@@ -73,7 +76,7 @@ async function sendNotificationEmail(env, sub) {
   </div>
 </div>`;
 
-  await fetch('https://api.resend.com/emails', {
+  const resp = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + env.RESEND_API_KEY,
@@ -86,6 +89,10 @@ async function sendNotificationEmail(env, sub) {
       html: html,
     }),
   });
+
+  const result = await resp.json();
+  if (!resp.ok) return { error: result.message || JSON.stringify(result), to: notifEmail.trim() };
+  return { sent: true, to: notifEmail.trim(), id: result.id };
 }
 
 function esc(s) {
