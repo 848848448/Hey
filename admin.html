@@ -335,6 +335,13 @@
           <input class="setting-input" type="email" id="setNotifEmail" placeholder="email@example.com">
         </div>
         <p class="setting-hint" style="margin-left:156px;margin-top:-8px;margin-bottom:8px;">Each new registration will be sent to this email address. Requires RESEND_API_KEY env variable in Cloudflare.</p>
+        <div class="setting-row">
+          <label></label>
+          <div>
+            <button class="btn btn-sm" onclick="testEmail()">Send Test Email</button>
+            <span id="testEmailResult" style="font-size:13px;margin-left:10px;"></span>
+          </div>
+        </div>
       </div>
 
       <button class="btn btn-accent" onclick="saveSettings()" style="padding:14px 32px;font-size:15px;">Save All Settings</button>
@@ -808,6 +815,33 @@
         msg.textContent = d.error || 'Settings saved successfully!';
         if (!d.error) showToast('Settings saved');
         setTimeout(function() { msg.style.display = 'none'; }, 3000);
+      });
+    }
+
+    function testEmail() {
+      var el = document.getElementById('testEmailResult');
+      el.textContent = 'Sending...';
+      el.style.color = 'var(--text-secondary)';
+      fetch('/api/test-email', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success) {
+          el.style.color = 'var(--green)';
+          el.textContent = 'Test email sent to ' + (d.checks.notification_email || '');
+        } else {
+          el.style.color = 'var(--danger)';
+          var msg = d.message || '';
+          if (d.checks) {
+            if (d.checks.api_key && d.checks.api_key.indexOf('MISSING') === 0) msg = 'RESEND_API_KEY is not set in Cloudflare';
+            else if (d.checks.notification_email && d.checks.notification_email.indexOf('MISSING') === 0) msg = 'Set notification email above and save first';
+            else if (d.checks.resend_response) msg = d.checks.resend_response.message || msg;
+          }
+          el.textContent = msg || 'Error sending email';
+        }
+      }).catch(function() {
+        el.style.color = 'var(--danger)';
+        el.textContent = 'Connection error';
       });
     }
 
