@@ -328,6 +328,15 @@
         </div>
       </div>
 
+      <div class="settings-section">
+        <h3>Notifications</h3>
+        <div class="setting-row">
+          <label>Email Notifications</label>
+          <input class="setting-input" type="email" id="setNotifEmail" placeholder="email@example.com">
+        </div>
+        <p class="setting-hint" style="margin-left:156px;margin-top:-8px;margin-bottom:8px;">Each new registration will be sent to this email address. Requires RESEND_API_KEY env variable in Cloudflare.</p>
+      </div>
+
       <button class="btn btn-accent" onclick="saveSettings()" style="padding:14px 32px;font-size:15px;">Save All Settings</button>
       <p id="settingsMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
     </div>
@@ -742,6 +751,7 @@
         document.getElementById('setFormActive').checked = active;
         document.getElementById('formActiveLabel').textContent = active ? 'Form is open' : 'Form is closed';
         document.getElementById('setSuccessMsg').value = s.success_message || '';
+        document.getElementById('setNotifEmail').value = s.notification_email || '';
       });
     }
 
@@ -783,6 +793,7 @@
         logo_data: document.getElementById('logoPreview').src || '',
         form_active: document.getElementById('setFormActive').checked ? 'true' : 'false',
         success_message: document.getElementById('setSuccessMsg').value,
+        notification_email: document.getElementById('setNotifEmail').value,
       };
       var msg = document.getElementById('settingsMsg');
       fetch('/api/settings', {
