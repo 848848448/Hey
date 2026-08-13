@@ -322,7 +322,7 @@
       document.getElementById('tableContent').innerHTML = '<div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>';
       fetch('/api/submissions', { headers: { 'Authorization': 'Bearer ' + authToken } })
       .then(function(r) { if (r.status === 401) { logout(); throw new Error('Unauth'); } return r.json(); })
-      .then(function(data) { allData = data.reverse(); updateStats(); renderTable(allData); })
+      .then(function(data) { allData = data; updateStats(); renderTable(allData); })
       .catch(function(e) { if (e.message !== 'Unauth') document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>Could not load data</h3><p>Check your connection.</p></div>'; });
     }
 

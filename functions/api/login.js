@@ -15,10 +15,10 @@ export async function onRequestPost(context) {
     if (normalEmail === ownerEmail && password === env.ADMIN_PASSWORD) {
       role = 'owner';
     } else {
-      const adminsRaw = await env.SUBMISSIONS.get('admin_users');
-      const admins = adminsRaw ? JSON.parse(adminsRaw) : [];
-      const match = admins.find(a => a.email === normalEmail && a.password === password);
-      if (match) role = 'admin';
+      const admin = await env.DB.prepare(
+        'SELECT email FROM admin_users WHERE email = ? AND password = ?'
+      ).bind(normalEmail, password).first();
+      if (admin) role = 'admin';
     }
 
     if (!role) {
@@ -28,11 +28,13 @@ export async function onRequestPost(context) {
     const token = crypto.randomUUID() + '-' + crypto.randomUUID();
     const expiry = Date.now() + 24 * 60 * 60 * 1000;
 
-    const sessionsRaw = await env.SUBMISSIONS.get('admin_sessions');
-    const sessions = sessionsRaw ? JSON.parse(sessionsRaw) : [];
-    sessions.push({ token, email: normalEmail, role, expiry });
-    const active = sessions.filter(s => s.expiry > Date.now());
-    await env.SUBMISSIONS.put('admin_sessions', JSON.stringify(active));
+    await env.DB.prepare(
+      'DELETE FROM admin_sessions WHERE expiry < ?'
+    ).bind(Date.now()).run();
+
+    await env.DB.prepare(
+      'INSERT INTO admin_sessions (token, email, role, expiry) VALUES (?, ?, ?, ?)'
+    ).bind(token, normalEmail, role, expiry).run();
 
     return json({ token, role });
   } catch (e) {

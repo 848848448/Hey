@@ -4,11 +4,10 @@ export async function onRequestGet(context) {
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
   const ownerEmail = (env.SUPER_ADMIN_EMAIL || '').trim().toLowerCase();
-  const adminsRaw = await env.SUBMISSIONS.get('admin_users');
-  const admins = adminsRaw ? JSON.parse(adminsRaw) : [];
+  const { results } = await env.DB.prepare('SELECT email FROM admin_users').all();
 
   const list = [{ email: ownerEmail, role: 'owner' }];
-  admins.forEach(a => list.push({ email: a.email, role: 'admin' }));
+  results.forEach(a => list.push({ email: a.email, role: 'admin' }));
 
   return json(list);
 }
@@ -28,15 +27,17 @@ export async function onRequestPost(context) {
     return json({ error: 'Cannot add the owner as a regular admin.' }, 400);
   }
 
-  const adminsRaw = await env.SUBMISSIONS.get('admin_users');
-  const admins = adminsRaw ? JSON.parse(adminsRaw) : [];
+  const existing = await env.DB.prepare(
+    'SELECT email FROM admin_users WHERE email = ?'
+  ).bind(normalEmail).first();
 
-  if (admins.some(a => a.email === normalEmail)) {
+  if (existing) {
     return json({ error: 'This email is already an admin.' }, 400);
   }
 
-  admins.push({ email: normalEmail, password });
-  await env.SUBMISSIONS.put('admin_users', JSON.stringify(admins));
+  await env.DB.prepare(
+    'INSERT INTO admin_users (email, password) VALUES (?, ?)'
+  ).bind(normalEmail, password).run();
 
   return json({ status: 'ok' });
 }
@@ -54,16 +55,8 @@ export async function onRequestDelete(context) {
     return json({ error: 'The owner cannot be removed.' }, 403);
   }
 
-  const adminsRaw = await env.SUBMISSIONS.get('admin_users');
-  const admins = adminsRaw ? JSON.parse(adminsRaw) : [];
-  const filtered = admins.filter(a => a.email !== normalEmail);
-  await env.SUBMISSIONS.put('admin_users', JSON.stringify(filtered));
-
-  // Remove their sessions too
-  const sessionsRaw = await env.SUBMISSIONS.get('admin_sessions');
-  const sessions = sessionsRaw ? JSON.parse(sessionsRaw) : [];
-  const activeSessions = sessions.filter(s => s.email !== normalEmail);
-  await env.SUBMISSIONS.put('admin_sessions', JSON.stringify(activeSessions));
+  await env.DB.prepare('DELETE FROM admin_users WHERE email = ?').bind(normalEmail).run();
+  await env.DB.prepare('DELETE FROM admin_sessions WHERE email = ?').bind(normalEmail).run();
 
   return json({ status: 'ok' });
 }
@@ -73,9 +66,9 @@ async function verifyOwner(request, env) {
   const token = authHeader.replace('Bearer ', '');
   if (!token) return null;
 
-  const sessionsRaw = await env.SUBMISSIONS.get('admin_sessions');
-  const sessions = sessionsRaw ? JSON.parse(sessionsRaw) : [];
-  const session = sessions.find(s => s.token === token && s.expiry > Date.now());
+  const session = await env.DB.prepare(
+    'SELECT * FROM admin_sessions WHERE token = ? AND expiry > ?'
+  ).bind(token, Date.now()).first();
 
   if (!session || session.role !== 'owner') return null;
   return session;
