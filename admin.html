@@ -130,9 +130,15 @@
     .detail-textarea:focus { border-color: var(--accent); }
     .detail-actions { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
     .notes-log { max-height: 300px; overflow-y: auto; }
-    .note-item { padding: 12px 14px; background: var(--input-bg); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
-    .note-meta { font-size: 11px; color: var(--text-light); margin-bottom: 4px; }
+    .note-item { padding: 12px 14px; background: var(--input-bg); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid var(--accent); position: relative; }
+    .note-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .note-meta { font-size: 11px; color: var(--text-light); }
+    .note-actions { display: flex; gap: 4px; }
+    .note-action-btn { background: none; border: none; font-size: 12px; cursor: pointer; padding: 2px 6px; border-radius: 4px; color: var(--text-light); transition: all 0.15s; }
+    .note-action-btn:hover { background: var(--border); color: var(--text); }
+    .note-action-btn.del:hover { background: var(--danger-bg); color: var(--danger); }
     .note-text { font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+    .note-edit-area { width: 100%; min-height: 60px; padding: 8px 10px; border: 1.5px solid var(--accent); border-radius: 8px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); outline: none; resize: vertical; margin-top: 4px; }
     .notes-empty { font-size: 13px; color: var(--text-light); padding: 8px 0; }
 
     /* Admin management */
@@ -480,7 +486,7 @@
 
     function renderTable(data) {
       if (!data.length) { document.getElementById('tableContent').innerHTML='<div class="state-msg"><h3>No submissions found</h3><p>'+(!allData.length?'They\'ll appear here once people fill out the form.':'Try adjusting your search or filter.')+'</p></div>'; return; }
-      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Status</th><th>Time</th></tr></thead><tbody>';
+      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
       data.forEach(function(row) {
         var d=row.timestamp?new Date(row.timestamp):null;
         var ds=d?d.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
@@ -488,6 +494,9 @@
         var statusBadge='<span class="badge badge-'+esc(row.status||'new')+'">'+esc((row.status||'new').charAt(0).toUpperCase()+(row.status||'new').slice(1))+'</span>';
         var times=(row.preferredTime||[]);
         var tb=times.length?times.map(function(t){return'<span class="badge badge-time">'+esc(t)+'</span>';}).join(' '):'—';
+        var noteCount=0;
+        try { var na=JSON.parse(row.notes||'[]'); noteCount=na.length; } catch(e) { if(row.notes&&row.notes.trim()) noteCount=1; }
+        var notesBadge=noteCount?'<span class="badge badge-time">'+noteCount+'</span>':'—';
         h+='<tr style="cursor:pointer" onclick="openDetail(\''+esc(row.id)+'\')">';
         h+='<td><span class="timestamp">'+ds+'<br>'+ts+'</span></td>';
         h+='<td class="name-cell">'+esc(row.fullName||'—')+'</td>';
@@ -495,6 +504,7 @@
         h+='<td><a class="cell-link" href="mailto:'+esc(row.email||'')+'">'+esc(row.email||'—')+'</a></td>';
         h+='<td>'+esc(row.language||'—')+'</td>';
         h+='<td>'+statusBadge+'</td>';
+        h+='<td>'+notesBadge+'</td>';
         h+='<td>'+tb+'</td></tr>';
       });
       h+='</tbody></table>';
@@ -555,12 +565,63 @@
       var el = document.getElementById('notesLog');
       if (!notes.length) { el.innerHTML = '<div class="notes-empty">No notes yet</div>'; return; }
       var h = '';
-      notes.forEach(function(n) {
+      notes.forEach(function(n, i) {
         var timeStr = n.time ? new Date(n.time).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
-        h += '<div class="note-item"><div class="note-meta">' + (timeStr ? esc(timeStr) : '') + (n.author ? ' — ' + esc(n.author) : '') + '</div><div class="note-text">' + esc(n.text) + '</div></div>';
+        h += '<div class="note-item" id="note-' + i + '">';
+        h += '<div class="note-header"><span class="note-meta">' + (timeStr ? esc(timeStr) : '') + (n.author ? ' — ' + esc(n.author) : '') + '</span>';
+        h += '<span class="note-actions"><button class="note-action-btn" onclick="editNote(' + i + ')" title="Edit">Edit</button><button class="note-action-btn del" onclick="deleteNote(' + i + ')" title="Delete">Delete</button></span></div>';
+        h += '<div class="note-text" id="note-text-' + i + '">' + esc(n.text) + '</div></div>';
       });
       el.innerHTML = h;
       el.scrollTop = el.scrollHeight;
+    }
+
+    function getNotesList() {
+      var row = allData.find(function(r) { return r.id === currentDetailId; });
+      if (!row) return [];
+      try { return JSON.parse(row.notes || '[]'); } catch(e) {
+        if (row.notes && row.notes.trim()) return [{ text: row.notes, time: '' }];
+        return [];
+      }
+    }
+
+    function saveNotesToServer(notes) {
+      var notesStr = JSON.stringify(notes);
+      return fetch('/api/submissions', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: currentDetailId, notes: notesStr })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return false; }
+        var row = allData.find(function(r) { return r.id === currentDetailId; });
+        if (row) row.notes = notesStr;
+        renderNotes(notesStr);
+        filterTable();
+        return true;
+      }).catch(function() { showToast('Connection error'); return false; });
+    }
+
+    function editNote(i) {
+      var notes = getNotesList();
+      if (!notes[i]) return;
+      var el = document.getElementById('note-text-' + i);
+      el.innerHTML = '<textarea class="note-edit-area" id="note-edit-' + i + '">' + esc(notes[i].text) + '</textarea><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn btn-accent btn-sm" onclick="saveEditNote(' + i + ')">Save</button><button class="btn btn-sm" onclick="renderNotes(allData.find(function(r){return r.id===currentDetailId}).notes||\'[]\')">Cancel</button></div>';
+      document.getElementById('note-edit-' + i).focus();
+    }
+
+    function saveEditNote(i) {
+      var text = document.getElementById('note-edit-' + i).value.trim();
+      if (!text) { showToast('Note cannot be empty'); return; }
+      var notes = getNotesList();
+      notes[i].text = text;
+      saveNotesToServer(notes).then(function(ok) { if (ok) showToast('Note updated'); });
+    }
+
+    function deleteNote(i) {
+      if (!confirm('Delete this note?')) return;
+      var notes = getNotesList();
+      notes.splice(i, 1);
+      saveNotesToServer(notes).then(function(ok) { if (ok) showToast('Note deleted'); });
     }
 
     function addNote() {
