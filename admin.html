@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
+  <title>Admin — Submissions</title>
   <style>
     :root {
       --ground: #f7f3ef;
@@ -13,11 +13,13 @@
       --accent-soft: #fdf0ed;
       --text: #2d2219;
       --text-secondary: #97897a;
+      --text-light: #beb2a5;
       --border: #e4ddd6;
       --row-hover: #fdfbf9;
       --badge-bg: #f0ebe6;
       --green: #2d8a4e;
       --green-bg: #edf7f0;
+      --input-bg: #faf7f4;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -29,11 +31,13 @@
         --accent-soft: #3a2420;
         --text: #ede6dd;
         --text-secondary: #9a8d7e;
+        --text-light: #6a6058;
         --border: #3d362e;
         --row-hover: #2e2820;
         --badge-bg: #3a342c;
         --green: #5cb87a;
         --green-bg: #243028;
+        --input-bg: #2e2820;
       }
     }
 
@@ -45,11 +49,13 @@
       --accent-soft: #3a2420;
       --text: #ede6dd;
       --text-secondary: #9a8d7e;
+      --text-light: #6a6058;
       --border: #3d362e;
       --row-hover: #2e2820;
       --badge-bg: #3a342c;
       --green: #5cb87a;
       --green-bg: #243028;
+      --input-bg: #2e2820;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,50 +65,114 @@
       min-height: 100vh;
       background: var(--ground);
       color: var(--text);
-      padding: 32px 20px;
     }
 
-    .dashboard {
-      max-width: 1100px;
-      margin: 0 auto;
+    /* ===== Login gate ===== */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
     }
 
-    /* --- Header --- */
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 1px 2px rgba(45,34,25,0.04), 0 8px 32px rgba(45,34,25,0.06);
+      padding: 44px 36px;
+      text-align: center;
+    }
+
+    .login-card .logo {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 24px;
+    }
+
+    .login-card h1 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .login-card .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    .login-card input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--input-bg);
+      outline: none;
+      transition: border-color 0.2s ease;
+      margin-bottom: 16px;
+    }
+    .login-card input[type="password"]:focus { border-color: var(--accent); }
+    .login-card input[type="password"]::placeholder { color: var(--text-light); }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .login-btn:hover { background: var(--accent-hover); }
+
+    .login-error {
+      color: var(--accent);
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ===== Dashboard ===== */
+    .dashboard { display: none; padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
+
     .dash-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 32px;
+      gap: 16px;
+      margin-bottom: 28px;
       flex-wrap: wrap;
     }
 
-    .dash-title {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .dash-logo { width: 40px; height: 40px; }
+    .dash-title { display: flex; align-items: center; gap: 14px; }
+    .dash-logo { width: 36px; height: 36px; }
 
     .dash-title h1 {
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 400;
       color: var(--text);
     }
 
-    .dash-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+    .dash-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .refresh-btn, .export-btn {
+    .btn-secondary {
       padding: 10px 18px;
       border-radius: 10px;
       font-family: inherit;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.18s ease;
@@ -110,70 +180,72 @@
       background: var(--card);
       color: var(--text);
     }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-    .refresh-btn:hover, .export-btn:hover {
-      border-color: var(--accent);
+    .btn-logout {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: var(--accent-soft);
       color: var(--accent);
+      transition: background 0.18s ease;
     }
+    .btn-logout:hover { background: var(--accent); color: #fff; }
 
-    /* --- Stats --- */
+    /* Stats */
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 28px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
     .stat-card {
       background: var(--card);
       border-radius: 14px;
-      padding: 22px 24px;
+      padding: 20px 22px;
       box-shadow: 0 1px 3px rgba(45,34,25,0.04);
     }
 
     .stat-label {
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.07em;
       color: var(--text-secondary);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .stat-value {
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: 32px;
+      font-size: 30px;
       color: var(--text);
+      font-variant-numeric: tabular-nums;
     }
 
-    /* --- Search --- */
-    .search-bar {
-      margin-bottom: 20px;
-    }
+    /* Search */
+    .toolbar { margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
 
-    .search-bar input {
-      width: 100%;
-      max-width: 400px;
+    .toolbar input {
+      flex: 1;
+      min-width: 200px;
       padding: 12px 16px;
       border: 1.5px solid var(--border);
       border-radius: 10px;
       font-family: inherit;
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text);
       background: var(--card);
       outline: none;
       transition: border-color 0.2s ease;
     }
+    .toolbar input:focus { border-color: var(--accent); }
+    .toolbar input::placeholder { color: var(--text-light); }
 
-    .search-bar input:focus {
-      border-color: var(--accent);
-    }
-
-    .search-bar input::placeholder {
-      color: var(--text-secondary);
-      opacity: 0.6;
-    }
-
-    /* --- Table --- */
+    /* Table */
     .table-wrap {
       background: var(--card);
       border-radius: 14px;
@@ -185,12 +257,12 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
-      min-width: 700px;
+      min-width: 750px;
     }
 
     thead th {
       text-align: left;
-      padding: 14px 18px;
+      padding: 14px 16px;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.07em;
@@ -198,11 +270,10 @@
       font-weight: 600;
       border-bottom: 1.5px solid var(--border);
       white-space: nowrap;
-      font-variant-numeric: tabular-nums;
     }
 
     tbody td {
-      padding: 14px 18px;
+      padding: 13px 16px;
       border-bottom: 1px solid var(--border);
       color: var(--text);
       vertical-align: top;
@@ -210,100 +281,99 @@
     }
 
     tbody tr:last-child td { border-bottom: none; }
-
-    tbody tr:hover td {
-      background: var(--row-hover);
-    }
+    tbody tr:hover td { background: var(--row-hover); }
 
     .name-cell { font-weight: 600; white-space: nowrap; }
 
     .badge {
       display: inline-block;
-      padding: 3px 10px;
-      border-radius: 6px;
+      padding: 2px 9px;
+      border-radius: 5px;
       font-size: 12px;
       font-weight: 500;
+      margin: 2px 2px 2px 0;
     }
+    .badge-time { background: var(--badge-bg); color: var(--text-secondary); }
+    .badge-yes { background: var(--green-bg); color: var(--green); }
 
-    .badge-time {
-      background: var(--badge-bg);
-      color: var(--text-secondary);
-      margin: 2px 3px 2px 0;
+    .cell-link { color: var(--accent); text-decoration: none; }
+    .cell-link:hover { text-decoration: underline; }
+
+    .timestamp { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+
+    /* Detail panel */
+    .detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(45,34,25,0.3);
+      z-index: 100;
+      justify-content: flex-end;
     }
+    .detail-overlay.open { display: flex; }
 
-    .badge-yes {
-      background: var(--green-bg);
-      color: var(--green);
-    }
-
-    .phone-link, .email-link {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .phone-link:hover, .email-link:hover {
-      text-decoration: underline;
-    }
-
-    .timestamp {
-      font-size: 13px;
-      color: var(--text-secondary);
-      white-space: nowrap;
-    }
-
-    /* --- Empty state --- */
-    .empty-state {
-      text-align: center;
-      padding: 64px 24px;
-      color: var(--text-secondary);
-    }
-
-    .empty-state svg { margin-bottom: 16px; opacity: 0.4; }
-    .empty-state h3 {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 18px; font-weight: 400;
-      color: var(--text); margin-bottom: 8px;
-    }
-    .empty-state p { font-size: 14px; }
-
-    /* --- Setup banner --- */
-    .setup-banner {
-      background: var(--accent-soft);
-      border: 1.5px solid var(--accent);
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin-bottom: 28px;
-      font-size: 14px;
-      line-height: 1.7;
-      color: var(--text);
-    }
-
-    .setup-banner strong { color: var(--accent); }
-
-    .setup-banner code {
-      display: inline-block;
+    .detail-panel {
+      width: 100%;
+      max-width: 420px;
       background: var(--card);
-      padding: 1px 6px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      height: 100%;
+      overflow-y: auto;
+      padding: 32px 28px;
+      box-shadow: -4px 0 24px rgba(45,34,25,0.1);
+      animation: slideIn 0.25s ease;
     }
 
-    .setup-banner ol {
-      margin: 10px 0 0 20px;
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    .detail-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      float: right;
+      padding: 4px;
+      line-height: 1;
+    }
+    .detail-close:hover { color: var(--text); }
+
+    .detail-panel h2 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 24px;
+      padding-right: 32px;
     }
 
-    .setup-banner li { margin-bottom: 4px; }
+    .detail-field { margin-bottom: 20px; }
+    .detail-field dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .detail-field dd {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.5;
+    }
 
-    /* --- Loading --- */
-    .loading {
+    /* Empty / loading */
+    .state-msg {
       text-align: center;
-      padding: 48px;
+      padding: 56px 24px;
       color: var(--text-secondary);
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .state-msg h3 {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 6px;
     }
+    .state-msg p { font-size: 14px; }
 
     .spinner {
       width: 28px; height: 28px;
@@ -313,17 +383,40 @@
       animation: spin 0.7s linear infinite;
       margin: 0 auto 12px;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 600px) {
-      body { padding: 20px 12px; }
-      .dash-title h1 { font-size: 20px; }
-      .stat-card { padding: 16px 18px; }
-      .stat-value { font-size: 26px; }
+      .dashboard { padding: 20px 12px; }
+      .dash-title h1 { font-size: 18px; }
+      .stat-card { padding: 16px; }
+      .stat-value { font-size: 24px; }
+      .detail-panel { max-width: 100%; }
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
+
+  <!-- LOGIN -->
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-card">
+      <svg class="logo" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+        <rect width="56" height="56" rx="16" fill="var(--accent)"/>
+        <circle cx="20" cy="22" r="3.5" fill="#fff"/>
+        <circle cx="36" cy="22" r="3.5" fill="#fff"/>
+        <path d="M17 31c3.5 7 18.5 7 22 0" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <h1>Admin Dashboard</h1>
+      <p class="subtitle">Enter your admin password to continue</p>
+      <form id="loginForm">
+        <input type="password" id="adminPass" placeholder="Password" autocomplete="current-password" required>
+        <button type="submit" class="login-btn">Sign In</button>
+        <p class="login-error" id="loginError">Incorrect password. Try again.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
     <div class="dash-header">
       <div class="dash-title">
         <svg class="dash-logo" viewBox="0 0 56 56" fill="none" aria-hidden="true">
@@ -335,26 +428,15 @@
         <h1>Submissions</h1>
       </div>
       <div class="dash-actions">
-        <button class="refresh-btn" onclick="loadData()">Refresh</button>
-        <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+        <button class="btn-secondary" onclick="loadData()">Refresh</button>
+        <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
+        <button class="btn-logout" onclick="logout()">Log out</button>
       </div>
-    </div>
-
-    <div id="setupBanner" class="setup-banner" style="display:none;">
-      <strong>Setup required:</strong> connect to Google Sheets to see submissions.
-      <ol>
-        <li>Create a new Google Sheet</li>
-        <li>Go to <strong>Extensions &gt; Apps Script</strong></li>
-        <li>Paste the code from <code>apps-script.gs</code></li>
-        <li>Click <strong>Deploy &gt; New deployment &gt; Web app</strong></li>
-        <li>Set access to <strong>"Anyone"</strong> and deploy</li>
-        <li>Copy the URL and paste it in <code>SCRIPT_URL</code> at the bottom of this page and in <code>index.html</code></li>
-      </ol>
     </div>
 
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-label">Total submissions</div>
+        <div class="stat-label">Total</div>
         <div class="stat-value" id="statTotal">—</div>
       </div>
       <div class="stat-card">
@@ -365,105 +447,147 @@
         <div class="stat-label">This week</div>
         <div class="stat-value" id="statWeek">—</div>
       </div>
-    </div>
-
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search by name, email, phone..." oninput="filterTable()">
-    </div>
-
-    <div class="table-wrap">
-      <div id="tableContent">
-        <div class="loading">
-          <div class="spinner"></div>
-          Loading submissions...
-        </div>
+      <div class="stat-card">
+        <div class="stat-label">This month</div>
+        <div class="stat-value" id="statMonth">—</div>
       </div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="Search name, email, phone..." oninput="filterTable()">
+    </div>
+
+    <div class="table-wrap" id="tableContent">
+      <div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
+    <div class="detail-panel" id="detailPanel">
+      <button class="detail-close" onclick="closeDetail()">&times;</button>
+      <h2 id="detailName"></h2>
+      <dl id="detailBody"></dl>
     </div>
   </div>
 
   <script>
-    // =====================================================
-    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
-    var SCRIPT_URL = '';
-    // =====================================================
-
     var allData = [];
+    var authToken = '';
+
+    // LOGIN
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var pass = document.getElementById('adminPass').value;
+
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass })
+      })
+      .then(function(r) {
+        if (!r.ok) throw new Error('Wrong');
+        return r.json();
+      })
+      .then(function(data) {
+        authToken = data.token;
+        sessionStorage.setItem('adminToken', authToken);
+        showDashboard();
+      })
+      .catch(function() {
+        document.getElementById('loginError').style.display = 'block';
+      });
+    });
+
+    // AUTO-LOGIN
+    (function() {
+      var saved = sessionStorage.getItem('adminToken');
+      if (saved) {
+        authToken = saved;
+        showDashboard();
+      }
+    })();
+
+    function showDashboard() {
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadData();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('adminToken');
+      authToken = '';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('loginWrap').style.display = 'flex';
+      document.getElementById('adminPass').value = '';
+      document.getElementById('loginError').style.display = 'none';
+    }
 
     function loadData() {
-      if (!SCRIPT_URL) {
-        document.getElementById('setupBanner').style.display = 'block';
-        document.getElementById('statTotal').textContent = '0';
-        document.getElementById('statToday').textContent = '0';
-        document.getElementById('statWeek').textContent = '0';
-        showEmpty();
-        return;
-      }
+      document.getElementById('tableContent').innerHTML = '<div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>';
 
-      document.getElementById('tableContent').innerHTML = '<div class="loading"><div class="spinner"></div>Loading submissions...</div>';
-
-      fetch(SCRIPT_URL)
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-          allData = data.reverse();
-          updateStats();
-          renderTable(allData);
-        })
-        .catch(function() {
-          document.getElementById('tableContent').innerHTML = '<div class="empty-state"><h3>Could not load data</h3><p>Check that your Apps Script URL is correct and deployed.</p></div>';
-        });
+      fetch('/api/submissions', {
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      })
+      .then(function(r) {
+        if (r.status === 401) { logout(); throw new Error('Unauthorized'); }
+        return r.json();
+      })
+      .then(function(data) {
+        allData = data.reverse();
+        updateStats();
+        renderTable(allData);
+      })
+      .catch(function(err) {
+        if (err.message !== 'Unauthorized') {
+          document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>Could not load data</h3><p>Check your connection and try again.</p></div>';
+        }
+      });
     }
 
     function updateStats() {
       var now = new Date();
       var todayStr = now.toISOString().slice(0, 10);
-      var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      var weekAgo = new Date(now.getTime() - 7 * 86400000);
+      var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      var today = 0, week = 0, month = 0;
 
-      var today = 0, week = 0;
       allData.forEach(function(row) {
-        var ts = row['Timestamp'] || '';
+        var ts = row.timestamp || '';
+        var d = new Date(ts);
         if (ts.slice(0, 10) === todayStr) today++;
-        if (new Date(ts) >= weekAgo) week++;
+        if (d >= weekAgo) week++;
+        if (d >= monthStart) month++;
       });
 
       document.getElementById('statTotal').textContent = allData.length;
       document.getElementById('statToday').textContent = today;
       document.getElementById('statWeek').textContent = week;
+      document.getElementById('statMonth').textContent = month;
     }
 
     function renderTable(data) {
-      if (data.length === 0) { showEmpty(); return; }
+      if (!data.length) {
+        document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>No submissions yet</h3><p>They\'ll appear here once people fill out the form.</p></div>';
+        return;
+      }
 
-      var html = '<table><thead><tr>';
-      html += '<th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Preferred Time</th><th>Consent</th>';
-      html += '</tr></thead><tbody>';
+      var html = '<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Preferred Time</th><th>Consent</th></tr></thead><tbody>';
 
-      data.forEach(function(row) {
-        var ts = row['Timestamp'] || '';
-        var date = ts ? new Date(ts) : null;
-        var dateStr = date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-        var timeStr = date ? date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+      data.forEach(function(row, i) {
+        var d = row.timestamp ? new Date(row.timestamp) : null;
+        var dateStr = d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+        var timeStr = d ? d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+        var times = (row.preferredTime || []);
+        var timeBadges = times.length ? times.map(function(t) { return '<span class="badge badge-time">' + esc(t) + '</span>'; }).join(' ') : '—';
+        var consentBadge = row.consent ? '<span class="badge badge-yes">Yes</span>' : '—';
 
-        var name = esc(row['Full Name'] || '—');
-        var phone = esc(row['Phone'] || '—');
-        var email = esc(row['Email'] || '—');
-        var lang = esc(row['Language'] || '—');
-        var times = row['Preferred Time'] || '';
-        var consent = row['Consent'] || '';
-
-        var timeBadges = times ? times.split(',').map(function(t) {
-          return '<span class="badge badge-time">' + esc(t.trim()) + '</span>';
-        }).join(' ') : '—';
-
-        var consentBadge = consent === 'Yes'
-          ? '<span class="badge badge-yes">Yes</span>'
-          : esc(consent || '—');
-
-        html += '<tr>';
+        html += '<tr style="cursor:pointer" onclick="openDetail(' + i + ')">';
         html += '<td><span class="timestamp">' + dateStr + '<br>' + timeStr + '</span></td>';
-        html += '<td class="name-cell">' + name + '</td>';
-        html += '<td><a class="phone-link" href="tel:' + phone + '">' + phone + '</a></td>';
-        html += '<td><a class="email-link" href="mailto:' + email + '">' + email + '</a></td>';
-        html += '<td>' + lang + '</td>';
+        html += '<td class="name-cell">' + esc(row.fullName || '—') + '</td>';
+        html += '<td><a class="cell-link" href="tel:' + esc(row.phone || '') + '">' + esc(row.phone || '—') + '</a></td>';
+        html += '<td><a class="cell-link" href="mailto:' + esc(row.email || '') + '">' + esc(row.email || '—') + '</a></td>';
+        html += '<td>' + esc(row.language || '—') + '</td>';
         html += '<td>' + timeBadges + '</td>';
         html += '<td>' + consentBadge + '</td>';
         html += '</tr>';
@@ -473,55 +597,62 @@
       document.getElementById('tableContent').innerHTML = html;
     }
 
-    function showEmpty() {
-      document.getElementById('tableContent').innerHTML =
-        '<div class="empty-state">' +
-        '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="var(--text-secondary)" stroke-width="2"/><path d="M6 18h36M18 18v20" stroke="var(--text-secondary)" stroke-width="2"/></svg>' +
-        '<h3>No submissions yet</h3>' +
-        '<p>Submissions will appear here once people fill out the form.</p>' +
-        '</div>';
-    }
-
     function filterTable() {
       var q = document.getElementById('searchInput').value.toLowerCase();
       if (!q) { renderTable(allData); return; }
+      renderTable(allData.filter(function(r) {
+        return (r.fullName || '').toLowerCase().indexOf(q) !== -1
+          || (r.email || '').toLowerCase().indexOf(q) !== -1
+          || (r.phone || '').toLowerCase().indexOf(q) !== -1
+          || (r.language || '').toLowerCase().indexOf(q) !== -1;
+      }));
+    }
 
-      var filtered = allData.filter(function(row) {
-        return (row['Full Name'] || '').toLowerCase().indexOf(q) !== -1
-          || (row['Email'] || '').toLowerCase().indexOf(q) !== -1
-          || (row['Phone'] || '').toLowerCase().indexOf(q) !== -1
-          || (row['Language'] || '').toLowerCase().indexOf(q) !== -1;
+    function openDetail(i) {
+      var row = allData[i];
+      if (!row) return;
+      document.getElementById('detailName').textContent = row.fullName || 'Unknown';
+      var d = row.timestamp ? new Date(row.timestamp) : null;
+      var fields = [
+        ['Submitted', d ? d.toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) : '—'],
+        ['Phone', row.phone || '—'],
+        ['Email', row.email || '—'],
+        ['Language', row.language || '—'],
+        ['Preferred Time', (row.preferredTime || []).join(', ') || '—'],
+        ['Consent', row.consent ? 'Yes' : 'No']
+      ];
+      var html = '';
+      fields.forEach(function(f) {
+        html += '<div class="detail-field"><dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd></div>';
       });
-      renderTable(filtered);
+      document.getElementById('detailBody').innerHTML = html;
+      document.getElementById('detailOverlay').classList.add('open');
+    }
+
+    function closeDetail(e) {
+      if (e && e.target !== document.getElementById('detailOverlay')) return;
+      document.getElementById('detailOverlay').classList.remove('open');
     }
 
     function exportCSV() {
       if (!allData.length) return;
       var headers = ['Timestamp', 'Full Name', 'Phone', 'Email', 'Language', 'Preferred Time', 'Consent'];
       var csv = headers.join(',') + '\n';
-      allData.forEach(function(row) {
-        csv += headers.map(function(h) {
-          var v = (row[h] || '').toString().replace(/"/g, '""');
-          return '"' + v + '"';
-        }).join(',') + '\n';
+      allData.forEach(function(r) {
+        csv += [
+          r.timestamp, r.fullName, r.phone, r.email, r.language,
+          (r.preferredTime || []).join('; '),
+          r.consent ? 'Yes' : 'No'
+        ].map(function(v) { return '"' + (v || '').toString().replace(/"/g, '""') + '"'; }).join(',') + '\n';
       });
-
       var blob = new Blob([csv], { type: 'text/csv' });
-      var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
-      a.href = url;
+      a.href = URL.createObjectURL(blob);
       a.download = 'submissions-' + new Date().toISOString().slice(0, 10) + '.csv';
       a.click();
-      URL.revokeObjectURL(url);
     }
 
-    function esc(s) {
-      var d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
-    }
-
-    loadData();
+    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
   </script>
 </body>
 </html>
