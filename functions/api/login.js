@@ -22,7 +22,7 @@ export async function onRequestPost(context) {
     }
 
     if (!role) {
-      return json({ error: 'Unauthorized' }, 401);
+      return json({ error: 'Invalid email or password.' }, 401);
     }
 
     const token = crypto.randomUUID() + '-' + crypto.randomUUID();
