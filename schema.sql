@@ -6,7 +6,9 @@ CREATE TABLE IF NOT EXISTS submissions (
   language TEXT,
   preferred_time TEXT,
   consent INTEGER DEFAULT 0,
-  timestamp TEXT NOT NULL
+  timestamp TEXT NOT NULL,
+  status TEXT DEFAULT 'new',
+  notes TEXT DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS admin_users (
@@ -21,4 +23,9 @@ CREATE TABLE IF NOT EXISTS admin_sessions (
   email TEXT NOT NULL,
   role TEXT NOT NULL,
   expiry INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS site_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
 );
