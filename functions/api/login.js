@@ -36,7 +36,7 @@ export async function onRequestPost(context) {
 
     return json({ token, role });
   } catch (e) {
-    return json({ error: 'Invalid request' }, 400);
+    return json({ error: 'Server error: ' + (e.message || 'unknown') }, 500);
   }
 }
 

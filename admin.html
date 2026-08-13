@@ -264,16 +264,24 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, password: pass })
       })
-      .then(function(r) { if (!r.ok) throw new Error('Bad'); return r.json(); })
-      .then(function(data) {
-        authToken = data.token;
-        currentRole = data.role;
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(result) {
+        if (!result.ok) {
+          var errEl = document.getElementById('loginError');
+          errEl.textContent = result.data.error || 'Login failed.';
+          errEl.style.display = 'block';
+          return;
+        }
+        authToken = result.data.token;
+        currentRole = result.data.role;
         currentEmail = email;
         sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail }));
         showDashboard();
       })
-      .catch(function() {
-        document.getElementById('loginError').style.display = 'block';
+      .catch(function(e) {
+        var errEl = document.getElementById('loginError');
+        errEl.textContent = 'Connection error — please try again.';
+        errEl.style.display = 'block';
       });
     });
 
