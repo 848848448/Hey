@@ -68,41 +68,70 @@
       color: var(--text);
     }
 
-    /* ========== HERO ========== */
-    .hero {
+    /* ========== WELCOME SCREEN ========== */
+    .welcome-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
       background: var(--hero-gradient);
-      padding: 56px 24px 48px;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
     }
 
-    .hero-inner {
-      max-width: 580px;
-      margin: 0 auto;
+    .welcome-inner {
+      text-align: center;
+      max-width: 480px;
     }
 
     .hero-logo {
-      width: 72px;
-      height: 72px;
-      margin-bottom: 28px;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 32px;
     }
 
-    .hero h1 {
+    .welcome-inner h1 {
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 400;
       line-height: 1.3;
       color: var(--text);
-      margin-bottom: 14px;
-      text-wrap: balance;
+      margin-bottom: 16px;
     }
 
-    .hero p {
+    .welcome-inner p {
       font-size: 16px;
-      line-height: 1.6;
+      line-height: 1.7;
       color: var(--text-secondary);
-      max-width: 440px;
-      margin: 0 auto;
+      max-width: 400px;
+      margin: 0 auto 32px;
+    }
+
+    .welcome-time {
+      display: block;
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .start-btn {
+      display: inline-block;
+      padding: 16px 64px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    }
+    .start-btn:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(217,68,48,0.3); transform: translateY(-2px); }
+    .start-btn:active { transform: translateY(0); box-shadow: none; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .welcome-inner { animation: rise 0.6s cubic-bezier(0.22,1,0.36,1); }
     }
 
     /* ========== FORM SECTION ========== */
@@ -341,8 +370,9 @@
 </head>
 <body>
 
-  <header class="hero">
-    <div class="hero-inner">
+  <!-- WELCOME SCREEN -->
+  <div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-inner">
       <svg class="hero-logo" id="heroLogo" viewBox="0 0 72 72" fill="none" aria-hidden="true">
         <rect width="72" height="72" rx="20" fill="var(--accent)"/>
         <circle cx="26" cy="28" r="4.5" fill="#fff"/>
@@ -351,10 +381,13 @@
       </svg>
       <h1 id="heroTitle">GoldsteinCare</h1>
       <p id="heroDesc">Schedule your screening call. Fill out the form below and our team will reach out to confirm your eligibility and find a time that works for you.</p>
+      <span class="welcome-time">Takes about 15 seconds</span>
+      <button class="start-btn" id="startBtn" onclick="showForm()">Start</button>
     </div>
-  </header>
+  </div>
 
-  <main class="form-section">
+  <!-- FORM SCREEN (hidden initially) -->
+  <main class="form-section" id="formSection" style="display:none">
     <div class="form-card">
       <form id="screeningForm" novalidate>
         <p class="form-heading">Please provide the information below so we can confirm eligibility and schedule a screening call.<span class="req">*</span></p>
@@ -446,7 +479,7 @@
     </div>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" id="siteFooter" style="display:none">
     <span>&copy; 2026 <span id="footerName">GoldsteinCare</span>. All rights reserved.</span>
     <a href="/admin.html" class="admin-link" aria-label="Admin">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a3 3 0 0 0-3 3v2H3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1V4a3 3 0 0 0-3-3zm-1.5 3a1.5 1.5 0 1 1 3 0v2h-3V4z" fill="currentColor"/></svg>
@@ -481,6 +514,17 @@
         document.getElementById('screeningForm').innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-size:16px;color:var(--text-secondary);">This form is currently closed. Please check back later.</p></div>';
       }
     }).catch(function() {});
+
+    function showForm() {
+      var welcome = document.getElementById('welcomeScreen');
+      welcome.style.transition = 'opacity 0.3s ease';
+      welcome.style.opacity = '0';
+      setTimeout(function() {
+        welcome.style.display = 'none';
+        document.getElementById('formSection').style.display = '';
+        document.getElementById('siteFooter').style.display = '';
+      }, 300);
+    }
 
     document.getElementById('phone').addEventListener('input', function(e) {
       var v = e.target.value.replace(/\D/g, '');
