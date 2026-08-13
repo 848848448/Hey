@@ -481,7 +481,7 @@
         var ts=d?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
         var statusBadge='<span class="badge badge-'+esc(row.status||'new')+'">'+esc((row.status||'new').charAt(0).toUpperCase()+(row.status||'new').slice(1))+'</span>';
         var times=(row.preferredTime||[]);
-        var tb=times.length?times.map(function(t){return'<span class="badge badge-time">'+esc(t.split(' ')[0])+'</span>';}).join(' '):'—';
+        var tb=times.length?times.map(function(t){return'<span class="badge badge-time">'+esc(t)+'</span>';}).join(' '):'—';
         h+='<tr style="cursor:pointer" onclick="openDetail(\''+esc(row.id)+'\')">';
         h+='<td><span class="timestamp">'+ds+'<br>'+ts+'</span></td>';
         h+='<td class="name-cell">'+esc(row.fullName||'—')+'</td>';
@@ -531,12 +531,13 @@
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId, status: status })
-      }).then(function(r) { return r.json(); }).then(function() {
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
         var row = allData.find(function(r) { return r.id === currentDetailId; });
         if (row) row.status = status;
         updateStats(); filterTable();
         showToast('Status updated');
-      });
+      }).catch(function() { showToast('Connection error'); });
     }
 
     function saveNotes() {
@@ -546,11 +547,12 @@
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId, notes: notes })
-      }).then(function(r) { return r.json(); }).then(function() {
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
         var row = allData.find(function(r) { return r.id === currentDetailId; });
         if (row) row.notes = notes;
         showToast('Notes saved');
-      });
+      }).catch(function() { showToast('Connection error'); });
     }
 
     function deleteSubmission() {
@@ -559,7 +561,8 @@
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId })
-      }).then(function(r) { return r.json(); }).then(function() {
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
         allData = allData.filter(function(r) { return r.id !== currentDetailId; });
         closeDetail(); updateStats(); filterTable();
         showToast('Submission deleted');
