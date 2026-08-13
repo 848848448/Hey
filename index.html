@@ -393,12 +393,12 @@
         <p class="form-heading">Please provide the information below so we can confirm eligibility and schedule a screening call.<span class="req">*</span></p>
 
         <div class="field">
-          <label class="field-q" for="fullName">What is your full name?</label>
+          <label class="field-q" for="fullName">What is your full name?<span class="req">*</span></label>
           <input type="text" id="fullName" name="fullName" placeholder="Type your answer here..." required>
         </div>
 
         <div class="field">
-          <label class="field-q" for="phone">What is the best phone number to reach you?</label>
+          <label class="field-q" for="phone">What is the best phone number to reach you?<span class="req">*</span></label>
           <div class="phone-row">
             <select class="country-select" id="countryCode" name="countryCode" aria-label="Country code">
               <option value="+1">🇺🇸 +1</option>
@@ -418,18 +418,43 @@
         </div>
 
         <div class="field">
-          <label class="field-q" for="email">What's your email address?</label>
+          <label class="field-q" for="email">What's your email address?<span class="req">*</span></label>
           <input type="email" id="email" name="email" placeholder="name@example.com" required>
         </div>
 
         <div class="field">
-          <label class="field-q" for="language">What language do you prefer to communicate in?</label>
-          <input type="text" id="language" name="language" placeholder="Type your answer here...">
+          <label class="field-q" for="language">What language do you prefer to communicate in?<span class="req">*</span></label>
+          <select id="language" name="language" class="country-select" required style="width:100%;padding:12px 0;border-bottom:1.5px solid var(--border);border-top:none;border-left:none;border-right:none;border-radius:0;font-size:16px;">
+            <option value="" disabled selected>Select a language...</option>
+            <option value="English">English</option>
+            <option value="Yiddish">Yiddish</option>
+            <option value="Hebrew">Hebrew</option>
+            <option value="Spanish">Spanish</option>
+            <option value="Russian">Russian</option>
+            <option value="French">French</option>
+            <option value="Arabic">Arabic</option>
+            <option value="Chinese (Mandarin)">Chinese (Mandarin)</option>
+            <option value="German">German</option>
+            <option value="Portuguese">Portuguese</option>
+            <option value="Italian">Italian</option>
+            <option value="Polish">Polish</option>
+            <option value="Hungarian">Hungarian</option>
+            <option value="Romanian">Romanian</option>
+            <option value="Ukrainian">Ukrainian</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Urdu">Urdu</option>
+            <option value="Turkish">Turkish</option>
+            <option value="Dutch">Dutch</option>
+            <option value="Farsi">Farsi</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         <div class="field">
-          <label class="field-q">What is your preferred time of day for a screening call?</label>
-          <span class="field-hint">Choose as many as you like</span>
+          <label class="field-q">What is your preferred time of day for a screening call?<span class="req">*</span></label>
+          <span class="field-hint">Choose at least one</span>
           <div class="time-grid">
             <div class="time-slot">
               <input type="checkbox" id="t-am" name="preferredTime" value="Morning (9–12)">
@@ -554,8 +579,15 @@
         consent: document.getElementById('consent').checked
       };
 
-      if (!data.fullName || !data.email || !data.consent) {
-        errEl.textContent = 'Please fill in all required fields.';
+      if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.language || !times.length || !data.consent) {
+        var missing = [];
+        if (!data.fullName) missing.push('Full Name');
+        if (!document.getElementById('phone').value.trim()) missing.push('Phone Number');
+        if (!data.email) missing.push('Email');
+        if (!data.language) missing.push('Language');
+        if (!times.length) missing.push('Preferred Time');
+        if (!data.consent) missing.push('Consent');
+        errEl.textContent = 'Please fill in: ' + missing.join(', ');
         errEl.style.display = 'block';
         return;
       }

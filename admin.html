@@ -126,9 +126,14 @@
     .detail-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
     .detail-select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--input-bg); outline: none; }
     .detail-select:focus { border-color: var(--accent); }
-    .detail-textarea { width: 100%; min-height: 200px; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--input-bg); outline: none; resize: vertical; }
+    .detail-textarea { width: 100%; min-height: 80px; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--input-bg); outline: none; resize: vertical; }
     .detail-textarea:focus { border-color: var(--accent); }
-    .detail-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .detail-actions { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+    .notes-log { max-height: 300px; overflow-y: auto; }
+    .note-item { padding: 12px 14px; background: var(--input-bg); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
+    .note-meta { font-size: 11px; color: var(--text-light); margin-bottom: 4px; }
+    .note-text { font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+    .notes-empty { font-size: 13px; color: var(--text-light); padding: 8px 0; }
 
     /* Admin management */
     .admin-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -339,11 +344,12 @@
       </div>
       <div class="detail-field">
         <dt>Notes</dt>
-        <dd><textarea class="detail-textarea" id="detailNotes" placeholder="Add notes about this submission..."></textarea></dd>
-      </div>
-      <div class="detail-actions">
-        <button class="btn btn-accent btn-sm" onclick="saveNotes()">Save Notes</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteSubmission()">Delete</button>
+        <div class="notes-log" id="notesLog"></div>
+        <textarea class="detail-textarea" id="newNoteText" placeholder="Write a new note..." style="min-height:80px;margin-top:8px;"></textarea>
+        <div class="detail-actions" style="margin-top:8px;">
+          <button class="btn btn-accent btn-sm" onclick="addNote()">Add Note</button>
+          <button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="deleteSubmission()">Delete Submission</button>
+        </div>
       </div>
     </div>
   </div>
@@ -514,7 +520,8 @@
       fields.forEach(function(f) { h += '<div class="detail-field"><dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd></div>'; });
       document.getElementById('detailBody').innerHTML = h;
       document.getElementById('detailStatus').value = row.status || 'new';
-      document.getElementById('detailNotes').value = row.notes || '';
+      document.getElementById('newNoteText').value = '';
+      renderNotes(row.notes || '[]');
       document.getElementById('detailOverlay').classList.add('open');
     }
 
@@ -540,18 +547,44 @@
       }).catch(function() { showToast('Connection error'); });
     }
 
-    function saveNotes() {
+    function renderNotes(notesStr) {
+      var notes = [];
+      try { notes = JSON.parse(notesStr); } catch(e) {
+        if (notesStr && notesStr.trim()) notes = [{ text: notesStr, time: '' }];
+      }
+      var el = document.getElementById('notesLog');
+      if (!notes.length) { el.innerHTML = '<div class="notes-empty">No notes yet</div>'; return; }
+      var h = '';
+      notes.forEach(function(n) {
+        var timeStr = n.time ? new Date(n.time).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+        h += '<div class="note-item"><div class="note-meta">' + (timeStr ? esc(timeStr) : '') + (n.author ? ' — ' + esc(n.author) : '') + '</div><div class="note-text">' + esc(n.text) + '</div></div>';
+      });
+      el.innerHTML = h;
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function addNote() {
       if (!currentDetailId) return;
-      var notes = document.getElementById('detailNotes').value;
+      var text = document.getElementById('newNoteText').value.trim();
+      if (!text) { showToast('Write something first'); return; }
+      var row = allData.find(function(r) { return r.id === currentDetailId; });
+      if (!row) return;
+      var notes = [];
+      try { notes = JSON.parse(row.notes || '[]'); } catch(e) {
+        if (row.notes && row.notes.trim()) notes = [{ text: row.notes, time: '' }];
+      }
+      notes.push({ text: text, time: new Date().toISOString(), author: currentEmail });
+      var notesStr = JSON.stringify(notes);
       fetch('/api/submissions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify({ id: currentDetailId, notes: notes })
+        body: JSON.stringify({ id: currentDetailId, notes: notesStr })
       }).then(function(r) { return r.json(); }).then(function(d) {
         if (d.error) { showToast('Error: ' + d.error); return; }
-        var row = allData.find(function(r) { return r.id === currentDetailId; });
-        if (row) row.notes = notes;
-        showToast('Notes saved');
+        row.notes = notesStr;
+        renderNotes(notesStr);
+        document.getElementById('newNoteText').value = '';
+        showToast('Note added');
       }).catch(function() { showToast('Connection error'); });
     }
 
