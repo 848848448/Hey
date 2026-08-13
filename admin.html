@@ -20,377 +20,138 @@
       --green: #2d8a4e;
       --green-bg: #edf7f0;
       --input-bg: #faf7f4;
+      --danger: #c0392b;
+      --danger-bg: #fdf0ed;
+      --owner-bg: #fff8e6;
+      --owner-border: #e6d28a;
     }
-
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
-        --ground: #1a1612;
-        --card: #252019;
-        --accent: #e55846;
-        --accent-hover: #f06a59;
-        --accent-soft: #3a2420;
-        --text: #ede6dd;
-        --text-secondary: #9a8d7e;
-        --text-light: #6a6058;
-        --border: #3d362e;
-        --row-hover: #2e2820;
-        --badge-bg: #3a342c;
-        --green: #5cb87a;
-        --green-bg: #243028;
-        --input-bg: #2e2820;
+        --ground: #1a1612; --card: #252019; --accent: #e55846; --accent-hover: #f06a59;
+        --accent-soft: #3a2420; --text: #ede6dd; --text-secondary: #9a8d7e;
+        --text-light: #6a6058; --border: #3d362e; --row-hover: #2e2820;
+        --badge-bg: #3a342c; --green: #5cb87a; --green-bg: #243028;
+        --input-bg: #2e2820; --danger: #e55846; --danger-bg: #3a2420;
+        --owner-bg: #332e1a; --owner-border: #5a5030;
       }
     }
-
     :root[data-theme="dark"] {
-      --ground: #1a1612;
-      --card: #252019;
-      --accent: #e5584a;
-      --accent-hover: #f06a59;
-      --accent-soft: #3a2420;
-      --text: #ede6dd;
-      --text-secondary: #9a8d7e;
-      --text-light: #6a6058;
-      --border: #3d362e;
-      --row-hover: #2e2820;
-      --badge-bg: #3a342c;
-      --green: #5cb87a;
-      --green-bg: #243028;
-      --input-bg: #2e2820;
+      --ground: #1a1612; --card: #252019; --accent: #e5584a; --accent-hover: #f06a59;
+      --accent-soft: #3a2420; --text: #ede6dd; --text-secondary: #9a8d7e;
+      --text-light: #6a6058; --border: #3d362e; --row-hover: #2e2820;
+      --badge-bg: #3a342c; --green: #5cb87a; --green-bg: #243028;
+      --input-bg: #2e2820; --danger: #e5584a; --danger-bg: #3a2420;
+      --owner-bg: #332e1a; --owner-border: #5a5030;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; background: var(--ground); color: var(--text); }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      min-height: 100vh;
-      background: var(--ground);
-      color: var(--text);
-    }
-
-    /* ===== Login gate ===== */
-    .login-wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 380px;
-      background: var(--card);
-      border-radius: 20px;
-      box-shadow: 0 1px 2px rgba(45,34,25,0.04), 0 8px 32px rgba(45,34,25,0.06);
-      padding: 44px 36px;
-      text-align: center;
-    }
-
-    .login-card .logo {
-      width: 56px;
-      height: 56px;
-      margin-bottom: 24px;
-    }
-
-    .login-card h1 {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 22px;
-      font-weight: 400;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .login-card .subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 28px;
-    }
-
-    .login-card input[type="password"] {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 15px;
-      color: var(--text);
-      background: var(--input-bg);
-      outline: none;
-      transition: border-color 0.2s ease;
-      margin-bottom: 16px;
-    }
-    .login-card input[type="password"]:focus { border-color: var(--accent); }
-    .login-card input[type="password"]::placeholder { color: var(--text-light); }
-
-    .login-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
+    /* ===== LOGIN ===== */
+    .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .login-card { width: 100%; max-width: 380px; background: var(--card); border-radius: 20px; box-shadow: 0 1px 2px rgba(45,34,25,0.04), 0 8px 32px rgba(45,34,25,0.06); padding: 44px 36px; text-align: center; }
+    .login-card .logo { width: 56px; height: 56px; margin-bottom: 24px; }
+    .login-card h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 8px; }
+    .login-card .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+    .login-card input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; color: var(--text); background: var(--input-bg); outline: none; transition: border-color 0.2s; margin-bottom: 12px; }
+    .login-card input:focus { border-color: var(--accent); }
+    .login-card input::placeholder { color: var(--text-light); }
+    .login-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .login-btn:hover { background: var(--accent-hover); }
+    .login-error { color: var(--accent); font-size: 13px; margin-top: 12px; display: none; }
 
-    .login-error {
-      color: var(--accent);
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    /* ===== Dashboard ===== */
+    /* ===== DASHBOARD ===== */
     .dashboard { display: none; padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
-
-    .dash-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-
+    .dash-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
     .dash-title { display: flex; align-items: center; gap: 14px; }
     .dash-logo { width: 36px; height: 36px; }
-
-    .dash-title h1 {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 22px;
-      font-weight: 400;
-      color: var(--text);
-    }
-
+    .dash-title h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 400; }
     .dash-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .btn-secondary {
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-    }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-    .btn-logout {
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      background: var(--accent-soft);
-      color: var(--accent);
-      transition: background 0.18s ease;
-    }
+    .btn { padding: 10px 18px; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; border: 1.5px solid var(--border); background: var(--card); color: var(--text); }
+    .btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-accent:hover { background: var(--accent-hover); color: #fff; border-color: var(--accent-hover); }
+    .btn-logout { border: none; background: var(--accent-soft); color: var(--accent); }
     .btn-logout:hover { background: var(--accent); color: #fff; }
+    .btn-danger { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1.5px solid var(--border); }
+    .tab { padding: 12px 20px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.18s; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
     /* Stats */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .stat-card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 20px 22px;
-      box-shadow: 0 1px 3px rgba(45,34,25,0.04);
-    }
-
-    .stat-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 30px;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: var(--card); border-radius: 14px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(45,34,25,0.04); }
+    .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 4px; }
+    .stat-value { font-family: Georgia, 'Times New Roman', serif; font-size: 30px; font-variant-numeric: tabular-nums; }
 
     /* Search */
-    .toolbar { margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
-
-    .toolbar input {
-      flex: 1;
-      min-width: 200px;
-      padding: 12px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-family: inherit;
-      font-size: 14px;
-      color: var(--text);
-      background: var(--card);
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
+    .toolbar { margin-bottom: 16px; }
+    .toolbar input { width: 100%; max-width: 360px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); outline: none; transition: border-color 0.2s; }
     .toolbar input:focus { border-color: var(--accent); }
     .toolbar input::placeholder { color: var(--text-light); }
 
     /* Table */
-    .table-wrap {
-      background: var(--card);
-      border-radius: 14px;
-      box-shadow: 0 1px 3px rgba(45,34,25,0.04);
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      min-width: 750px;
-    }
-
-    thead th {
-      text-align: left;
-      padding: 14px 16px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-secondary);
-      font-weight: 600;
-      border-bottom: 1.5px solid var(--border);
-      white-space: nowrap;
-    }
-
-    tbody td {
-      padding: 13px 16px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      vertical-align: top;
-      font-variant-numeric: tabular-nums;
-    }
-
+    .table-wrap { background: var(--card); border-radius: 14px; box-shadow: 0 1px 3px rgba(45,34,25,0.04); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 750px; }
+    thead th { text-align: left; padding: 14px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); font-weight: 600; border-bottom: 1.5px solid var(--border); white-space: nowrap; }
+    tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: top; font-variant-numeric: tabular-nums; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: var(--row-hover); }
-
     .name-cell { font-weight: 600; white-space: nowrap; }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 9px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 500;
-      margin: 2px 2px 2px 0;
-    }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 500; margin: 2px 2px 2px 0; }
     .badge-time { background: var(--badge-bg); color: var(--text-secondary); }
     .badge-yes { background: var(--green-bg); color: var(--green); }
-
+    .badge-owner { background: var(--owner-bg); border: 1px solid var(--owner-border); color: #9a7d20; font-size: 11px; }
+    .badge-admin { background: var(--accent-soft); color: var(--accent); font-size: 11px; }
     .cell-link { color: var(--accent); text-decoration: none; }
     .cell-link:hover { text-decoration: underline; }
-
     .timestamp { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
 
     /* Detail panel */
-    .detail-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(45,34,25,0.3);
-      z-index: 100;
-      justify-content: flex-end;
-    }
+    .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(45,34,25,0.3); z-index: 100; justify-content: flex-end; }
     .detail-overlay.open { display: flex; }
-
-    .detail-panel {
-      width: 100%;
-      max-width: 420px;
-      background: var(--card);
-      height: 100%;
-      overflow-y: auto;
-      padding: 32px 28px;
-      box-shadow: -4px 0 24px rgba(45,34,25,0.1);
-      animation: slideIn 0.25s ease;
-    }
-
+    .detail-panel { width: 100%; max-width: 420px; background: var(--card); height: 100%; overflow-y: auto; padding: 32px 28px; box-shadow: -4px 0 24px rgba(45,34,25,0.1); animation: slideIn 0.25s ease; }
     @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-    .detail-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--text-secondary);
-      float: right;
-      padding: 4px;
-      line-height: 1;
-    }
+    .detail-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); float: right; padding: 4px; line-height: 1; }
     .detail-close:hover { color: var(--text); }
-
-    .detail-panel h2 {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 20px;
-      font-weight: 400;
-      color: var(--text);
-      margin-bottom: 24px;
-      padding-right: 32px;
-    }
-
+    .detail-panel h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 20px; font-weight: 400; margin-bottom: 24px; padding-right: 32px; }
     .detail-field { margin-bottom: 20px; }
-    .detail-field dt {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-    .detail-field dd {
-      font-size: 15px;
-      color: var(--text);
-      line-height: 1.5;
-    }
+    .detail-field dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 4px; }
+    .detail-field dd { font-size: 15px; line-height: 1.5; }
 
-    /* Empty / loading */
-    .state-msg {
-      text-align: center;
-      padding: 56px 24px;
-      color: var(--text-secondary);
-    }
-    .state-msg h3 {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 18px;
-      font-weight: 400;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
+    /* Admin management */
+    .admin-section { margin-top: 8px; }
+    .admin-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .admin-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; }
+    .admin-item.owner { border-color: var(--owner-border); background: var(--owner-bg); }
+    .admin-info { display: flex; flex-direction: column; gap: 2px; }
+    .admin-email { font-size: 14px; font-weight: 500; }
+    .admin-role { font-size: 12px; color: var(--text-secondary); }
+    .add-admin-form { display: flex; gap: 10px; flex-wrap: wrap; }
+    .add-admin-form input { flex: 1; min-width: 200px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--input-bg); outline: none; }
+    .add-admin-form input:focus { border-color: var(--accent); }
+
+    /* States */
+    .state-msg { text-align: center; padding: 56px 24px; color: var(--text-secondary); }
+    .state-msg h3 { font-family: Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: 400; color: var(--text); margin-bottom: 6px; }
     .state-msg p { font-size: 14px; }
-
-    .spinner {
-      width: 28px; height: 28px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto 12px;
-    }
+    .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .role-label { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
     @media (max-width: 600px) {
       .dashboard { padding: 20px 12px; }
       .dash-title h1 { font-size: 18px; }
-      .stat-card { padding: 16px; }
-      .stat-value { font-size: 24px; }
       .detail-panel { max-width: 100%; }
+      .tabs { overflow-x: auto; }
     }
   </style>
 </head>
@@ -406,11 +167,12 @@
         <path d="M17 31c3.5 7 18.5 7 22 0" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
       </svg>
       <h1>GoldsteinCare Admin</h1>
-      <p class="subtitle">Enter your password to continue</p>
+      <p class="subtitle">Sign in with your admin credentials</p>
       <form id="loginForm">
-        <input type="password" id="adminPass" placeholder="Password" autocomplete="current-password" required>
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email" required>
+        <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required>
         <button type="submit" class="login-btn">Sign In</button>
-        <p class="login-error" id="loginError">Incorrect password. Try again.</p>
+        <p class="login-error" id="loginError">Invalid email or password.</p>
       </form>
     </div>
   </div>
@@ -425,40 +187,43 @@
           <circle cx="36" cy="22" r="3.5" fill="#fff"/>
           <path d="M17 31c3.5 7 18.5 7 22 0" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
         </svg>
-        <h1>GoldsteinCare — Submissions</h1>
+        <h1>GoldsteinCare</h1>
       </div>
       <div class="dash-actions">
-        <button class="btn-secondary" onclick="loadData()">Refresh</button>
-        <button class="btn-secondary" onclick="exportCSV()">Export CSV</button>
-        <button class="btn-logout" onclick="logout()">Log out</button>
+        <button class="btn" onclick="loadData()">Refresh</button>
+        <button class="btn" onclick="exportCSV()">Export CSV</button>
+        <button class="btn btn-logout" onclick="logout()">Log out</button>
       </div>
     </div>
 
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Total</div>
-        <div class="stat-value" id="statTotal">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Today</div>
-        <div class="stat-value" id="statToday">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">This week</div>
-        <div class="stat-value" id="statWeek">—</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">This month</div>
-        <div class="stat-value" id="statMonth">—</div>
-      </div>
+    <div class="tabs" id="tabBar">
+      <button class="tab active" data-tab="submissions">Submissions</button>
+      <button class="tab" data-tab="team" id="teamTab" style="display:none">Team</button>
     </div>
 
-    <div class="toolbar">
-      <input type="text" id="searchInput" placeholder="Search name, email, phone..." oninput="filterTable()">
+    <!-- SUBMISSIONS TAB -->
+    <div class="tab-panel active" id="panel-submissions">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value" id="statToday">—</div></div>
+        <div class="stat-card"><div class="stat-label">This week</div><div class="stat-value" id="statWeek">—</div></div>
+        <div class="stat-card"><div class="stat-label">This month</div><div class="stat-value" id="statMonth">—</div></div>
+      </div>
+      <div class="toolbar"><input type="text" id="searchInput" placeholder="Search name, email, phone..." oninput="filterTable()"></div>
+      <div class="table-wrap" id="tableContent"><div class="state-msg"><div class="spinner"></div><p>Loading...</p></div></div>
     </div>
 
-    <div class="table-wrap" id="tableContent">
-      <div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>
+    <!-- TEAM TAB (owner only) -->
+    <div class="tab-panel" id="panel-team">
+      <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;margin-bottom:20px;">Manage Team</h2>
+      <div class="admin-list" id="adminList"></div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-secondary);">Add New Admin</h3>
+      <form class="add-admin-form" id="addAdminForm">
+        <input type="email" id="newAdminEmail" placeholder="Email address" required>
+        <input type="password" id="newAdminPass" placeholder="Password" required>
+        <button type="submit" class="btn btn-accent">Add Admin</button>
+      </form>
+      <p id="adminMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
     </div>
   </div>
 
@@ -474,24 +239,37 @@
   <script>
     var allData = [];
     var authToken = '';
+    var currentRole = '';
+    var currentEmail = '';
+
+    // TABS
+    document.querySelectorAll('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'team') loadAdmins();
+      });
+    });
 
     // LOGIN
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      var pass = document.getElementById('adminPass').value;
+      var email = document.getElementById('loginEmail').value.trim();
+      var pass = document.getElementById('loginPass').value;
 
       fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pass })
+        body: JSON.stringify({ email: email, password: pass })
       })
-      .then(function(r) {
-        if (!r.ok) throw new Error('Wrong');
-        return r.json();
-      })
+      .then(function(r) { if (!r.ok) throw new Error('Bad'); return r.json(); })
       .then(function(data) {
         authToken = data.token;
-        sessionStorage.setItem('adminToken', authToken);
+        currentRole = data.role;
+        currentEmail = email;
+        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail }));
         showDashboard();
       })
       .catch(function() {
@@ -501,9 +279,12 @@
 
     // AUTO-LOGIN
     (function() {
-      var saved = sessionStorage.getItem('adminToken');
+      var saved = sessionStorage.getItem('auth');
       if (saved) {
-        authToken = saved;
+        var d = JSON.parse(saved);
+        authToken = d.token;
+        currentRole = d.role;
+        currentEmail = d.email;
         showDashboard();
       }
     })();
@@ -511,148 +292,139 @@
     function showDashboard() {
       document.getElementById('loginWrap').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
+      if (currentRole === 'owner') {
+        document.getElementById('teamTab').style.display = '';
+      }
       loadData();
     }
 
     function logout() {
-      sessionStorage.removeItem('adminToken');
-      authToken = '';
+      sessionStorage.removeItem('auth');
+      authToken = ''; currentRole = ''; currentEmail = '';
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginWrap').style.display = 'flex';
-      document.getElementById('adminPass').value = '';
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPass').value = '';
       document.getElementById('loginError').style.display = 'none';
+      document.getElementById('teamTab').style.display = 'none';
     }
 
+    // SUBMISSIONS
     function loadData() {
       document.getElementById('tableContent').innerHTML = '<div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>';
-
-      fetch('/api/submissions', {
-        headers: { 'Authorization': 'Bearer ' + authToken }
-      })
-      .then(function(r) {
-        if (r.status === 401) { logout(); throw new Error('Unauthorized'); }
-        return r.json();
-      })
-      .then(function(data) {
-        allData = data.reverse();
-        updateStats();
-        renderTable(allData);
-      })
-      .catch(function(err) {
-        if (err.message !== 'Unauthorized') {
-          document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>Could not load data</h3><p>Check your connection and try again.</p></div>';
-        }
-      });
+      fetch('/api/submissions', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { if (r.status === 401) { logout(); throw new Error('Unauth'); } return r.json(); })
+      .then(function(data) { allData = data.reverse(); updateStats(); renderTable(allData); })
+      .catch(function(e) { if (e.message !== 'Unauth') document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>Could not load data</h3><p>Check your connection.</p></div>'; });
     }
 
     function updateStats() {
-      var now = new Date();
-      var todayStr = now.toISOString().slice(0, 10);
-      var weekAgo = new Date(now.getTime() - 7 * 86400000);
-      var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-      var today = 0, week = 0, month = 0;
-
-      allData.forEach(function(row) {
-        var ts = row.timestamp || '';
-        var d = new Date(ts);
-        if (ts.slice(0, 10) === todayStr) today++;
-        if (d >= weekAgo) week++;
-        if (d >= monthStart) month++;
-      });
-
-      document.getElementById('statTotal').textContent = allData.length;
-      document.getElementById('statToday').textContent = today;
-      document.getElementById('statWeek').textContent = week;
-      document.getElementById('statMonth').textContent = month;
+      var now = new Date(); var todayStr = now.toISOString().slice(0,10);
+      var weekAgo = new Date(now.getTime()-7*864e5); var monthStart = new Date(now.getFullYear(),now.getMonth(),1);
+      var today=0,week=0,month=0;
+      allData.forEach(function(r) { var d=new Date(r.timestamp||''); if ((r.timestamp||'').slice(0,10)===todayStr) today++; if (d>=weekAgo) week++; if (d>=monthStart) month++; });
+      document.getElementById('statTotal').textContent=allData.length;
+      document.getElementById('statToday').textContent=today;
+      document.getElementById('statWeek').textContent=week;
+      document.getElementById('statMonth').textContent=month;
     }
 
     function renderTable(data) {
-      if (!data.length) {
-        document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>No submissions yet</h3><p>They\'ll appear here once people fill out the form.</p></div>';
-        return;
-      }
-
-      var html = '<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Preferred Time</th><th>Consent</th></tr></thead><tbody>';
-
-      data.forEach(function(row, i) {
-        var d = row.timestamp ? new Date(row.timestamp) : null;
-        var dateStr = d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-        var timeStr = d ? d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
-        var times = (row.preferredTime || []);
-        var timeBadges = times.length ? times.map(function(t) { return '<span class="badge badge-time">' + esc(t) + '</span>'; }).join(' ') : '—';
-        var consentBadge = row.consent ? '<span class="badge badge-yes">Yes</span>' : '—';
-
-        html += '<tr style="cursor:pointer" onclick="openDetail(' + i + ')">';
-        html += '<td><span class="timestamp">' + dateStr + '<br>' + timeStr + '</span></td>';
-        html += '<td class="name-cell">' + esc(row.fullName || '—') + '</td>';
-        html += '<td><a class="cell-link" href="tel:' + esc(row.phone || '') + '">' + esc(row.phone || '—') + '</a></td>';
-        html += '<td><a class="cell-link" href="mailto:' + esc(row.email || '') + '">' + esc(row.email || '—') + '</a></td>';
-        html += '<td>' + esc(row.language || '—') + '</td>';
-        html += '<td>' + timeBadges + '</td>';
-        html += '<td>' + consentBadge + '</td>';
-        html += '</tr>';
+      if (!data.length) { document.getElementById('tableContent').innerHTML='<div class="state-msg"><h3>No submissions yet</h3><p>They\'ll appear here once people fill out the form.</p></div>'; return; }
+      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Preferred Time</th><th>Consent</th></tr></thead><tbody>';
+      data.forEach(function(row,i) {
+        var d=row.timestamp?new Date(row.timestamp):null;
+        var ds=d?d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+        var ts=d?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
+        var times=(row.preferredTime||[]);
+        var tb=times.length?times.map(function(t){return'<span class="badge badge-time">'+esc(t)+'</span>';}).join(' '):'—';
+        var cb=row.consent?'<span class="badge badge-yes">Yes</span>':'—';
+        h+='<tr style="cursor:pointer" onclick="openDetail('+i+')">';
+        h+='<td><span class="timestamp">'+ds+'<br>'+ts+'</span></td>';
+        h+='<td class="name-cell">'+esc(row.fullName||'—')+'</td>';
+        h+='<td><a class="cell-link" href="tel:'+esc(row.phone||'')+'">'+esc(row.phone||'—')+'</a></td>';
+        h+='<td><a class="cell-link" href="mailto:'+esc(row.email||'')+'">'+esc(row.email||'—')+'</a></td>';
+        h+='<td>'+esc(row.language||'—')+'</td><td>'+tb+'</td><td>'+cb+'</td></tr>';
       });
-
-      html += '</tbody></table>';
-      document.getElementById('tableContent').innerHTML = html;
+      h+='</tbody></table>';
+      document.getElementById('tableContent').innerHTML=h;
     }
 
     function filterTable() {
-      var q = document.getElementById('searchInput').value.toLowerCase();
-      if (!q) { renderTable(allData); return; }
-      renderTable(allData.filter(function(r) {
-        return (r.fullName || '').toLowerCase().indexOf(q) !== -1
-          || (r.email || '').toLowerCase().indexOf(q) !== -1
-          || (r.phone || '').toLowerCase().indexOf(q) !== -1
-          || (r.language || '').toLowerCase().indexOf(q) !== -1;
-      }));
+      var q=document.getElementById('searchInput').value.toLowerCase();
+      if(!q){renderTable(allData);return;}
+      renderTable(allData.filter(function(r){return(r.fullName||'').toLowerCase().indexOf(q)!==-1||(r.email||'').toLowerCase().indexOf(q)!==-1||(r.phone||'').toLowerCase().indexOf(q)!==-1||(r.language||'').toLowerCase().indexOf(q)!==-1;}));
     }
 
     function openDetail(i) {
-      var row = allData[i];
-      if (!row) return;
-      document.getElementById('detailName').textContent = row.fullName || 'Unknown';
-      var d = row.timestamp ? new Date(row.timestamp) : null;
-      var fields = [
-        ['Submitted', d ? d.toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' }) : '—'],
-        ['Phone', row.phone || '—'],
-        ['Email', row.email || '—'],
-        ['Language', row.language || '—'],
-        ['Preferred Time', (row.preferredTime || []).join(', ') || '—'],
-        ['Consent', row.consent ? 'Yes' : 'No']
-      ];
-      var html = '';
-      fields.forEach(function(f) {
-        html += '<div class="detail-field"><dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd></div>';
-      });
-      document.getElementById('detailBody').innerHTML = html;
+      var row=allData[i]; if(!row)return;
+      document.getElementById('detailName').textContent=row.fullName||'Unknown';
+      var d=row.timestamp?new Date(row.timestamp):null;
+      var fields=[['Submitted',d?d.toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'}):'—'],['Phone',row.phone||'—'],['Email',row.email||'—'],['Language',row.language||'—'],['Preferred Time',(row.preferredTime||[]).join(', ')||'—'],['Consent',row.consent?'Yes':'No']];
+      var h='';fields.forEach(function(f){h+='<div class="detail-field"><dt>'+f[0]+'</dt><dd>'+esc(f[1])+'</dd></div>';});
+      document.getElementById('detailBody').innerHTML=h;
       document.getElementById('detailOverlay').classList.add('open');
     }
 
-    function closeDetail(e) {
-      if (e && e.target !== document.getElementById('detailOverlay')) return;
-      document.getElementById('detailOverlay').classList.remove('open');
-    }
+    function closeDetail(e) { if(e&&e.target!==document.getElementById('detailOverlay'))return; document.getElementById('detailOverlay').classList.remove('open'); }
 
     function exportCSV() {
-      if (!allData.length) return;
-      var headers = ['Timestamp', 'Full Name', 'Phone', 'Email', 'Language', 'Preferred Time', 'Consent'];
-      var csv = headers.join(',') + '\n';
-      allData.forEach(function(r) {
-        csv += [
-          r.timestamp, r.fullName, r.phone, r.email, r.language,
-          (r.preferredTime || []).join('; '),
-          r.consent ? 'Yes' : 'No'
-        ].map(function(v) { return '"' + (v || '').toString().replace(/"/g, '""') + '"'; }).join(',') + '\n';
-      });
-      var blob = new Blob([csv], { type: 'text/csv' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'submissions-' + new Date().toISOString().slice(0, 10) + '.csv';
-      a.click();
+      if(!allData.length)return;
+      var hd=['Timestamp','Full Name','Phone','Email','Language','Preferred Time','Consent'];
+      var csv=hd.join(',')+'\n';
+      allData.forEach(function(r){csv+=[r.timestamp,r.fullName,r.phone,r.email,r.language,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No'].map(function(v){return'"'+(v||'').toString().replace(/"/g,'""')+'"';}).join(',')+'\n';});
+      var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='submissions-'+new Date().toISOString().slice(0,10)+'.csv';a.click();
     }
 
-    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    // TEAM MANAGEMENT (owner only)
+    function loadAdmins() {
+      fetch('/api/admins', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(admins) {
+        var h = '';
+        admins.forEach(function(a) {
+          var isOwner = a.role === 'owner';
+          h += '<div class="admin-item' + (isOwner ? ' owner' : '') + '">';
+          h += '<div class="admin-info"><span class="admin-email">' + esc(a.email) + '</span>';
+          h += '<span class="admin-role">' + (isOwner ? '<span class="badge badge-owner">Owner</span>' : '<span class="badge badge-admin">Admin</span>') + '</span></div>';
+          if (!isOwner) h += '<button class="btn btn-danger btn-sm" onclick="removeAdmin(\'' + esc(a.email) + '\')">Remove</button>';
+          h += '</div>';
+        });
+        document.getElementById('adminList').innerHTML = h;
+      });
+    }
+
+    document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = document.getElementById('newAdminEmail').value.trim();
+      var pass = document.getElementById('newAdminPass').value;
+      var msg = document.getElementById('adminMsg');
+
+      fetch('/api/admins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ email: email, password: pass })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        msg.style.display = 'block';
+        msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
+        msg.textContent = d.error || 'Admin added successfully.';
+        if (!d.error) { document.getElementById('newAdminEmail').value = ''; document.getElementById('newAdminPass').value = ''; loadAdmins(); }
+      });
+    });
+
+    function removeAdmin(email) {
+      if (!confirm('Remove ' + email + ' from the admin team?')) return;
+      fetch('/api/admins', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ email: email })
+      })
+      .then(function() { loadAdmins(); });
+    }
+
+    function esc(s) { var d=document.createElement('div');d.textContent=s;return d.innerHTML; }
   </script>
 </body>
 </html>
