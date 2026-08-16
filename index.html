@@ -361,13 +361,13 @@
     .admin-link:hover { opacity: 1; }
 
     /* Language toggle */
-    .lang-toggle {
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 50;
+    .lang-toggle-bar {
       display: flex;
+      justify-content: center;
+      padding: 12px 0 0;
+    }
+    .lang-toggle {
+      display: inline-flex;
       background: var(--card);
       border: 1.5px solid var(--border);
       border-radius: 10px;
@@ -394,6 +394,53 @@
       color: var(--text);
     }
 
+    /* Custom language dropdown */
+    .custom-dropdown { position: relative; }
+    .dropdown-selected {
+      width: 100%;
+      padding: 12px 0;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+    .dropdown-selected:focus { border-bottom-color: var(--accent); outline: none; }
+    .dropdown-selected.placeholder { color: var(--text-light); }
+    .dropdown-arrow { font-size: 10px; color: var(--text-light); transition: transform 0.2s; }
+    .custom-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+    .dropdown-list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 220px;
+      overflow-y: auto;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(45,34,25,0.1);
+      z-index: 30;
+      margin-top: 4px;
+    }
+    .custom-dropdown.open .dropdown-list { display: block; }
+    .dropdown-item {
+      padding: 12px 16px;
+      font-size: 15px;
+      cursor: pointer;
+      color: var(--text);
+      transition: background 0.12s;
+    }
+    .dropdown-item:hover { background: var(--option-hover); }
+    .dropdown-item.selected { color: var(--accent); font-weight: 600; }
+
     @media (max-width: 560px) {
       .hero { padding: 40px 20px 36px; }
       .hero h1 { font-size: 26px; }
@@ -405,12 +452,14 @@
 <body>
 
   <!-- WELCOME SCREEN -->
-  <div class="welcome-screen" id="welcomeScreen" style="position:relative;">
-    <div class="lang-toggle" id="langToggle1">
-      <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
-      <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
-    </div>
+  <div class="welcome-screen" id="welcomeScreen">
     <div class="welcome-inner">
+      <div class="lang-toggle-bar">
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+          <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
+        </div>
+      </div>
       <svg class="hero-logo" id="heroLogo" viewBox="0 0 72 72" fill="none" aria-hidden="true">
         <rect width="72" height="72" rx="20" fill="var(--accent)"/>
         <circle cx="26" cy="28" r="4.5" fill="#fff"/>
@@ -425,12 +474,14 @@
   </div>
 
   <!-- FORM SCREEN (hidden initially) -->
-  <main class="form-section" id="formSection" style="display:none;position:relative;">
-    <div class="lang-toggle" id="langToggle2" style="top:-32px;">
-      <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
-      <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
-    </div>
+  <main class="form-section" id="formSection" style="display:none;">
     <div class="form-card">
+      <div class="lang-toggle-bar" style="margin-bottom:24px;">
+        <div class="lang-toggle">
+          <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+          <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
+        </div>
+      </div>
       <form id="screeningForm" novalidate>
         <p class="form-heading">Please provide the information below so we can confirm eligibility and schedule a screening call.<span class="req">*</span></p>
 
@@ -465,33 +516,15 @@
         </div>
 
         <div class="field">
-          <label class="field-q" for="language">What language do you prefer to communicate in?<span class="req">*</span></label>
-          <select id="language" name="language" class="country-select" required style="width:100%;padding:12px 0;border-bottom:1.5px solid var(--border);border-top:none;border-left:none;border-right:none;border-radius:0;font-size:16px;">
-            <option value="" disabled selected>Select a language...</option>
-            <option value="English">English</option>
-            <option value="Spanish">Spanish</option>
-            <option value="Russian">Russian</option>
-            <option value="French">French</option>
-            <option value="Arabic">Arabic</option>
-            <option value="Chinese (Mandarin)">Chinese (Mandarin)</option>
-            <option value="German">German</option>
-            <option value="Portuguese">Portuguese</option>
-            <option value="Italian">Italian</option>
-            <option value="Polish">Polish</option>
-            <option value="Hungarian">Hungarian</option>
-            <option value="Romanian">Romanian</option>
-            <option value="Ukrainian">Ukrainian</option>
-            <option value="Japanese">Japanese</option>
-            <option value="Korean">Korean</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Urdu">Urdu</option>
-            <option value="Turkish">Turkish</option>
-            <option value="Dutch">Dutch</option>
-            <option value="Farsi">Farsi</option>
-            <option value="Yiddish">Yiddish</option>
-            <option value="Hebrew">Hebrew</option>
-            <option value="Other">Other</option>
-          </select>
+          <label class="field-q" id="labelLang">What language do you prefer to communicate in?<span class="req">*</span></label>
+          <input type="hidden" id="language" name="language" value="">
+          <div class="custom-dropdown" id="langDropdown">
+            <div class="dropdown-selected placeholder" tabindex="0" id="langSelected" onclick="toggleLangDropdown()">
+              <span id="langSelectedText">Select a language...</span>
+              <span class="dropdown-arrow">&#9660;</span>
+            </div>
+            <div class="dropdown-list" id="langList"></div>
+          </div>
         </div>
 
         <div class="field">
@@ -631,8 +664,10 @@
       document.getElementById('phone').placeholder = t.phPhone;
       document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
       document.getElementById('email').placeholder = t.phEmail;
-      document.querySelector('label[for="language"]').innerHTML = t.labelLang + '<span class="req">*</span>';
-      document.querySelector('#language option[value=""]').textContent = t.selectLang;
+      document.getElementById('labelLang').innerHTML = t.labelLang + '<span class="req">*</span>';
+      if (!document.getElementById('language').value) {
+        document.getElementById('langSelectedText').textContent = t.selectLang;
+      }
       document.querySelector('.field:nth-child(5) .field-q').innerHTML = t.labelTime + '<span class="req">*</span>';
       document.querySelector('.field-hint').textContent = t.timeHint;
       var slotNames = document.querySelectorAll('.slot-name');
@@ -648,6 +683,39 @@
       var footerSpan = document.querySelector('.site-footer span');
       footerSpan.innerHTML = '&copy; 2026 <span id="footerName">' + (document.getElementById('footerName')?.textContent || 'GoldsteinCare') + '</span>. ' + t.footerRights;
     }
+
+    // Custom language dropdown
+    var langOptions = ['English','Spanish','Russian','French','Arabic','Chinese (Mandarin)','German','Portuguese','Italian','Polish','Hungarian','Romanian','Ukrainian','Japanese','Korean','Hindi','Urdu','Turkish','Dutch','Farsi','Yiddish','Hebrew','Other'];
+
+    function buildLangDropdown() {
+      var list = document.getElementById('langList');
+      var h = '';
+      langOptions.forEach(function(lang) {
+        h += '<div class="dropdown-item" data-value="' + lang + '" onclick="selectLang(\'' + lang.replace(/'/g,"\\'") + '\')">' + lang + '</div>';
+      });
+      list.innerHTML = h;
+    }
+    buildLangDropdown();
+
+    function toggleLangDropdown() {
+      document.getElementById('langDropdown').classList.toggle('open');
+    }
+
+    function selectLang(val) {
+      document.getElementById('language').value = val;
+      var sel = document.getElementById('langSelected');
+      document.getElementById('langSelectedText').textContent = val;
+      sel.classList.remove('placeholder');
+      document.getElementById('langDropdown').classList.remove('open');
+      document.querySelectorAll('#langList .dropdown-item').forEach(function(el) {
+        el.classList.toggle('selected', el.dataset.value === val);
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('langDropdown');
+      if (!dd.contains(e.target)) dd.classList.remove('open');
+    });
 
     // Load dynamic settings from admin dashboard
     fetch('/api/settings').then(function(r) { return r.json(); }).then(function(s) {
