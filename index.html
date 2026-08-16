@@ -396,7 +396,7 @@
 
     /* Custom language dropdown */
     .custom-dropdown { position: relative; }
-    .dropdown-selected {
+    .dropdown-input {
       width: 100%;
       padding: 12px 0;
       border: none;
@@ -405,16 +405,11 @@
       font-size: 16px;
       color: var(--text);
       background: transparent;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      outline: none;
       transition: border-color 0.2s;
     }
-    .dropdown-selected:focus { border-bottom-color: var(--accent); outline: none; }
-    .dropdown-selected.placeholder { color: var(--text-light); }
-    .dropdown-arrow { font-size: 10px; color: var(--text-light); transition: transform 0.2s; }
-    .custom-dropdown.open .dropdown-arrow { transform: rotate(180deg); }
+    .dropdown-input:focus { border-bottom-color: var(--accent); }
+    .dropdown-input::placeholder { color: var(--text-light); }
     .dropdown-list {
       display: none;
       position: absolute;
@@ -440,6 +435,7 @@
     }
     .dropdown-item:hover { background: var(--option-hover); }
     .dropdown-item.selected { color: var(--accent); font-weight: 600; }
+    .dropdown-no-results { padding: 12px 16px; font-size: 14px; color: var(--text-light); }
 
     @media (max-width: 560px) {
       .hero { padding: 40px 20px 36px; }
@@ -454,7 +450,7 @@
   <!-- WELCOME SCREEN -->
   <div class="welcome-screen" id="welcomeScreen">
     <div class="welcome-inner">
-      <div class="lang-toggle-bar">
+      <div class="lang-toggle-bar" style="margin-bottom:24px;">
         <div class="lang-toggle">
           <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
           <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
@@ -519,10 +515,7 @@
           <label class="field-q" id="labelLang">What language do you prefer to communicate in?<span class="req">*</span></label>
           <input type="hidden" id="language" name="language" value="">
           <div class="custom-dropdown" id="langDropdown">
-            <div class="dropdown-selected placeholder" tabindex="0" id="langSelected" onclick="toggleLangDropdown()">
-              <span id="langSelectedText">Select a language...</span>
-              <span class="dropdown-arrow">&#9660;</span>
-            </div>
+            <input type="text" class="dropdown-input" id="langInput" placeholder="Select a language..." autocomplete="off" onfocus="openLangDropdown()" oninput="filterLangDropdown()">
             <div class="dropdown-list" id="langList"></div>
           </div>
         </div>
@@ -665,9 +658,7 @@
       document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
       document.getElementById('email').placeholder = t.phEmail;
       document.getElementById('labelLang').innerHTML = t.labelLang + '<span class="req">*</span>';
-      if (!document.getElementById('language').value) {
-        document.getElementById('langSelectedText').textContent = t.selectLang;
-      }
+      document.getElementById('langInput').placeholder = t.selectLang;
       document.querySelector('.field:nth-child(5) .field-q').innerHTML = t.labelTime + '<span class="req">*</span>';
       document.querySelector('.field-hint').textContent = t.timeHint;
       var slotNames = document.querySelectorAll('.slot-name');
@@ -687,30 +678,43 @@
     // Custom language dropdown
     var langOptions = ['English','Spanish','Russian','French','Arabic','Chinese (Mandarin)','German','Portuguese','Italian','Polish','Hungarian','Romanian','Ukrainian','Japanese','Korean','Hindi','Urdu','Turkish','Dutch','Farsi','Yiddish','Hebrew','Other'];
 
-    function buildLangDropdown() {
+    function renderLangOptions(filter) {
       var list = document.getElementById('langList');
+      var q = (filter || '').toLowerCase();
+      var matches = langOptions.filter(function(l) { return !q || l.toLowerCase().indexOf(q) !== -1; });
+      if (!matches.length) {
+        list.innerHTML = '<div class="dropdown-no-results">No results</div>';
+        return;
+      }
       var h = '';
-      langOptions.forEach(function(lang) {
-        h += '<div class="dropdown-item" data-value="' + lang + '" onclick="selectLang(\'' + lang.replace(/'/g,"\\'") + '\')">' + lang + '</div>';
+      var selected = document.getElementById('language').value;
+      matches.forEach(function(lang) {
+        h += '<div class="dropdown-item' + (lang === selected ? ' selected' : '') + '" data-value="' + lang + '" onmousedown="selectLangOption(\'' + lang.replace(/'/g,"\\'") + '\')">' + lang + '</div>';
       });
       list.innerHTML = h;
     }
-    buildLangDropdown();
+    renderLangOptions();
 
-    function toggleLangDropdown() {
-      document.getElementById('langDropdown').classList.toggle('open');
+    function openLangDropdown() {
+      document.getElementById('langDropdown').classList.add('open');
+      renderLangOptions(document.getElementById('langInput').value);
     }
 
-    function selectLang(val) {
+    function filterLangDropdown() {
+      document.getElementById('langDropdown').classList.add('open');
+      document.getElementById('language').value = '';
+      renderLangOptions(document.getElementById('langInput').value);
+    }
+
+    function selectLangOption(val) {
       document.getElementById('language').value = val;
-      var sel = document.getElementById('langSelected');
-      document.getElementById('langSelectedText').textContent = val;
-      sel.classList.remove('placeholder');
+      document.getElementById('langInput').value = val;
       document.getElementById('langDropdown').classList.remove('open');
-      document.querySelectorAll('#langList .dropdown-item').forEach(function(el) {
-        el.classList.toggle('selected', el.dataset.value === val);
-      });
     }
+
+    document.getElementById('langInput').addEventListener('blur', function() {
+      setTimeout(function() { document.getElementById('langDropdown').classList.remove('open'); }, 150);
+    });
 
     document.addEventListener('click', function(e) {
       var dd = document.getElementById('langDropdown');
@@ -725,13 +729,13 @@
         document.getElementById('footerName').textContent = s.company_name;
       }
       if (s.company_description) document.getElementById('heroDesc').textContent = s.company_description;
-      if (s.logo_data) {
+      if (s.logo_data && s.logo_data.length > 20 && s.logo_data.indexOf('data:image') === 0) {
         var logoImg = document.createElement('img');
         logoImg.src = s.logo_data;
         logoImg.alt = 'Logo';
         logoImg.style.cssText = 'width:72px;height:72px;border-radius:20px;object-fit:contain;margin-bottom:28px;';
         var svg = document.getElementById('heroLogo');
-        svg.parentNode.replaceChild(logoImg, svg);
+        if (svg) svg.parentNode.replaceChild(logoImg, svg);
       }
       if (s.accent_color) {
         document.documentElement.style.setProperty('--accent', s.accent_color);
