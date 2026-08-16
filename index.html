@@ -360,6 +360,39 @@
     }
     .admin-link:hover { opacity: 1; }
 
+    /* Language toggle */
+    .lang-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
+      display: flex;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(45,34,25,0.08);
+    }
+    .lang-btn {
+      padding: 8px 14px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.18s;
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .lang-btn:not(.active):hover {
+      background: var(--option-hover);
+      color: var(--text);
+    }
+
     @media (max-width: 560px) {
       .hero { padding: 40px 20px 36px; }
       .hero h1 { font-size: 26px; }
@@ -369,6 +402,12 @@
   </style>
 </head>
 <body>
+
+  <!-- LANGUAGE TOGGLE -->
+  <div class="lang-toggle" id="langToggle">
+    <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+    <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
+  </div>
 
   <!-- WELCOME SCREEN -->
   <div class="welcome-screen" id="welcomeScreen">
@@ -512,6 +551,101 @@
   </footer>
 
   <script>
+    var currentLang = 'en';
+    var T = {
+      en: {
+        heroDesc: 'Schedule your screening call. Fill out the form below and our team will reach out to confirm your eligibility and find a time that works for you.',
+        welcomeTime: 'Takes about 15 seconds',
+        startBtn: 'Start',
+        formHeading: 'Please provide the information below so we can confirm eligibility and schedule a screening call.',
+        labelName: 'What is your full name?',
+        phName: 'Type your answer here...',
+        labelPhone: 'What is the best phone number to reach you?',
+        phPhone: '(201) 555-0123',
+        labelEmail: "What's your email address?",
+        phEmail: 'name@example.com',
+        labelLang: 'What language do you prefer to communicate in?',
+        selectLang: 'Select a language...',
+        labelTime: 'What is your preferred time of day for a screening call?',
+        timeHint: 'Choose at least one',
+        morning: 'Morning', earlyAfternoon: 'Early Afternoon', lateAfternoon: 'Late Afternoon', evening: 'Evening',
+        consentTitle: 'Consent to Contact',
+        consentText: 'I agree to be contacted for a screening call regarding eligibility and services.',
+        submitBtn: 'Submit',
+        submitting: 'Submitting...',
+        thankYou: 'Thank you',
+        successDefault: "Your information has been submitted successfully. We'll be in touch soon to schedule your screening call.",
+        formClosed: 'This form is currently closed. Please check back later.',
+        errorPrefix: 'Please fill in: ',
+        errorGeneric: 'Something went wrong. Please try again.',
+        fName: 'Full Name', fPhone: 'Phone Number', fEmail: 'Email', fLang: 'Language', fTime: 'Preferred Time', fConsent: 'Consent',
+        footerRights: 'All rights reserved.'
+      },
+      es: {
+        heroDesc: 'Programe su llamada de evaluación. Complete el formulario a continuación y nuestro equipo se comunicará con usted para confirmar su elegibilidad y encontrar un horario conveniente.',
+        welcomeTime: 'Toma unos 15 segundos',
+        startBtn: 'Comenzar',
+        formHeading: 'Por favor, proporcione la siguiente información para que podamos confirmar su elegibilidad y programar una llamada de evaluación.',
+        labelName: '¿Cuál es su nombre completo?',
+        phName: 'Escriba su respuesta aquí...',
+        labelPhone: '¿Cuál es el mejor número de teléfono para contactarlo?',
+        phPhone: '(201) 555-0123',
+        labelEmail: '¿Cuál es su dirección de correo electrónico?',
+        phEmail: 'nombre@ejemplo.com',
+        labelLang: '¿En qué idioma prefiere comunicarse?',
+        selectLang: 'Seleccione un idioma...',
+        labelTime: '¿Cuál es su horario preferido para la llamada de evaluación?',
+        timeHint: 'Elija al menos uno',
+        morning: 'Mañana', earlyAfternoon: 'Principio de la tarde', lateAfternoon: 'Final de la tarde', evening: 'Noche',
+        consentTitle: 'Consentimiento de contacto',
+        consentText: 'Acepto ser contactado para una llamada de evaluación sobre elegibilidad y servicios.',
+        submitBtn: 'Enviar',
+        submitting: 'Enviando...',
+        thankYou: 'Gracias',
+        successDefault: 'Su información se ha enviado correctamente. Nos pondremos en contacto pronto para programar su llamada de evaluación.',
+        formClosed: 'Este formulario está cerrado actualmente. Vuelva a intentarlo más tarde.',
+        errorPrefix: 'Por favor complete: ',
+        errorGeneric: 'Algo salió mal. Por favor inténtelo de nuevo.',
+        fName: 'Nombre completo', fPhone: 'Teléfono', fEmail: 'Correo electrónico', fLang: 'Idioma', fTime: 'Horario preferido', fConsent: 'Consentimiento',
+        footerRights: 'Todos los derechos reservados.'
+      }
+    };
+
+    function switchLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.lang === lang);
+      });
+      document.documentElement.lang = lang;
+      var t = T[lang];
+      document.getElementById('heroDesc').textContent = t.heroDesc;
+      document.querySelector('.welcome-time').textContent = t.welcomeTime;
+      document.getElementById('startBtn').textContent = t.startBtn;
+      document.querySelector('.form-heading').innerHTML = t.formHeading + '<span class="req">*</span>';
+      document.querySelector('label[for="fullName"]').innerHTML = t.labelName + '<span class="req">*</span>';
+      document.getElementById('fullName').placeholder = t.phName;
+      document.querySelector('label[for="phone"]').innerHTML = t.labelPhone + '<span class="req">*</span>';
+      document.getElementById('phone').placeholder = t.phPhone;
+      document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
+      document.getElementById('email').placeholder = t.phEmail;
+      document.querySelector('label[for="language"]').innerHTML = t.labelLang + '<span class="req">*</span>';
+      document.querySelector('#language option[value=""]').textContent = t.selectLang;
+      document.querySelector('.field:nth-child(5) .field-q').innerHTML = t.labelTime + '<span class="req">*</span>';
+      document.querySelector('.field-hint').textContent = t.timeHint;
+      var slotNames = document.querySelectorAll('.slot-name');
+      slotNames[0].textContent = t.morning;
+      slotNames[1].textContent = t.earlyAfternoon;
+      slotNames[2].textContent = t.lateAfternoon;
+      slotNames[3].textContent = t.evening;
+      document.querySelector('.consent-field .field-q').innerHTML = t.consentTitle + '<span class="req">*</span>';
+      document.querySelector('.consent-copy').textContent = t.consentText;
+      var btn = document.getElementById('submitBtn');
+      if (!btn.disabled) btn.textContent = t.submitBtn;
+      document.querySelector('.done h2').textContent = t.thankYou;
+      var footerSpan = document.querySelector('.site-footer span');
+      footerSpan.innerHTML = '&copy; 2026 <span id="footerName">' + (document.getElementById('footerName')?.textContent || 'GoldsteinCare') + '</span>. ' + t.footerRights;
+    }
+
     // Load dynamic settings from admin dashboard
     fetch('/api/settings').then(function(r) { return r.json(); }).then(function(s) {
       if (s.company_name) {
@@ -536,7 +670,7 @@
       }
       if (s.success_message) document.getElementById('successMsg').textContent = s.success_message;
       if (s.form_active === 'false') {
-        document.getElementById('screeningForm').innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-size:16px;color:var(--text-secondary);">This form is currently closed. Please check back later.</p></div>';
+        document.getElementById('screeningForm').innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-size:16px;color:var(--text-secondary);" id="formClosedMsg">' + T[currentLang].formClosed + '</p></div>';
       }
     }).catch(function() {});
 
@@ -580,20 +714,21 @@
       };
 
       if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.language || !times.length || !data.consent) {
+        var t = T[currentLang];
         var missing = [];
-        if (!data.fullName) missing.push('Full Name');
-        if (!document.getElementById('phone').value.trim()) missing.push('Phone Number');
-        if (!data.email) missing.push('Email');
-        if (!data.language) missing.push('Language');
-        if (!times.length) missing.push('Preferred Time');
-        if (!data.consent) missing.push('Consent');
-        errEl.textContent = 'Please fill in: ' + missing.join(', ');
+        if (!data.fullName) missing.push(t.fName);
+        if (!document.getElementById('phone').value.trim()) missing.push(t.fPhone);
+        if (!data.email) missing.push(t.fEmail);
+        if (!data.language) missing.push(t.fLang);
+        if (!times.length) missing.push(t.fTime);
+        if (!data.consent) missing.push(t.fConsent);
+        errEl.textContent = t.errorPrefix + missing.join(', ');
         errEl.style.display = 'block';
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = 'Submitting...';
+      btn.textContent = T[currentLang].submitting;
 
       fetch('/api/submit', {
         method: 'POST',
@@ -606,10 +741,10 @@
       })
       .then(function() { showSuccess(); })
       .catch(function() {
-        errEl.textContent = 'Something went wrong. Please try again.';
+        errEl.textContent = T[currentLang].errorGeneric;
         errEl.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Submit';
+        btn.textContent = T[currentLang].submitBtn;
       });
     });
 
