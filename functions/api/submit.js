@@ -28,11 +28,14 @@ export async function onRequestPost(context) {
       emailResult = { error: e.message || 'unknown error' };
     }
 
+    let sheetResult = null;
     try {
-      await sendToGoogleSheet(env, { fullName, phone, email, language, preferredTime, timestamp });
-    } catch (e) {}
+      sheetResult = await sendToGoogleSheet(env, { fullName, phone, email, language, preferredTime, timestamp });
+    } catch (e) {
+      sheetResult = { error: e.message || 'unknown error' };
+    }
 
-    return json({ status: 'ok', id, email_status: emailResult });
+    return json({ status: 'ok', id, email_status: emailResult, sheet_status: sheetResult });
   } catch (e) {
     return json({ error: 'Server error: ' + (e.message || 'unknown') }, 500);
   }
@@ -105,15 +108,15 @@ async function sendToGoogleSheet(env, sub) {
   try {
     const row = await env.DB.prepare("SELECT value FROM site_settings WHERE key = 'google_sheet_url'").first();
     sheetUrl = row?.value;
-  } catch (e) { return; }
+  } catch (e) { return { skipped: 'db error: ' + e.message }; }
 
-  if (!sheetUrl || !sheetUrl.trim()) return;
+  if (!sheetUrl || !sheetUrl.trim()) return { skipped: 'no google_sheet_url in settings' };
 
   const times = (() => {
     try { return JSON.parse(sub.preferredTime).join(', '); } catch(e) { return sub.preferredTime || ''; }
   })();
 
-  await fetch(sheetUrl.trim(), {
+  const resp = await fetch(sheetUrl.trim(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -125,6 +128,10 @@ async function sendToGoogleSheet(env, sub) {
       preferredTime: times,
     }),
   });
+
+  const text = await resp.text();
+  if (!resp.ok) return { error: 'HTTP ' + resp.status, response: text.slice(0, 200), url: sheetUrl.trim().slice(0, 60) };
+  return { sent: true, url: sheetUrl.trim().slice(0, 60) };
 }
 
 function esc(s) {
