@@ -832,12 +832,15 @@
         } else {
           el.style.color = 'var(--danger)';
           var msg = d.message || '';
+          var extra = '';
           if (d.checks) {
             if (d.checks.api_key && d.checks.api_key.indexOf('MISSING') === 0) msg = 'RESEND_API_KEY is not set in Cloudflare';
             else if (d.checks.notification_email && d.checks.notification_email.indexOf('MISSING') === 0) msg = 'Set notification email above and save first';
             else if (d.checks.resend_response) msg = d.checks.resend_response.message || msg;
+            if (d.checks.api_key) extra += ' | Key: ' + d.checks.api_key;
+            if (d.checks.notification_email && d.checks.notification_email.indexOf('MISSING') !== 0) extra += ' | To: ' + d.checks.notification_email;
           }
-          el.textContent = msg || 'Error sending email';
+          el.textContent = (msg || 'Error sending email') + extra;
         }
       }).catch(function() {
         el.style.color = 'var(--danger)';
