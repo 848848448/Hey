@@ -122,7 +122,7 @@ async function sendToGoogleSheet(env, sub) {
     body: JSON.stringify({
       timestamp: sub.timestamp,
       fullName: sub.fullName,
-      phone: sub.phone,
+      phone: "'" + sub.phone,
       email: sub.email,
       language: sub.language,
       preferredTime: times,
