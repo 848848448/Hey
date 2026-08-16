@@ -404,14 +404,12 @@
 </head>
 <body>
 
-  <!-- LANGUAGE TOGGLE -->
-  <div class="lang-toggle" id="langToggle">
-    <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
-    <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
-  </div>
-
   <!-- WELCOME SCREEN -->
-  <div class="welcome-screen" id="welcomeScreen">
+  <div class="welcome-screen" id="welcomeScreen" style="position:relative;">
+    <div class="lang-toggle" id="langToggle1">
+      <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
+    </div>
     <div class="welcome-inner">
       <svg class="hero-logo" id="heroLogo" viewBox="0 0 72 72" fill="none" aria-hidden="true">
         <rect width="72" height="72" rx="20" fill="var(--accent)"/>
@@ -427,7 +425,11 @@
   </div>
 
   <!-- FORM SCREEN (hidden initially) -->
-  <main class="form-section" id="formSection" style="display:none">
+  <main class="form-section" id="formSection" style="display:none;position:relative;">
+    <div class="lang-toggle" id="langToggle2" style="top:-32px;">
+      <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" data-lang="es" onclick="switchLang('es')">ES</button>
+    </div>
     <div class="form-card">
       <form id="screeningForm" novalidate>
         <p class="form-heading">Please provide the information below so we can confirm eligibility and schedule a screening call.<span class="req">*</span></p>
