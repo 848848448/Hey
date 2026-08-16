@@ -30,7 +30,8 @@ export async function onRequestPost(context) {
     checks.notification_email = 'MISSING — set it in Admin > Settings > Notifications';
     return json({ success: false, checks });
   }
-  checks.notification_email = notifEmail.trim();
+  notifEmail = notifEmail.trim().toLowerCase();
+  checks.notification_email = notifEmail;
 
   try {
     const resp = await fetch('https://api.resend.com/emails', {

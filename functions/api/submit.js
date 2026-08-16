@@ -44,6 +44,7 @@ async function sendNotificationEmail(env, sub) {
   } catch (e) { return { skipped: 'db error: ' + e.message }; }
 
   if (!notifEmail || !notifEmail.trim()) return { skipped: 'no notification_email in settings' };
+  notifEmail = notifEmail.trim().toLowerCase();
 
   let companyName = 'GoldsteinCare';
   try {
