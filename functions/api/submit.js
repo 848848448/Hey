@@ -28,6 +28,10 @@ export async function onRequestPost(context) {
       emailResult = { error: e.message || 'unknown error' };
     }
 
+    try {
+      await sendToGoogleSheet(env, { fullName, phone, email, language, preferredTime, timestamp });
+    } catch (e) {}
+
     return json({ status: 'ok', id, email_status: emailResult });
   } catch (e) {
     return json({ error: 'Server error: ' + (e.message || 'unknown') }, 500);
@@ -94,6 +98,33 @@ async function sendNotificationEmail(env, sub) {
   const result = await resp.json();
   if (!resp.ok) return { error: result.message || JSON.stringify(result), to: notifEmail.trim() };
   return { sent: true, to: notifEmail.trim(), id: result.id };
+}
+
+async function sendToGoogleSheet(env, sub) {
+  let sheetUrl;
+  try {
+    const row = await env.DB.prepare("SELECT value FROM site_settings WHERE key = 'google_sheet_url'").first();
+    sheetUrl = row?.value;
+  } catch (e) { return; }
+
+  if (!sheetUrl || !sheetUrl.trim()) return;
+
+  const times = (() => {
+    try { return JSON.parse(sub.preferredTime).join(', '); } catch(e) { return sub.preferredTime || ''; }
+  })();
+
+  await fetch(sheetUrl.trim(), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      timestamp: sub.timestamp,
+      fullName: sub.fullName,
+      phone: sub.phone,
+      email: sub.email,
+      language: sub.language,
+      preferredTime: times,
+    }),
+  });
 }
 
 function esc(s) {

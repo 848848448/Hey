@@ -17,7 +17,7 @@ export async function onRequestPut(context) {
 
   try {
     const body = await request.json();
-    const allowed = ['company_name', 'company_description', 'accent_color', 'logo_data', 'form_active', 'success_message', 'notification_email'];
+    const allowed = ['company_name', 'company_description', 'accent_color', 'logo_data', 'form_active', 'success_message', 'notification_email', 'google_sheet_url'];
 
     for (const key of allowed) {
       if (body[key] !== undefined) {

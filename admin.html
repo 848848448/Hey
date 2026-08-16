@@ -344,6 +344,15 @@
         </div>
       </div>
 
+      <div class="settings-section">
+        <h3>Google Sheets</h3>
+        <div class="setting-row">
+          <label>Sheet URL</label>
+          <input class="setting-input" type="url" id="setSheetUrl" placeholder="https://script.google.com/macros/s/...">
+        </div>
+        <p class="setting-hint" style="margin-left:156px;margin-top:-8px;margin-bottom:8px;">Each new registration will be automatically added to your Google Sheet.</p>
+      </div>
+
       <button class="btn btn-accent" onclick="saveSettings()" style="padding:14px 32px;font-size:15px;">Save All Settings</button>
       <p id="settingsMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
     </div>
@@ -759,6 +768,7 @@
         document.getElementById('formActiveLabel').textContent = active ? 'Form is open' : 'Form is closed';
         document.getElementById('setSuccessMsg').value = s.success_message || '';
         document.getElementById('setNotifEmail').value = s.notification_email || '';
+        document.getElementById('setSheetUrl').value = s.google_sheet_url || '';
       });
     }
 
@@ -801,6 +811,7 @@
         form_active: document.getElementById('setFormActive').checked ? 'true' : 'false',
         success_message: document.getElementById('setSuccessMsg').value,
         notification_email: document.getElementById('setNotifEmail').value,
+        google_sheet_url: document.getElementById('setSheetUrl').value,
       };
       var msg = document.getElementById('settingsMsg');
       fetch('/api/settings', {
