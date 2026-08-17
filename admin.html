@@ -266,6 +266,7 @@
         </select>
       </div>
       <div class="table-wrap" id="tableContent"><div class="state-msg"><div class="spinner"></div><p>Loading...</p></div></div>
+      <div id="pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
     <!-- TEAM TAB -->
@@ -470,43 +471,65 @@
     }
 
     // SUBMISSIONS
-    function loadData() {
+    var currentPage = 1;
+    var totalPages = 1;
+    var totalCount = 0;
+    var searchTimer = null;
+
+    function loadData(page) {
+      if (page !== undefined) currentPage = page;
       document.getElementById('tableContent').innerHTML = '<div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>';
-      fetch('/api/submissions', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      var q = (document.getElementById('searchInput').value || '').trim();
+      var sf = (document.getElementById('statusFilter').value || '');
+      var url = '/api/submissions?page=' + currentPage + '&limit=50';
+      if (q) url += '&search=' + encodeURIComponent(q);
+      if (sf) url += '&status=' + encodeURIComponent(sf);
+      fetch(url, { headers: { 'Authorization': 'Bearer ' + authToken } })
       .then(function(r) { if (r.status === 401) { logout(); throw new Error('Unauth'); } return r.json(); })
-      .then(function(data) { allData = data; updateStats(); filterTable(); })
+      .then(function(resp) {
+        allData = resp.submissions || [];
+        totalCount = resp.total || 0;
+        totalPages = resp.pages || 1;
+        currentPage = resp.page || 1;
+        updateStats();
+        renderTable(allData);
+        renderPagination();
+      })
       .catch(function(e) { if (e.message !== 'Unauth') document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>Could not load data</h3><p>Check your connection.</p></div>'; });
     }
 
     function updateStats() {
+      document.getElementById('statTotal').textContent = totalCount;
+      var els = {statToday:0, statWeek:0, statNew:0, statContacted:0, statCompleted:0};
       var now = new Date(), todayStr = now.toISOString().slice(0,10);
       var weekAgo = new Date(now.getTime()-7*864e5);
-      var today=0, week=0, newC=0, contacted=0, completed=0;
       allData.forEach(function(r) {
         var d = new Date(r.timestamp||'');
-        if ((r.timestamp||'').slice(0,10)===todayStr) today++;
-        if (d>=weekAgo) week++;
-        if (r.status==='new') newC++;
-        else if (r.status==='contacted') contacted++;
-        else if (r.status==='completed') completed++;
+        if ((r.timestamp||'').slice(0,10)===todayStr) els.statToday++;
+        if (d>=weekAgo) els.statWeek++;
+        if (r.status==='new') els.statNew++;
+        else if (r.status==='contacted') els.statContacted++;
+        else if (r.status==='completed') els.statCompleted++;
       });
-      document.getElementById('statTotal').textContent = allData.length;
-      document.getElementById('statToday').textContent = today;
-      document.getElementById('statWeek').textContent = week;
-      document.getElementById('statNew').textContent = newC;
-      document.getElementById('statContacted').textContent = contacted;
-      document.getElementById('statCompleted').textContent = completed;
+      Object.keys(els).forEach(function(k) { var e=document.getElementById(k); if(e) e.textContent=els[k]; });
     }
 
     function filterTable() {
-      var q = document.getElementById('searchInput').value.toLowerCase();
-      var sf = document.getElementById('statusFilter').value;
-      var filtered = allData.filter(function(r) {
-        var matchSearch = !q || (r.fullName||'').toLowerCase().indexOf(q)!==-1 || (r.email||'').toLowerCase().indexOf(q)!==-1 || (r.phone||'').toLowerCase().indexOf(q)!==-1 || (r.language||'').toLowerCase().indexOf(q)!==-1;
-        var matchStatus = !sf || r.status === sf;
-        return matchSearch && matchStatus;
-      });
-      renderTable(filtered);
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function() { loadData(1); }, 300);
+    }
+
+    function renderPagination() {
+      var el = document.getElementById('pagination');
+      if (!el) return;
+      if (totalPages <= 1) { el.innerHTML = '<span style="color:var(--text-secondary);font-size:13px;">' + totalCount + ' total</span>'; return; }
+      var h = '<span style="color:var(--text-secondary);font-size:13px;">' + totalCount + ' total &mdash; Page ' + currentPage + ' of ' + totalPages + '</span><span style="display:flex;gap:6px;">';
+      h += '<button class="btn btn-sm" onclick="loadData(1)" ' + (currentPage<=1?'disabled':'') + '>&laquo;</button>';
+      h += '<button class="btn btn-sm" onclick="loadData('+(currentPage-1)+')" ' + (currentPage<=1?'disabled':'') + '>&lsaquo; Prev</button>';
+      h += '<button class="btn btn-sm" onclick="loadData('+(currentPage+1)+')" ' + (currentPage>=totalPages?'disabled':'') + '>Next &rsaquo;</button>';
+      h += '<button class="btn btn-sm" onclick="loadData('+totalPages+')" ' + (currentPage>=totalPages?'disabled':'') + '>&raquo;</button>';
+      h += '</span>';
+      el.innerHTML = h;
     }
 
     function renderTable(data) {
@@ -689,16 +712,23 @@
     }
 
     function exportCSV() {
-      if (!allData.length) return;
-      var hd = ['Timestamp','Full Name','Phone','Email','Language','Preferred Time','Consent','Status','Notes'];
-      var csv = hd.join(',') + '\n';
-      allData.forEach(function(r) {
-        csv += [r.timestamp,r.fullName,r.phone,r.email,r.language,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
-      });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-      a.download = 'submissions-'+new Date().toISOString().slice(0,10)+'.csv';
-      a.click();
+      showToast('Exporting all data...');
+      fetch('/api/submissions?page=1&limit=100000', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        var rows = resp.submissions || [];
+        if (!rows.length) { showToast('No data to export'); return; }
+        var hd = ['Timestamp','Full Name','Phone','Email','Language','Preferred Time','Consent','Status','Notes'];
+        var csv = hd.join(',') + '\n';
+        rows.forEach(function(r) {
+          csv += [r.timestamp,r.fullName,r.phone,r.email,r.language,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
+        });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+        a.download = 'submissions-'+new Date().toISOString().slice(0,10)+'.csv';
+        a.click();
+        showToast('Exported ' + rows.length + ' rows');
+      }).catch(function() { showToast('Export failed'); });
     }
 
     // TEAM MANAGEMENT

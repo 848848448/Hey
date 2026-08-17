@@ -3,9 +3,37 @@ export async function onRequestGet(context) {
   const session = await verifyToken(request, env);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
+  const url = new URL(request.url);
+  const page = Math.max(1, parseInt(url.searchParams.get('page')) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit')) || 50));
+  const search = (url.searchParams.get('search') || '').trim();
+  const statusFilter = (url.searchParams.get('status') || '').trim();
+  const offset = (page - 1) * limit;
+
+  let whereClause = '';
+  const binds = [];
+
+  if (search || statusFilter) {
+    const conditions = [];
+    if (search) {
+      conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ?)');
+      binds.push('%' + search + '%', '%' + search + '%', '%' + search + '%');
+    }
+    if (statusFilter) {
+      conditions.push('status = ?');
+      binds.push(statusFilter);
+    }
+    whereClause = 'WHERE ' + conditions.join(' AND ');
+  }
+
+  const countResult = await env.DB.prepare(
+    'SELECT COUNT(*) as total FROM submissions ' + whereClause
+  ).bind(...binds).first();
+  const total = countResult?.total || 0;
+
   const { results } = await env.DB.prepare(
-    'SELECT * FROM submissions ORDER BY timestamp DESC'
-  ).all();
+    'SELECT * FROM submissions ' + whereClause + ' ORDER BY timestamp DESC LIMIT ? OFFSET ?'
+  ).bind(...binds, limit, offset).all();
 
   const submissions = results.map(row => ({
     id: row.id,
@@ -20,7 +48,7 @@ export async function onRequestGet(context) {
     notes: row.notes || '',
   }));
 
-  return json(submissions);
+  return json({ submissions, total, page, limit, pages: Math.ceil(total / limit) });
 }
 
 export async function onRequestPatch(context) {
