@@ -15,7 +15,7 @@ export async function onRequestPost(context) {
     checks.api_key = 'MISSING — add RESEND_API_KEY in Cloudflare Pages > Settings > Environment variables';
     return json({ success: false, checks });
   }
-  checks.api_key = 'OK (' + env.RESEND_API_KEY.slice(0, 6) + '...)';
+  checks.api_key = 'OK';
 
   let notifEmail;
   try {

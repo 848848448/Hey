@@ -1,3 +1,5 @@
+import { hashPassword } from './_security.js';
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   const session = await verifyOwner(request, env);
@@ -19,10 +21,14 @@ export async function onRequestPost(context) {
 
   const { email, password } = await request.json();
   if (!email || !password) return json({ error: 'Email and password are required.' }, 400);
+  if (password.length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400);
 
   const normalEmail = email.trim().toLowerCase();
-  const ownerEmail = (env.SUPER_ADMIN_EMAIL || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalEmail)) {
+    return json({ error: 'Invalid email format.' }, 400);
+  }
 
+  const ownerEmail = (env.SUPER_ADMIN_EMAIL || '').trim().toLowerCase();
   if (normalEmail === ownerEmail) {
     return json({ error: 'Cannot add the owner as a regular admin.' }, 400);
   }
@@ -35,9 +41,10 @@ export async function onRequestPost(context) {
     return json({ error: 'This email is already an admin.' }, 400);
   }
 
+  const hashed = await hashPassword(password, normalEmail);
   await env.DB.prepare(
     'INSERT INTO admin_users (email, password) VALUES (?, ?)'
-  ).bind(normalEmail, password).run();
+  ).bind(normalEmail, hashed).run();
 
   return json({ status: 'ok' });
 }

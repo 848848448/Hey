@@ -30,6 +30,13 @@ CREATE TABLE IF NOT EXISTS site_settings (
   value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key TEXT PRIMARY KEY,
+  attempts INTEGER DEFAULT 0,
+  first_attempt INTEGER NOT NULL,
+  blocked_until INTEGER DEFAULT 0
+);
+
 CREATE INDEX IF NOT EXISTS idx_submissions_timestamp ON submissions(timestamp DESC);
 CREATE INDEX IF NOT EXISTS idx_submissions_email ON submissions(email);
 CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status);

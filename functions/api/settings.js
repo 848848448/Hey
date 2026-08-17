@@ -1,9 +1,17 @@
 export async function onRequestGet(context) {
-  const { env } = context;
+  const { request, env } = context;
   try {
     const { results } = await env.DB.prepare('SELECT key, value FROM site_settings').all();
     const settings = {};
-    results.forEach(r => { settings[r.key] = r.value; });
+    const publicKeys = ['company_name', 'company_description', 'accent_color', 'logo_data', 'form_active', 'success_message'];
+
+    const isAuth = await isAuthenticated(request, env);
+
+    results.forEach(r => {
+      if (isAuth || publicKeys.includes(r.key)) {
+        settings[r.key] = r.value;
+      }
+    });
     return json(settings);
   } catch (e) {
     return json({});
@@ -19,6 +27,10 @@ export async function onRequestPut(context) {
     const body = await request.json();
     const allowed = ['company_name', 'company_description', 'accent_color', 'logo_data', 'form_active', 'success_message', 'notification_email', 'google_sheet_url'];
 
+    if (body.accent_color && !/^#[0-9a-fA-F]{6}$/.test(body.accent_color)) {
+      return json({ error: 'Invalid color format' }, 400);
+    }
+
     for (const key of allowed) {
       if (body[key] !== undefined) {
         await env.DB.prepare(
@@ -28,8 +40,18 @@ export async function onRequestPut(context) {
     }
     return json({ status: 'ok' });
   } catch (e) {
-    return json({ error: 'Server error: ' + (e.message || 'unknown') }, 500);
+    return json({ error: 'Server error' }, 500);
   }
+}
+
+async function isAuthenticated(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.replace('Bearer ', '');
+  if (!token) return false;
+  const session = await env.DB.prepare(
+    'SELECT * FROM admin_sessions WHERE token = ? AND expiry > ?'
+  ).bind(token, Date.now()).first();
+  return !!session;
 }
 
 async function verifyOwner(request, env) {

@@ -453,6 +453,9 @@
     }
 
     function logout() {
+      if (authToken) {
+        fetch('/api/logout', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
+      }
       sessionStorage.removeItem('auth');
       authToken = ''; currentRole = ''; currentEmail = '';
       document.getElementById('dashboard').style.display = 'none';

@@ -10,6 +10,7 @@ export async function onRequestPost(context) {
   if (!session || session.role !== 'owner') return json({ error: 'Unauthorized' }, 401);
 
   const migrations = [
+    'CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, attempts INTEGER DEFAULT 0, first_attempt INTEGER NOT NULL, blocked_until INTEGER DEFAULT 0)',
     'CREATE INDEX IF NOT EXISTS idx_submissions_timestamp ON submissions(timestamp DESC)',
     'CREATE INDEX IF NOT EXISTS idx_submissions_email ON submissions(email)',
     'CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status)',
