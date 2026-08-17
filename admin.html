@@ -447,6 +447,7 @@
       if (currentRole === 'owner') {
         document.getElementById('teamTab').style.display = '';
         document.getElementById('settingsTab').style.display = '';
+        fetch('/api/migrate', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
       }
       loadData();
     }
