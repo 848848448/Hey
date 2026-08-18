@@ -989,7 +989,7 @@
     }
 
     function copySellerLink(code) {
-      var url = window.location.origin + '/?ref=' + code;
+      var url = window.location.origin + '/r/' + code;
       navigator.clipboard.writeText(url).then(function() { showToast('Link copied: ' + url); }).catch(function() {
         prompt('Copy this link:', url);
       });
@@ -1047,7 +1047,7 @@
       .then(function(d) {
         msg.style.display = 'block';
         msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
-        msg.textContent = d.error || 'Seller added! Link: ' + window.location.origin + '/?ref=' + d.code;
+        msg.textContent = d.error || 'Seller added! Link: ' + window.location.origin + '/r/' + d.code;
         if (!d.error) {
           document.getElementById('newSellerName').value = '';
           document.getElementById('newSellerCode').value = '';

@@ -791,7 +791,10 @@
         times.push(cb.value);
       });
 
-      var refCode = new URLSearchParams(window.location.search).get('ref') || '';
+      var refCode = '';
+      var pathMatch = window.location.pathname.match(/^\/r\/([a-zA-Z0-9_-]+)/);
+      if (pathMatch) refCode = pathMatch[1];
+      else refCode = new URLSearchParams(window.location.search).get('ref') || '';
 
       var data = {
         fullName: document.getElementById('fullName').value.trim(),
