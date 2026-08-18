@@ -31,18 +31,33 @@ export async function onRequestPost(context) {
     const preferredTime = JSON.stringify(Array.isArray(data.preferredTime) ? data.preferredTime.slice(0, 4) : []);
     const consent = data.consent ? 1 : 0;
 
+    let sellerCode = '';
+    let sellerName = '';
+    if (data.sellerCode) {
+      const cleanCode = String(data.sellerCode).trim().toLowerCase();
+      if (/^[a-z0-9_-]{2,30}$/.test(cleanCode)) {
+        try {
+          const seller = await env.DB.prepare('SELECT name, active FROM sellers WHERE code = ?').bind(cleanCode).first();
+          if (seller && seller.active) {
+            sellerCode = cleanCode;
+            sellerName = seller.name;
+          }
+        } catch (e) {}
+      }
+    }
+
     await env.DB.prepare(
-      'INSERT INTO submissions (id, full_name, phone, email, address, language, preferred_time, consent, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).bind(id, fullName, phone, email, address, language, preferredTime, consent, timestamp).run();
+      'INSERT INTO submissions (id, full_name, phone, email, address, language, preferred_time, consent, timestamp, seller_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(id, fullName, phone, email, address, language, preferredTime, consent, timestamp, sellerCode).run();
 
     await recordAttempt(env, rateKey, 10 * 60 * 1000);
 
     try {
-      await sendNotificationEmail(env, { fullName, phone, email, address, language, preferredTime, timestamp });
+      await sendNotificationEmail(env, { fullName, phone, email, address, language, preferredTime, timestamp, sellerCode, sellerName });
     } catch (e) {}
 
     try {
-      await sendToGoogleSheet(env, { fullName, phone, email, address, language, preferredTime, timestamp });
+      await sendToGoogleSheet(env, { fullName, phone, email, address, language, preferredTime, timestamp, sellerCode, sellerName });
     } catch (e) {}
 
     return json({ status: 'ok', id });
@@ -89,6 +104,7 @@ async function sendNotificationEmail(env, sub) {
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Address</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(sub.address)}</td></tr>
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Language</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(sub.language)}</td></tr>
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Preferred Time</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(times)}</td></tr>
+      ${sub.sellerCode ? '<tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Referred By</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">' + esc(sub.sellerName) + ' (' + esc(sub.sellerCode) + ')</td></tr>' : ''}
       <tr><td style="padding:10px 12px;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Submitted</td><td style="padding:10px 12px;">${esc(date)}</td></tr>
     </table>
   </div>
@@ -133,6 +149,7 @@ async function sendToGoogleSheet(env, sub) {
       address: sub.address,
       language: sub.language,
       preferredTime: times,
+      seller: sub.sellerName ? sub.sellerName + ' (' + sub.sellerCode + ')' : '',
     }),
   });
 }

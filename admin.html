@@ -242,6 +242,7 @@
 
     <div class="tabs" id="tabBar">
       <button class="tab active" data-tab="submissions">Submissions</button>
+      <button class="tab" data-tab="sellers" id="sellersTab" style="display:none">Sellers</button>
       <button class="tab" data-tab="team" id="teamTab" style="display:none">Team</button>
       <button class="tab" data-tab="settings" id="settingsTab" style="display:none">Settings</button>
     </div>
@@ -264,9 +265,30 @@
           <option value="contacted">Contacted</option>
           <option value="completed">Completed</option>
         </select>
+        <select class="filter-select" id="sellerFilter" onchange="filterTable()">
+          <option value="">All sellers</option>
+        </select>
       </div>
       <div class="table-wrap" id="tableContent"><div class="state-msg"><div class="spinner"></div><p>Loading...</p></div></div>
       <div id="pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <!-- SELLERS TAB -->
+    <div class="tab-panel" id="panel-sellers">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;">Manage Sellers</h2>
+      </div>
+      <div class="stats-row" id="sellerStats"></div>
+      <div class="admin-list" id="sellerList"></div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;margin-top:24px;color:var(--text-secondary);">Add New Seller</h3>
+      <form class="add-admin-form" id="addSellerForm" style="flex-wrap:wrap;gap:10px;">
+        <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:140px;">
+        <input type="text" id="newSellerCode" placeholder="Unique code (e.g. john)" required style="min-width:120px;" pattern="[a-zA-Z0-9_-]{2,30}">
+        <input type="email" id="newSellerEmail" placeholder="Email (optional)" style="min-width:160px;">
+        <input type="tel" id="newSellerPhone" placeholder="Phone (optional)" style="min-width:120px;">
+        <button type="submit" class="btn btn-accent">Add Seller</button>
+      </form>
+      <p id="sellerMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
     </div>
 
     <!-- TEAM TAB -->
@@ -390,7 +412,7 @@
   <div id="toast" style="display:none"></div>
 
   <script>
-    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentDetailId = null;
+    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentDetailId = null, sellerNameMap = {};
 
     // TABS
     document.querySelectorAll('.tab').forEach(function(tab) {
@@ -399,6 +421,7 @@
         document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
         tab.classList.add('active');
         document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'sellers') loadSellers();
         if (tab.dataset.tab === 'team') loadAdmins();
         if (tab.dataset.tab === 'settings') loadSettings();
       });
@@ -445,10 +468,12 @@
       document.getElementById('loginWrap').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       if (currentRole === 'owner') {
+        document.getElementById('sellersTab').style.display = '';
         document.getElementById('teamTab').style.display = '';
         document.getElementById('settingsTab').style.display = '';
         fetch('/api/migrate', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
       }
+      loadSellerFilter();
       loadData();
     }
 
@@ -463,6 +488,7 @@
       document.getElementById('loginEmail').value = '';
       document.getElementById('loginPass').value = '';
       document.getElementById('loginError').style.display = 'none';
+      document.getElementById('sellersTab').style.display = 'none';
       document.getElementById('teamTab').style.display = 'none';
       document.getElementById('settingsTab').style.display = 'none';
     }
@@ -485,9 +511,11 @@
       document.getElementById('tableContent').innerHTML = '<div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>';
       var q = (document.getElementById('searchInput').value || '').trim();
       var sf = (document.getElementById('statusFilter').value || '');
+      var selF = (document.getElementById('sellerFilter').value || '');
       var url = '/api/submissions?page=' + currentPage + '&limit=50';
       if (q) url += '&search=' + encodeURIComponent(q);
       if (sf) url += '&status=' + encodeURIComponent(sf);
+      if (selF) url += '&seller=' + encodeURIComponent(selF);
       fetch(url, { headers: { 'Authorization': 'Bearer ' + authToken } })
       .then(function(r) { if (r.status === 401) { logout(); throw new Error('Unauth'); } return r.json(); })
       .then(function(resp) {
@@ -538,7 +566,7 @@
 
     function renderTable(data) {
       if (!data.length) { document.getElementById('tableContent').innerHTML='<div class="state-msg"><h3>No submissions found</h3><p>'+(!allData.length?'They\'ll appear here once people fill out the form.':'Try adjusting your search or filter.')+'</p></div>'; return; }
-      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Language</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
+      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Language</th><th>Seller</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
       data.forEach(function(row) {
         var d=row.timestamp?new Date(row.timestamp):null;
         var ds=d?d.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
@@ -556,6 +584,8 @@
         h+='<td><a class="cell-link" href="mailto:'+esc(row.email||'')+'">'+esc(row.email||'—')+'</a></td>';
         h+='<td>'+esc(row.address||'—')+'</td>';
         h+='<td>'+esc(row.language||'—')+'</td>';
+        var sellerDisplay = row.sellerCode ? (sellerNameMap[row.sellerCode] || row.sellerCode) : '—';
+        h+='<td>'+(row.sellerCode ? '<span class="badge badge-time">'+esc(sellerDisplay)+'</span>' : '—')+'</td>';
         h+='<td>'+statusBadge+'</td>';
         h+='<td>'+notesBadge+'</td>';
         h+='<td>'+tb+'</td></tr>';
@@ -571,6 +601,7 @@
       currentDetailId = id;
       document.getElementById('detailName').textContent = row.fullName || 'Unknown';
       var d = row.timestamp ? new Date(row.timestamp) : null;
+      var sellerDisplay = row.sellerCode ? (sellerNameMap[row.sellerCode] || row.sellerCode) : '';
       var fields = [
         ['Submitted', d ? d.toLocaleString('en-US', {dateStyle:'long', timeStyle:'short'}) : '—'],
         ['Phone', row.phone || '—'],
@@ -580,6 +611,7 @@
         ['Preferred Time', (row.preferredTime || []).join(', ') || '—'],
         ['Consent', row.consent ? 'Yes' : 'No']
       ];
+      if (sellerDisplay) fields.push(['Referred By', sellerDisplay]);
       var h = '';
       fields.forEach(function(f) { h += '<div class="detail-field"><dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd></div>'; });
       document.getElementById('detailBody').innerHTML = h;
@@ -724,10 +756,11 @@
       .then(function(resp) {
         var rows = resp.submissions || [];
         if (!rows.length) { showToast('No data to export'); return; }
-        var hd = ['Timestamp','Full Name','Phone','Email','Address','Language','Preferred Time','Consent','Status','Notes'];
+        var hd = ['Timestamp','Full Name','Phone','Email','Address','Language','Seller','Preferred Time','Consent','Status','Notes'];
         var csv = hd.join(',') + '\n';
         rows.forEach(function(r) {
-          csv += [r.timestamp,r.fullName,r.phone,r.email,r.address||'',r.language,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
+          var sellerDisplay = r.sellerCode ? (sellerNameMap[r.sellerCode] || r.sellerCode) : '';
+          csv += [r.timestamp,r.fullName,r.phone,r.email,r.address||'',r.language,sellerDisplay,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
         });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
@@ -894,6 +927,138 @@
         el.textContent = 'Connection error';
       });
     }
+
+    // SELLERS
+    function loadSellerFilter() {
+      fetch('/api/sellers', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(sellers) {
+        if (!Array.isArray(sellers)) return;
+        sellerNameMap = {};
+        sellers.forEach(function(s) { sellerNameMap[s.code] = s.name; });
+        var sel = document.getElementById('sellerFilter');
+        var current = sel.value;
+        sel.innerHTML = '<option value="">All sellers</option>';
+        sellers.forEach(function(s) {
+          sel.innerHTML += '<option value="' + esc(s.code) + '">' + esc(s.name) + ' (' + s.submissions + ')</option>';
+        });
+        sel.value = current;
+      }).catch(function(){});
+    }
+
+    function loadSellers() {
+      fetch('/api/sellers', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(sellers) {
+        if (!Array.isArray(sellers)) { document.getElementById('sellerList').innerHTML = '<div class="state-msg"><p>Could not load sellers</p></div>'; return; }
+        sellerNameMap = {};
+        sellers.forEach(function(s) { sellerNameMap[s.code] = s.name; });
+
+        var totalSubs = 0;
+        sellers.forEach(function(s) { totalSubs += s.submissions; });
+        document.getElementById('sellerStats').innerHTML =
+          '<div class="stat-card"><div class="stat-label">Total Sellers</div><div class="stat-value">' + sellers.length + '</div></div>' +
+          '<div class="stat-card"><div class="stat-label">Active</div><div class="stat-value">' + sellers.filter(function(s){return s.active;}).length + '</div></div>' +
+          '<div class="stat-card"><div class="stat-label">Total Referrals</div><div class="stat-value">' + totalSubs + '</div></div>';
+
+        if (!sellers.length) {
+          document.getElementById('sellerList').innerHTML = '<div class="state-msg"><h3>No sellers yet</h3><p>Add your first seller below to generate referral links.</p></div>';
+          return;
+        }
+
+        var baseUrl = window.location.origin + '/?ref=';
+        var h = '';
+        sellers.forEach(function(s) {
+          h += '<div class="admin-item' + (!s.active ? '' : '') + '" style="flex-wrap:wrap;gap:8px;">';
+          h += '<div class="admin-info" style="flex:1;min-width:180px;">';
+          h += '<span class="admin-email">' + esc(s.name) + '</span>';
+          h += '<span style="font-size:12px;color:var(--text-secondary);">' + esc(s.code) + (s.email ? ' &middot; ' + esc(s.email) : '') + (s.phone ? ' &middot; ' + esc(s.phone) : '') + '</span>';
+          h += '<span style="margin-top:2px;">';
+          h += '<span class="badge ' + (s.active ? 'badge-yes' : 'badge-time') + '">' + (s.active ? 'Active' : 'Inactive') + '</span>';
+          h += '<span class="badge badge-time">' + s.submissions + ' referrals</span>';
+          h += '</span></div>';
+          h += '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
+          h += '<button class="btn btn-sm" onclick="copySellerLink(\'' + esc(s.code) + '\')" title="Copy link">Copy Link</button>';
+          h += '<button class="btn btn-sm" onclick="viewSellerSubs(\'' + esc(s.code) + '\')" title="View submissions">View</button>';
+          h += '<button class="btn btn-sm" onclick="toggleSeller(\'' + esc(s.id) + '\',' + (s.active ? 'false' : 'true') + ')">' + (s.active ? 'Deactivate' : 'Activate') + '</button>';
+          h += '<button class="btn btn-danger btn-sm" onclick="deleteSeller(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Delete</button>';
+          h += '</div></div>';
+        });
+        document.getElementById('sellerList').innerHTML = h;
+      }).catch(function() { document.getElementById('sellerList').innerHTML = '<div class="state-msg"><p>Could not load sellers</p></div>'; });
+    }
+
+    function copySellerLink(code) {
+      var url = window.location.origin + '/?ref=' + code;
+      navigator.clipboard.writeText(url).then(function() { showToast('Link copied: ' + url); }).catch(function() {
+        prompt('Copy this link:', url);
+      });
+    }
+
+    function viewSellerSubs(code) {
+      document.getElementById('sellerFilter').value = code;
+      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelector('[data-tab="submissions"]').classList.add('active');
+      document.getElementById('panel-submissions').classList.add('active');
+      filterTable();
+    }
+
+    function toggleSeller(id, active) {
+      fetch('/api/sellers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: id, active: active })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
+        showToast(active ? 'Seller activated' : 'Seller deactivated');
+        loadSellers();
+        loadSellerFilter();
+      });
+    }
+
+    function deleteSeller(id, name) {
+      if (!confirm('Delete seller "' + name + '"? Existing submissions will keep their referral tag.')) return;
+      fetch('/api/sellers', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: id })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
+        showToast('Seller deleted');
+        loadSellers();
+        loadSellerFilter();
+      });
+    }
+
+    document.getElementById('addSellerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('newSellerName').value.trim();
+      var code = document.getElementById('newSellerCode').value.trim();
+      var email = document.getElementById('newSellerEmail').value.trim();
+      var phone = document.getElementById('newSellerPhone').value.trim();
+      var msg = document.getElementById('sellerMsg');
+      fetch('/api/sellers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ name: name, code: code, email: email, phone: phone })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        msg.style.display = 'block';
+        msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
+        msg.textContent = d.error || 'Seller added! Link: ' + window.location.origin + '/?ref=' + d.code;
+        if (!d.error) {
+          document.getElementById('newSellerName').value = '';
+          document.getElementById('newSellerCode').value = '';
+          document.getElementById('newSellerEmail').value = '';
+          document.getElementById('newSellerPhone').value = '';
+          loadSellers();
+          loadSellerFilter();
+        }
+        setTimeout(function() { msg.style.display = 'none'; }, 5000);
+      });
+    });
 
     function esc(s) { var d=document.createElement('div');d.textContent=s;return d.innerHTML; }
   </script>

@@ -791,6 +791,8 @@
         times.push(cb.value);
       });
 
+      var refCode = new URLSearchParams(window.location.search).get('ref') || '';
+
       var data = {
         fullName: document.getElementById('fullName').value.trim(),
         phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.trim(),
@@ -798,7 +800,8 @@
         address: document.getElementById('address').value.trim(),
         language: document.getElementById('language').value.trim(),
         preferredTime: times,
-        consent: document.getElementById('consent').checked
+        consent: document.getElementById('consent').checked,
+        sellerCode: refCode
       };
 
       if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.address || !data.language || !times.length || !data.consent) {

@@ -31,6 +31,16 @@ CREATE TABLE IF NOT EXISTS site_settings (
   value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS sellers (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  code TEXT UNIQUE NOT NULL,
+  email TEXT DEFAULT '',
+  phone TEXT DEFAULT '',
+  active INTEGER DEFAULT 1,
+  created_at TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS rate_limits (
   key TEXT PRIMARY KEY,
   attempts INTEGER DEFAULT 0,
@@ -43,3 +53,5 @@ CREATE INDEX IF NOT EXISTS idx_submissions_email ON submissions(email);
 CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status);
 CREATE INDEX IF NOT EXISTS idx_admin_sessions_token ON admin_sessions(token);
 CREATE INDEX IF NOT EXISTS idx_admin_sessions_expiry ON admin_sessions(expiry);
+CREATE INDEX IF NOT EXISTS idx_sellers_code ON sellers(code);
+CREATE INDEX IF NOT EXISTS idx_submissions_seller_code ON submissions(seller_code);

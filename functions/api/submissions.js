@@ -8,12 +8,13 @@ export async function onRequestGet(context) {
   const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit')) || 50));
   const search = (url.searchParams.get('search') || '').trim();
   const statusFilter = (url.searchParams.get('status') || '').trim();
+  const sellerFilter = (url.searchParams.get('seller') || '').trim();
   const offset = (page - 1) * limit;
 
   let whereClause = '';
   const binds = [];
 
-  if (search || statusFilter) {
+  if (search || statusFilter || sellerFilter) {
     const conditions = [];
     if (search) {
       conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ?)');
@@ -22,6 +23,10 @@ export async function onRequestGet(context) {
     if (statusFilter) {
       conditions.push('status = ?');
       binds.push(statusFilter);
+    }
+    if (sellerFilter) {
+      conditions.push('seller_code = ?');
+      binds.push(sellerFilter);
     }
     whereClause = 'WHERE ' + conditions.join(' AND ');
   }
@@ -47,6 +52,7 @@ export async function onRequestGet(context) {
     timestamp: row.timestamp,
     status: row.status || 'new',
     notes: row.notes || '',
+    sellerCode: row.seller_code || '',
   }));
 
   return json({ submissions, total, page, limit, pages: Math.ceil(total / limit) });
