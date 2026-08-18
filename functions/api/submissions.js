@@ -8,28 +8,30 @@ export async function onRequestGet(context) {
   const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit')) || 50));
   const search = (url.searchParams.get('search') || '').trim();
   const statusFilter = (url.searchParams.get('status') || '').trim();
-  const sellerFilter = (url.searchParams.get('seller') || '').trim();
+  let sellerFilter = (url.searchParams.get('seller') || '').trim();
   const offset = (page - 1) * limit;
 
-  let whereClause = '';
+  if (session.role === 'seller' && session.seller_code) {
+    sellerFilter = session.seller_code;
+  }
+
+  const conditions = [];
   const binds = [];
 
-  if (search || statusFilter || sellerFilter) {
-    const conditions = [];
-    if (search) {
-      conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ?)');
-      binds.push('%' + search + '%', '%' + search + '%', '%' + search + '%', '%' + search + '%');
-    }
-    if (statusFilter) {
-      conditions.push('status = ?');
-      binds.push(statusFilter);
-    }
-    if (sellerFilter) {
-      conditions.push('seller_code = ?');
-      binds.push(sellerFilter);
-    }
-    whereClause = 'WHERE ' + conditions.join(' AND ');
+  if (search) {
+    conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ?)');
+    binds.push('%' + search + '%', '%' + search + '%', '%' + search + '%', '%' + search + '%');
   }
+  if (statusFilter) {
+    conditions.push('status = ?');
+    binds.push(statusFilter);
+  }
+  if (sellerFilter) {
+    conditions.push('seller_code = ?');
+    binds.push(sellerFilter);
+  }
+
+  const whereClause = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
 
   const countResult = await env.DB.prepare(
     'SELECT COUNT(*) as total FROM submissions ' + whereClause

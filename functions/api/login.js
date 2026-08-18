@@ -20,6 +20,7 @@ export async function onRequestPost(context) {
     const ownerEmail = (env.SUPER_ADMIN_EMAIL || '').trim().toLowerCase();
 
     let role = null;
+    let sellerCode = '';
 
     if (normalEmail === ownerEmail && password === env.ADMIN_PASSWORD) {
       role = 'owner';
@@ -44,6 +45,27 @@ export async function onRequestPost(context) {
     }
 
     if (!role) {
+      try {
+        const seller = await env.DB.prepare(
+          'SELECT code, password, active FROM sellers WHERE (email = ? OR code = ?) AND active = 1'
+        ).bind(normalEmail, normalEmail).first();
+        if (seller && seller.password) {
+          if (seller.password.length === 64 && seller.password.indexOf(':') === -1) {
+            const hashed = await hashPassword(password, seller.code);
+            if (hashed === seller.password) { role = 'seller'; sellerCode = seller.code; }
+          } else {
+            if (seller.password === password) {
+              role = 'seller';
+              sellerCode = seller.code;
+              const hashed = await hashPassword(password, seller.code);
+              await env.DB.prepare('UPDATE sellers SET password = ? WHERE code = ?').bind(hashed, seller.code).run();
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (!role) {
       await recordAttempt(env, rateKey, 15 * 60 * 1000);
       return json({ error: 'Invalid email or password.' }, 401);
     }
@@ -58,10 +80,10 @@ export async function onRequestPost(context) {
     ).bind(Date.now()).run();
 
     await env.DB.prepare(
-      'INSERT INTO admin_sessions (token, email, role, expiry) VALUES (?, ?, ?, ?)'
-    ).bind(token, normalEmail, role, expiry).run();
+      'INSERT INTO admin_sessions (token, email, role, expiry, seller_code) VALUES (?, ?, ?, ?, ?)'
+    ).bind(token, normalEmail, role, expiry, sellerCode).run();
 
-    return json({ token, role });
+    return json({ token, role, sellerCode });
   } catch (e) {
     return json({ error: 'Server error' }, 500);
   }

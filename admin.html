@@ -213,7 +213,7 @@
       <h1>GoldsteinCare Admin</h1>
       <p class="subtitle">Sign in with your admin credentials</p>
       <form id="loginForm">
-        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email" required>
+        <input type="text" id="loginEmail" placeholder="Email or username" autocomplete="email" required>
         <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required>
         <button type="submit" class="login-btn">Sign In</button>
         <p class="login-error" id="loginError"></p>
@@ -283,7 +283,8 @@
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;margin-top:24px;color:var(--text-secondary);">Add New Seller</h3>
       <form class="add-admin-form" id="addSellerForm" style="flex-wrap:wrap;gap:10px;">
         <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:180px;">
-        <input type="email" id="newSellerEmail" placeholder="Email (optional)" style="min-width:160px;">
+        <input type="text" id="newSellerEmail" placeholder="Email / Username" required style="min-width:160px;">
+        <input type="password" id="newSellerPass" placeholder="Password" required minlength="4" style="min-width:120px;">
         <input type="tel" id="newSellerPhone" placeholder="Phone (optional)" style="min-width:120px;">
         <button type="submit" class="btn btn-accent">Add Seller</button>
       </form>
@@ -387,21 +388,23 @@
       <h2 id="detailName"></h2>
       <dl id="detailBody"></dl>
       <hr class="detail-divider">
-      <div class="detail-field">
-        <dt>Status</dt>
-        <dd><select class="detail-select" id="detailStatus" onchange="updateSubmissionStatus()">
-          <option value="new">New</option>
-          <option value="contacted">Contacted</option>
-          <option value="completed">Completed</option>
-        </select></dd>
-      </div>
-      <div class="detail-field">
-        <dt>Notes</dt>
-        <div class="notes-log" id="notesLog"></div>
-        <textarea class="detail-textarea" id="newNoteText" placeholder="Write a new note..." style="min-height:80px;margin-top:8px;"></textarea>
-        <div class="detail-actions" style="margin-top:8px;">
-          <button class="btn btn-accent btn-sm" onclick="addNote()">Add Note</button>
-          <button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="deleteSubmission()">Delete Submission</button>
+      <div id="detailAdminControls">
+        <div class="detail-field">
+          <dt>Status</dt>
+          <dd><select class="detail-select" id="detailStatus" onchange="updateSubmissionStatus()">
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="completed">Completed</option>
+          </select></dd>
+        </div>
+        <div class="detail-field">
+          <dt>Notes</dt>
+          <div class="notes-log" id="notesLog"></div>
+          <textarea class="detail-textarea" id="newNoteText" placeholder="Write a new note..." style="min-height:80px;margin-top:8px;"></textarea>
+          <div class="detail-actions" style="margin-top:8px;">
+            <button class="btn btn-accent btn-sm" onclick="addNote()">Add Note</button>
+            <button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="deleteSubmission()">Delete Submission</button>
+          </div>
         </div>
       </div>
     </div>
@@ -411,7 +414,7 @@
   <div id="toast" style="display:none"></div>
 
   <script>
-    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentDetailId = null, sellerNameMap = {};
+    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentSellerCode = '', currentDetailId = null, sellerNameMap = {};
 
     // TABS
     document.querySelectorAll('.tab').forEach(function(tab) {
@@ -447,7 +450,8 @@
         authToken = result.data.token;
         currentRole = result.data.role;
         currentEmail = email;
-        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail }));
+        currentSellerCode = result.data.sellerCode || '';
+        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail, sellerCode: currentSellerCode }));
         showDashboard();
       })
       .catch(function() {
@@ -460,7 +464,7 @@
     // AUTO-LOGIN
     (function() {
       var saved = sessionStorage.getItem('auth');
-      if (saved) { var d = JSON.parse(saved); authToken = d.token; currentRole = d.role; currentEmail = d.email; showDashboard(); }
+      if (saved) { var d = JSON.parse(saved); authToken = d.token; currentRole = d.role; currentEmail = d.email; currentSellerCode = d.sellerCode || ''; showDashboard(); }
     })();
 
     function showDashboard() {
@@ -470,9 +474,15 @@
         document.getElementById('sellersTab').style.display = '';
         document.getElementById('teamTab').style.display = '';
         document.getElementById('settingsTab').style.display = '';
+        document.getElementById('sellerFilter').style.display = '';
         fetch('/api/migrate', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
+        loadSellerFilter();
+      } else if (currentRole === 'seller') {
+        document.getElementById('sellerFilter').style.display = 'none';
+        document.querySelector('.dash-title h1').textContent = 'My Referrals';
+      } else {
+        document.getElementById('sellerFilter').style.display = 'none';
       }
-      loadSellerFilter();
       loadData();
     }
 
@@ -481,7 +491,8 @@
         fetch('/api/logout', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
       }
       sessionStorage.removeItem('auth');
-      authToken = ''; currentRole = ''; currentEmail = '';
+      authToken = ''; currentRole = ''; currentEmail = ''; currentSellerCode = '';
+      document.querySelector('.dash-title h1').textContent = 'GoldsteinCare';
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginWrap').style.display = 'flex';
       document.getElementById('loginEmail').value = '';
@@ -617,6 +628,7 @@
       document.getElementById('detailStatus').value = row.status || 'new';
       document.getElementById('newNoteText').value = '';
       renderNotes(row.notes || '[]');
+      document.getElementById('detailAdminControls').style.display = (currentRole === 'seller') ? 'none' : '';
       document.getElementById('detailOverlay').classList.add('open');
     }
 
@@ -979,6 +991,7 @@
           h += '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
           h += '<button class="btn btn-sm" onclick="copySellerLink(\'' + esc(s.code) + '\')" title="Copy link">Copy Link</button>';
           h += '<button class="btn btn-sm" onclick="viewSellerSubs(\'' + esc(s.code) + '\')" title="View submissions">View</button>';
+          h += '<button class="btn btn-sm" onclick="resetSellerPass(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Reset Password</button>';
           h += '<button class="btn btn-sm" onclick="toggleSeller(\'' + esc(s.id) + '\',' + (s.active ? 'false' : 'true') + ')">' + (s.active ? 'Deactivate' : 'Activate') + '</button>';
           h += '<button class="btn btn-danger btn-sm" onclick="deleteSeller(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Delete</button>';
           h += '</div></div>';
@@ -1041,12 +1054,15 @@
       var name = document.getElementById('newSellerName').value.trim();
       var code = nameToCode(name);
       var email = document.getElementById('newSellerEmail').value.trim();
+      var pass = document.getElementById('newSellerPass').value;
       var phone = document.getElementById('newSellerPhone').value.trim();
       var msg = document.getElementById('sellerMsg');
+      if (!email) { msg.style.display='block'; msg.style.color='var(--danger)'; msg.textContent='Email/username is required for seller login'; return; }
+      if (!pass || pass.length < 4) { msg.style.display='block'; msg.style.color='var(--danger)'; msg.textContent='Password must be at least 4 characters'; return; }
       fetch('/api/sellers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify({ name: name, code: code, email: email, phone: phone })
+        body: JSON.stringify({ name: name, code: code, email: email, phone: phone, password: pass })
       })
       .then(function(r) { return r.json(); })
       .then(function(d) {
@@ -1055,7 +1071,7 @@
           return fetch('/api/sellers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-            body: JSON.stringify({ name: name, code: code, email: email, phone: phone })
+            body: JSON.stringify({ name: name, code: code, email: email, phone: phone, password: pass })
           }).then(function(r2) { return r2.json(); });
         }
         return d;
@@ -1063,17 +1079,31 @@
       .then(function(d) {
         msg.style.display = 'block';
         msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
-        msg.textContent = d.error || 'Seller added! Link: ' + window.location.origin + '/r/' + d.code;
+        msg.textContent = d.error || 'Seller added! They log in with: ' + email + ' + password. Link: ' + window.location.origin + '/r/' + d.code;
         if (!d.error) {
           document.getElementById('newSellerName').value = '';
           document.getElementById('newSellerEmail').value = '';
+          document.getElementById('newSellerPass').value = '';
           document.getElementById('newSellerPhone').value = '';
           loadSellers();
           loadSellerFilter();
         }
-        setTimeout(function() { msg.style.display = 'none'; }, 5000);
+        setTimeout(function() { msg.style.display = 'none'; }, 8000);
       });
     });
+
+    function resetSellerPass(id, name) {
+      var newPass = prompt('Enter new password for ' + name + ' (min 4 characters):');
+      if (!newPass || newPass.length < 4) { if (newPass !== null) showToast('Password must be at least 4 characters'); return; }
+      fetch('/api/sellers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: id, password: newPass })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
+        showToast('Password reset for ' + name);
+      });
+    }
 
     function esc(s) { var d=document.createElement('div');d.textContent=s;return d.innerHTML; }
   </script>

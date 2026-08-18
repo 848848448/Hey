@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS sellers (
   code TEXT UNIQUE NOT NULL,
   email TEXT DEFAULT '',
   phone TEXT DEFAULT '',
+  password TEXT DEFAULT '',
   active INTEGER DEFAULT 1,
   created_at TEXT NOT NULL
 );
