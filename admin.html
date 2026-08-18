@@ -280,15 +280,17 @@
       </div>
       <div class="stats-row" id="sellerStats"></div>
       <div class="admin-list" id="sellerList"></div>
-      <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;margin-top:24px;color:var(--text-secondary);">Add New Seller</h3>
-      <form class="add-admin-form" id="addSellerForm" style="flex-wrap:wrap;gap:10px;">
-        <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:180px;">
-        <input type="text" id="newSellerEmail" placeholder="Email / Username" required style="min-width:160px;">
-        <input type="password" id="newSellerPass" placeholder="Password" required minlength="4" style="min-width:120px;">
-        <input type="tel" id="newSellerPhone" placeholder="Phone (optional)" style="min-width:120px;">
-        <button type="submit" class="btn btn-accent">Add Seller</button>
-      </form>
-      <p id="sellerMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
+      <div id="addSellerSection">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;margin-top:24px;color:var(--text-secondary);">Add New Seller</h3>
+        <form class="add-admin-form" id="addSellerForm" style="flex-wrap:wrap;gap:10px;">
+          <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:180px;">
+          <input type="text" id="newSellerEmail" placeholder="Email / Username" required style="min-width:160px;">
+          <input type="password" id="newSellerPass" placeholder="Password" required minlength="4" style="min-width:120px;">
+          <input type="tel" id="newSellerPhone" placeholder="Phone (optional)" style="min-width:120px;">
+          <button type="submit" class="btn btn-accent">Add Seller</button>
+        </form>
+        <p id="sellerMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
+      </div>
     </div>
 
     <!-- TEAM TAB -->
@@ -477,11 +479,13 @@
         document.getElementById('sellerFilter').style.display = '';
         fetch('/api/migrate', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
         loadSellerFilter();
+      } else if (currentRole === 'admin') {
+        document.getElementById('sellersTab').style.display = '';
+        document.getElementById('sellerFilter').style.display = '';
+        loadSellerFilter();
       } else if (currentRole === 'seller') {
         document.getElementById('sellerFilter').style.display = 'none';
         document.querySelector('.dash-title h1').textContent = 'My Referrals';
-      } else {
-        document.getElementById('sellerFilter').style.display = 'none';
       }
       loadData();
     }
@@ -972,15 +976,17 @@
           '<div class="stat-card"><div class="stat-label">Active</div><div class="stat-value">' + sellers.filter(function(s){return s.active;}).length + '</div></div>' +
           '<div class="stat-card"><div class="stat-label">Total Referrals</div><div class="stat-value">' + totalSubs + '</div></div>';
 
+        var isOwner = currentRole === 'owner';
+        document.getElementById('addSellerSection').style.display = isOwner ? '' : 'none';
+
         if (!sellers.length) {
-          document.getElementById('sellerList').innerHTML = '<div class="state-msg"><h3>No sellers yet</h3><p>Add your first seller below to generate referral links.</p></div>';
+          document.getElementById('sellerList').innerHTML = '<div class="state-msg"><h3>No sellers yet</h3><p>' + (isOwner ? 'Add your first seller below to generate referral links.' : 'No sellers have been added yet.') + '</p></div>';
           return;
         }
 
-        var baseUrl = window.location.origin + '/?ref=';
         var h = '';
         sellers.forEach(function(s) {
-          h += '<div class="admin-item' + (!s.active ? '' : '') + '" style="flex-wrap:wrap;gap:8px;">';
+          h += '<div class="admin-item" style="flex-wrap:wrap;gap:8px;">';
           h += '<div class="admin-info" style="flex:1;min-width:180px;">';
           h += '<span class="admin-email">' + esc(s.name) + '</span>';
           h += '<span style="font-size:12px;color:var(--text-secondary);">' + esc(s.code) + (s.email ? ' &middot; ' + esc(s.email) : '') + (s.phone ? ' &middot; ' + esc(s.phone) : '') + '</span>';
@@ -989,11 +995,13 @@
           h += '<span class="badge badge-time">' + s.submissions + ' referrals</span>';
           h += '</span></div>';
           h += '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
-          h += '<button class="btn btn-sm" onclick="copySellerLink(\'' + esc(s.code) + '\')" title="Copy link">Copy Link</button>';
           h += '<button class="btn btn-sm" onclick="viewSellerSubs(\'' + esc(s.code) + '\')" title="View submissions">View</button>';
-          h += '<button class="btn btn-sm" onclick="resetSellerPass(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Reset Password</button>';
-          h += '<button class="btn btn-sm" onclick="toggleSeller(\'' + esc(s.id) + '\',' + (s.active ? 'false' : 'true') + ')">' + (s.active ? 'Deactivate' : 'Activate') + '</button>';
-          h += '<button class="btn btn-danger btn-sm" onclick="deleteSeller(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Delete</button>';
+          if (isOwner) {
+            h += '<button class="btn btn-sm" onclick="copySellerLink(\'' + esc(s.code) + '\')" title="Copy link">Copy Link</button>';
+            h += '<button class="btn btn-sm" onclick="resetSellerPass(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Reset Password</button>';
+            h += '<button class="btn btn-sm" onclick="toggleSeller(\'' + esc(s.id) + '\',' + (s.active ? 'false' : 'true') + ')">' + (s.active ? 'Deactivate' : 'Activate') + '</button>';
+            h += '<button class="btn btn-danger btn-sm" onclick="deleteSeller(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Delete</button>';
+          }
           h += '</div></div>';
         });
         document.getElementById('sellerList').innerHTML = h;
