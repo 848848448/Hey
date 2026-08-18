@@ -512,6 +512,11 @@
         </div>
 
         <div class="field">
+          <label class="field-q" for="address">What is your home address?<span class="req">*</span></label>
+          <input type="text" id="address" name="address" placeholder="123 Main St, City, State, ZIP" required>
+        </div>
+
+        <div class="field">
           <label class="field-q" id="labelLang">What language do you prefer to communicate in?<span class="req">*</span></label>
           <input type="hidden" id="language" name="language" value="">
           <div class="custom-dropdown" id="langDropdown">
@@ -593,6 +598,8 @@
         phPhone: '(201) 555-0123',
         labelEmail: "What's your email address?",
         phEmail: 'name@example.com',
+        labelAddress: 'What is your home address?',
+        phAddress: '123 Main St, City, State, ZIP',
         labelLang: 'What language do you prefer to communicate in?',
         selectLang: 'Select a language...',
         labelTime: 'What is your preferred time of day for a screening call?',
@@ -607,7 +614,7 @@
         formClosed: 'This form is currently closed. Please check back later.',
         errorPrefix: 'Please fill in: ',
         errorGeneric: 'Something went wrong. Please try again.',
-        fName: 'Full Name', fPhone: 'Phone Number', fEmail: 'Email', fLang: 'Language', fTime: 'Preferred Time', fConsent: 'Consent',
+        fName: 'Full Name', fPhone: 'Phone Number', fEmail: 'Email', fAddress: 'Home Address', fLang: 'Language', fTime: 'Preferred Time', fConsent: 'Consent',
         footerRights: 'All rights reserved.'
       },
       es: {
@@ -621,6 +628,8 @@
         phPhone: '(201) 555-0123',
         labelEmail: '¿Cuál es su dirección de correo electrónico?',
         phEmail: 'nombre@ejemplo.com',
+        labelAddress: '¿Cuál es su dirección de domicilio?',
+        phAddress: '123 Calle Principal, Ciudad, Estado, Código Postal',
         labelLang: '¿En qué idioma prefiere comunicarse?',
         selectLang: 'Seleccione un idioma...',
         labelTime: '¿Cuál es su horario preferido para la llamada de evaluación?',
@@ -635,7 +644,7 @@
         formClosed: 'Este formulario está cerrado actualmente. Vuelva a intentarlo más tarde.',
         errorPrefix: 'Por favor complete: ',
         errorGeneric: 'Algo salió mal. Por favor inténtelo de nuevo.',
-        fName: 'Nombre completo', fPhone: 'Teléfono', fEmail: 'Correo electrónico', fLang: 'Idioma', fTime: 'Horario preferido', fConsent: 'Consentimiento',
+        fName: 'Nombre completo', fPhone: 'Teléfono', fEmail: 'Correo electrónico', fAddress: 'Dirección', fLang: 'Idioma', fTime: 'Horario preferido', fConsent: 'Consentimiento',
         footerRights: 'Todos los derechos reservados.'
       }
     };
@@ -657,9 +666,11 @@
       document.getElementById('phone').placeholder = t.phPhone;
       document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
       document.getElementById('email').placeholder = t.phEmail;
+      document.querySelector('label[for="address"]').innerHTML = t.labelAddress + '<span class="req">*</span>';
+      document.getElementById('address').placeholder = t.phAddress;
       document.getElementById('labelLang').innerHTML = t.labelLang + '<span class="req">*</span>';
       document.getElementById('langInput').placeholder = t.selectLang;
-      document.querySelector('.field:nth-child(5) .field-q').innerHTML = t.labelTime + '<span class="req">*</span>';
+      document.querySelector('.field:nth-child(6) .field-q').innerHTML = t.labelTime + '<span class="req">*</span>';
       document.querySelector('.field-hint').textContent = t.timeHint;
       var slotNames = document.querySelectorAll('.slot-name');
       slotNames[0].textContent = t.morning;
@@ -784,17 +795,19 @@
         fullName: document.getElementById('fullName').value.trim(),
         phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.trim(),
         email: document.getElementById('email').value.trim(),
+        address: document.getElementById('address').value.trim(),
         language: document.getElementById('language').value.trim(),
         preferredTime: times,
         consent: document.getElementById('consent').checked
       };
 
-      if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.language || !times.length || !data.consent) {
+      if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.address || !data.language || !times.length || !data.consent) {
         var t = T[currentLang];
         var missing = [];
         if (!data.fullName) missing.push(t.fName);
         if (!document.getElementById('phone').value.trim()) missing.push(t.fPhone);
         if (!data.email) missing.push(t.fEmail);
+        if (!data.address) missing.push(t.fAddress);
         if (!data.language) missing.push(t.fLang);
         if (!times.length) missing.push(t.fTime);
         if (!data.consent) missing.push(t.fConsent);

@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   full_name TEXT NOT NULL,
   phone TEXT,
   email TEXT,
+  address TEXT,
   language TEXT,
   preferred_time TEXT,
   consent INTEGER DEFAULT 0,

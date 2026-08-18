@@ -16,8 +16,8 @@ export async function onRequestGet(context) {
   if (search || statusFilter) {
     const conditions = [];
     if (search) {
-      conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ?)');
-      binds.push('%' + search + '%', '%' + search + '%', '%' + search + '%');
+      conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ?)');
+      binds.push('%' + search + '%', '%' + search + '%', '%' + search + '%', '%' + search + '%');
     }
     if (statusFilter) {
       conditions.push('status = ?');
@@ -40,6 +40,7 @@ export async function onRequestGet(context) {
     fullName: row.full_name,
     phone: row.phone,
     email: row.email,
+    address: row.address || '',
     language: row.language,
     preferredTime: JSON.parse(row.preferred_time || '[]'),
     consent: Boolean(row.consent),

@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
 
     const data = await request.json();
 
-    if (!data.fullName || !data.email || !data.consent) {
+    if (!data.fullName || !data.email || !data.address || !data.consent) {
       return json({ error: 'Missing required fields' }, 400);
     }
 
@@ -26,22 +26,23 @@ export async function onRequestPost(context) {
     const fullName = String(data.fullName).slice(0, 200);
     const phone = String(data.phone || '').slice(0, 50);
     const email = String(data.email).trim().slice(0, 200);
+    const address = String(data.address || '').slice(0, 500);
     const language = String(data.language || '').slice(0, 100);
     const preferredTime = JSON.stringify(Array.isArray(data.preferredTime) ? data.preferredTime.slice(0, 4) : []);
     const consent = data.consent ? 1 : 0;
 
     await env.DB.prepare(
-      'INSERT INTO submissions (id, full_name, phone, email, language, preferred_time, consent, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-    ).bind(id, fullName, phone, email, language, preferredTime, consent, timestamp).run();
+      'INSERT INTO submissions (id, full_name, phone, email, address, language, preferred_time, consent, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).bind(id, fullName, phone, email, address, language, preferredTime, consent, timestamp).run();
 
     await recordAttempt(env, rateKey, 10 * 60 * 1000);
 
     try {
-      await sendNotificationEmail(env, { fullName, phone, email, language, preferredTime, timestamp });
+      await sendNotificationEmail(env, { fullName, phone, email, address, language, preferredTime, timestamp });
     } catch (e) {}
 
     try {
-      await sendToGoogleSheet(env, { fullName, phone, email, language, preferredTime, timestamp });
+      await sendToGoogleSheet(env, { fullName, phone, email, address, language, preferredTime, timestamp });
     } catch (e) {}
 
     return json({ status: 'ok', id });
@@ -85,6 +86,7 @@ async function sendNotificationEmail(env, sub) {
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;width:140px;">Name</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;font-weight:600;">${esc(sub.fullName)}</td></tr>
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Phone</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(sub.phone)}</td></tr>
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Email</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;"><a href="mailto:${esc(sub.email)}" style="color:#d94430;">${esc(sub.email)}</a></td></tr>
+      <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Address</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(sub.address)}</td></tr>
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Language</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(sub.language)}</td></tr>
       <tr><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Preferred Time</td><td style="padding:10px 12px;border-bottom:1px solid #f0ebe6;">${esc(times)}</td></tr>
       <tr><td style="padding:10px 12px;color:#97897a;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Submitted</td><td style="padding:10px 12px;">${esc(date)}</td></tr>
@@ -128,6 +130,7 @@ async function sendToGoogleSheet(env, sub) {
       fullName: sub.fullName,
       phone: "'" + sub.phone,
       email: sub.email,
+      address: sub.address,
       language: sub.language,
       preferredTime: times,
     }),
