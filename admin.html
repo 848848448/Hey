@@ -282,8 +282,7 @@
       <div class="admin-list" id="sellerList"></div>
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;margin-top:24px;color:var(--text-secondary);">Add New Seller</h3>
       <form class="add-admin-form" id="addSellerForm" style="flex-wrap:wrap;gap:10px;">
-        <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:140px;">
-        <input type="text" id="newSellerCode" placeholder="Unique code (e.g. john)" required style="min-width:120px;" pattern="[a-zA-Z0-9_-]{2,30}">
+        <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:180px;">
         <input type="email" id="newSellerEmail" placeholder="Email (optional)" style="min-width:160px;">
         <input type="tel" id="newSellerPhone" placeholder="Phone (optional)" style="min-width:120px;">
         <button type="submit" class="btn btn-accent">Add Seller</button>
@@ -1031,10 +1030,16 @@
       });
     }
 
+    function nameToCode(name) {
+      var code = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 30);
+      if (code.length < 2) code = 'seller' + Math.floor(Math.random() * 9000 + 1000);
+      return code;
+    }
+
     document.getElementById('addSellerForm').addEventListener('submit', function(e) {
       e.preventDefault();
       var name = document.getElementById('newSellerName').value.trim();
-      var code = document.getElementById('newSellerCode').value.trim();
+      var code = nameToCode(name);
       var email = document.getElementById('newSellerEmail').value.trim();
       var phone = document.getElementById('newSellerPhone').value.trim();
       var msg = document.getElementById('sellerMsg');
@@ -1045,12 +1050,22 @@
       })
       .then(function(r) { return r.json(); })
       .then(function(d) {
+        if (d.error && d.error.indexOf('already taken') !== -1) {
+          code = code + Math.floor(Math.random() * 900 + 100);
+          return fetch('/api/sellers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+            body: JSON.stringify({ name: name, code: code, email: email, phone: phone })
+          }).then(function(r2) { return r2.json(); });
+        }
+        return d;
+      })
+      .then(function(d) {
         msg.style.display = 'block';
         msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
         msg.textContent = d.error || 'Seller added! Link: ' + window.location.origin + '/r/' + d.code;
         if (!d.error) {
           document.getElementById('newSellerName').value = '';
-          document.getElementById('newSellerCode').value = '';
           document.getElementById('newSellerEmail').value = '';
           document.getElementById('newSellerPhone').value = '';
           loadSellers();
