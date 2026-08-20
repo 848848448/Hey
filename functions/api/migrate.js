@@ -23,6 +23,7 @@ export async function onRequestPost(context) {
     'CREATE INDEX IF NOT EXISTS idx_submissions_seller_code ON submissions(seller_code)',
     "ALTER TABLE sellers ADD COLUMN password TEXT DEFAULT ''",
     "ALTER TABLE admin_sessions ADD COLUMN seller_code TEXT DEFAULT ''",
+    "ALTER TABLE submissions ADD COLUMN dob TEXT DEFAULT ''",
   ];
 
   const results = [];

@@ -580,7 +580,7 @@
 
     function renderTable(data) {
       if (!data.length) { document.getElementById('tableContent').innerHTML='<div class="state-msg"><h3>No submissions found</h3><p>'+(!allData.length?'They\'ll appear here once people fill out the form.':'Try adjusting your search or filter.')+'</p></div>'; return; }
-      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Language</th><th>Seller</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
+      var h='<table><thead><tr><th>Date</th><th>Name</th><th>DOB</th><th>Phone</th><th>Email</th><th>Address</th><th>Language</th><th>Seller</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
       data.forEach(function(row) {
         var d=row.timestamp?new Date(row.timestamp):null;
         var ds=d?d.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
@@ -594,6 +594,7 @@
         h+='<tr style="cursor:pointer" onclick="openDetail(\''+esc(row.id)+'\')">';
         h+='<td><span class="timestamp">'+ds+'<br>'+ts+'</span></td>';
         h+='<td class="name-cell">'+esc(row.fullName||'—')+'</td>';
+        h+='<td>'+esc(row.dob||'—')+'</td>';
         h+='<td><a class="cell-link" href="tel:'+esc(row.phone||'')+'">'+esc(row.phone||'—')+'</a></td>';
         h+='<td><a class="cell-link" href="mailto:'+esc(row.email||'')+'">'+esc(row.email||'—')+'</a></td>';
         h+='<td>'+esc(row.address||'—')+'</td>';
@@ -618,6 +619,7 @@
       var sellerDisplay = row.sellerCode ? (sellerNameMap[row.sellerCode] || row.sellerCode) : '';
       var fields = [
         ['Submitted', d ? d.toLocaleString('en-US', {dateStyle:'long', timeStyle:'short'}) : '—'],
+        ['Date of Birth', row.dob || '—'],
         ['Phone', row.phone || '—'],
         ['Email', row.email || '—'],
         ['Address', row.address || '—'],
@@ -771,11 +773,11 @@
       .then(function(resp) {
         var rows = resp.submissions || [];
         if (!rows.length) { showToast('No data to export'); return; }
-        var hd = ['Timestamp','Full Name','Phone','Email','Address','Language','Seller','Preferred Time','Consent','Status','Notes'];
+        var hd = ['Timestamp','Full Name','Date of Birth','Phone','Email','Address','Language','Seller','Preferred Time','Consent','Status','Notes'];
         var csv = hd.join(',') + '\n';
         rows.forEach(function(r) {
           var sellerDisplay = r.sellerCode ? (sellerNameMap[r.sellerCode] || r.sellerCode) : '';
-          csv += [r.timestamp,r.fullName,r.phone,r.email,r.address||'',r.language,sellerDisplay,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
+          csv += [r.timestamp,r.fullName,r.dob||'',r.phone,r.email,r.address||'',r.language,sellerDisplay,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
         });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));

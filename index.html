@@ -487,6 +487,16 @@
         </div>
 
         <div class="field">
+          <label class="field-q" for="dob">What is your date of birth?<span class="req">*</span></label>
+          <input type="date" id="dob" name="dob" required style="color:var(--text);">
+        </div>
+
+        <div class="field">
+          <label class="field-q" for="address">What is your home address?<span class="req">*</span></label>
+          <input type="text" id="address" name="address" placeholder="123 Main St, City, State, ZIP" required>
+        </div>
+
+        <div class="field">
           <label class="field-q" for="phone">What is the best phone number to reach you?<span class="req">*</span></label>
           <div class="phone-row">
             <select class="country-select" id="countryCode" name="countryCode" aria-label="Country code">
@@ -512,11 +522,6 @@
         </div>
 
         <div class="field">
-          <label class="field-q" for="address">What is your home address?<span class="req">*</span></label>
-          <input type="text" id="address" name="address" placeholder="123 Main St, City, State, ZIP" required>
-        </div>
-
-        <div class="field">
           <label class="field-q" id="labelLang">What language do you prefer to communicate in?<span class="req">*</span></label>
           <input type="hidden" id="language" name="language" value="">
           <div class="custom-dropdown" id="langDropdown">
@@ -526,7 +531,7 @@
         </div>
 
         <div class="field">
-          <label class="field-q">What is your preferred time of day for a screening call?<span class="req">*</span></label>
+          <label class="field-q" id="labelTime">What is your preferred time of day for a screening call?<span class="req">*</span></label>
           <span class="field-hint">Choose at least one</span>
           <div class="time-grid">
             <div class="time-slot">
@@ -600,6 +605,7 @@
         phEmail: 'name@example.com',
         labelAddress: 'What is your home address?',
         phAddress: '123 Main St, City, State, ZIP',
+        labelDob: 'What is your date of birth?',
         labelLang: 'What language do you prefer to communicate in?',
         selectLang: 'Select a language...',
         labelTime: 'What is your preferred time of day for a screening call?',
@@ -614,7 +620,7 @@
         formClosed: 'This form is currently closed. Please check back later.',
         errorPrefix: 'Please fill in: ',
         errorGeneric: 'Something went wrong. Please try again.',
-        fName: 'Full Name', fPhone: 'Phone Number', fEmail: 'Email', fAddress: 'Home Address', fLang: 'Language', fTime: 'Preferred Time', fConsent: 'Consent',
+        fName: 'Full Name', fDob: 'Date of Birth', fPhone: 'Phone Number', fEmail: 'Email', fAddress: 'Home Address', fLang: 'Language', fTime: 'Preferred Time', fConsent: 'Consent',
         footerRights: 'All rights reserved.'
       },
       es: {
@@ -630,6 +636,7 @@
         phEmail: 'nombre@ejemplo.com',
         labelAddress: '¿Cuál es su dirección de domicilio?',
         phAddress: '123 Calle Principal, Ciudad, Estado, Código Postal',
+        labelDob: '¿Cuál es su fecha de nacimiento?',
         labelLang: '¿En qué idioma prefiere comunicarse?',
         selectLang: 'Seleccione un idioma...',
         labelTime: '¿Cuál es su horario preferido para la llamada de evaluación?',
@@ -644,7 +651,7 @@
         formClosed: 'Este formulario está cerrado actualmente. Vuelva a intentarlo más tarde.',
         errorPrefix: 'Por favor complete: ',
         errorGeneric: 'Algo salió mal. Por favor inténtelo de nuevo.',
-        fName: 'Nombre completo', fPhone: 'Teléfono', fEmail: 'Correo electrónico', fAddress: 'Dirección', fLang: 'Idioma', fTime: 'Horario preferido', fConsent: 'Consentimiento',
+        fName: 'Nombre completo', fDob: 'Fecha de nacimiento', fPhone: 'Teléfono', fEmail: 'Correo electrónico', fAddress: 'Dirección', fLang: 'Idioma', fTime: 'Horario preferido', fConsent: 'Consentimiento',
         footerRights: 'Todos los derechos reservados.'
       }
     };
@@ -666,11 +673,12 @@
       document.getElementById('phone').placeholder = t.phPhone;
       document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
       document.getElementById('email').placeholder = t.phEmail;
+      document.querySelector('label[for="dob"]').innerHTML = t.labelDob + '<span class="req">*</span>';
       document.querySelector('label[for="address"]').innerHTML = t.labelAddress + '<span class="req">*</span>';
       document.getElementById('address').placeholder = t.phAddress;
       document.getElementById('labelLang').innerHTML = t.labelLang + '<span class="req">*</span>';
       document.getElementById('langInput').placeholder = t.selectLang;
-      document.querySelector('.field:nth-child(6) .field-q').innerHTML = t.labelTime + '<span class="req">*</span>';
+      document.getElementById('labelTime').innerHTML = t.labelTime + '<span class="req">*</span>';
       document.querySelector('.field-hint').textContent = t.timeHint;
       var slotNames = document.querySelectorAll('.slot-name');
       slotNames[0].textContent = t.morning;
@@ -798,6 +806,7 @@
 
       var data = {
         fullName: document.getElementById('fullName').value.trim(),
+        dob: document.getElementById('dob').value,
         phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.trim(),
         email: document.getElementById('email').value.trim(),
         address: document.getElementById('address').value.trim(),
@@ -807,10 +816,11 @@
         sellerCode: refCode
       };
 
-      if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.address || !data.language || !times.length || !data.consent) {
+      if (!data.fullName || !data.dob || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.address || !data.language || !times.length || !data.consent) {
         var t = T[currentLang];
         var missing = [];
         if (!data.fullName) missing.push(t.fName);
+        if (!data.dob) missing.push(t.fDob);
         if (!document.getElementById('phone').value.trim()) missing.push(t.fPhone);
         if (!data.email) missing.push(t.fEmail);
         if (!data.address) missing.push(t.fAddress);

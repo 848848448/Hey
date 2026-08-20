@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   phone TEXT,
   email TEXT,
   address TEXT,
+  dob TEXT DEFAULT '',
   language TEXT,
   preferred_time TEXT,
   consent INTEGER DEFAULT 0,

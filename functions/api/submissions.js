@@ -45,6 +45,7 @@ export async function onRequestGet(context) {
   const submissions = results.map(row => ({
     id: row.id,
     fullName: row.full_name,
+    dob: row.dob || '',
     phone: row.phone,
     email: row.email,
     address: row.address || '',
