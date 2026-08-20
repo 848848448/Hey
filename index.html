@@ -224,6 +224,33 @@
 
     .phone-row input[type="tel"] { border-bottom: none; flex: 1; }
 
+    /* Address grid */
+    .address-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .address-grid input {
+      width: 100%;
+      padding: 12px 0;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      font-family: inherit;
+      font-size: 16px;
+      color: var(--text);
+      background: transparent;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .address-grid input:focus { border-bottom-color: var(--accent); }
+    .address-grid input::placeholder { color: var(--text-light); }
+    .address-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 120px;
+      gap: 0 16px;
+    }
+    @media (max-width: 480px) { .address-row { grid-template-columns: 1fr; } }
+
     /* Time grid */
     .time-grid {
       display: grid;
@@ -492,8 +519,15 @@
         </div>
 
         <div class="field">
-          <label class="field-q" for="address">What is your home address?<span class="req">*</span></label>
-          <input type="text" id="address" name="address" placeholder="123 Main St, City, State, ZIP" required>
+          <label class="field-q" id="labelAddress">What is your home address?<span class="req">*</span></label>
+          <div class="address-grid">
+            <input type="text" id="street" name="street" placeholder="Street address" required>
+            <div class="address-row">
+              <input type="text" id="city" name="city" placeholder="City" required>
+              <input type="text" id="state" name="state" placeholder="State" required>
+              <input type="text" id="zip" name="zip" placeholder="ZIP code" required>
+            </div>
+          </div>
         </div>
 
         <div class="field">
@@ -604,7 +638,10 @@
         labelEmail: "What's your email address?",
         phEmail: 'name@example.com',
         labelAddress: 'What is your home address?',
-        phAddress: '123 Main St, City, State, ZIP',
+        phStreet: 'Street address',
+        phCity: 'City',
+        phState: 'State',
+        phZip: 'ZIP code',
         labelDob: 'What is your date of birth?',
         labelLang: 'What language do you prefer to communicate in?',
         selectLang: 'Select a language...',
@@ -635,7 +672,10 @@
         labelEmail: '¿Cuál es su dirección de correo electrónico?',
         phEmail: 'nombre@ejemplo.com',
         labelAddress: '¿Cuál es su dirección de domicilio?',
-        phAddress: '123 Calle Principal, Ciudad, Estado, Código Postal',
+        phStreet: 'Dirección',
+        phCity: 'Ciudad',
+        phState: 'Estado',
+        phZip: 'Código postal',
         labelDob: '¿Cuál es su fecha de nacimiento?',
         labelLang: '¿En qué idioma prefiere comunicarse?',
         selectLang: 'Seleccione un idioma...',
@@ -674,8 +714,11 @@
       document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
       document.getElementById('email').placeholder = t.phEmail;
       document.querySelector('label[for="dob"]').innerHTML = t.labelDob + '<span class="req">*</span>';
-      document.querySelector('label[for="address"]').innerHTML = t.labelAddress + '<span class="req">*</span>';
-      document.getElementById('address').placeholder = t.phAddress;
+      document.getElementById('labelAddress').innerHTML = t.labelAddress + '<span class="req">*</span>';
+      document.getElementById('street').placeholder = t.phStreet;
+      document.getElementById('city').placeholder = t.phCity;
+      document.getElementById('state').placeholder = t.phState;
+      document.getElementById('zip').placeholder = t.phZip;
       document.getElementById('labelLang').innerHTML = t.labelLang + '<span class="req">*</span>';
       document.getElementById('langInput').placeholder = t.selectLang;
       document.getElementById('labelTime').innerHTML = t.labelTime + '<span class="req">*</span>';
@@ -804,26 +847,32 @@
       if (pathMatch) refCode = pathMatch[1];
       else refCode = new URLSearchParams(window.location.search).get('ref') || '';
 
+      var street = document.getElementById('street').value.trim();
+      var city = document.getElementById('city').value.trim();
+      var state = document.getElementById('state').value.trim();
+      var zip = document.getElementById('zip').value.trim();
+      var fullAddress = [street, city, state, zip].filter(Boolean).join(', ');
+
       var data = {
         fullName: document.getElementById('fullName').value.trim(),
         dob: document.getElementById('dob').value,
         phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.trim(),
         email: document.getElementById('email').value.trim(),
-        address: document.getElementById('address').value.trim(),
+        address: fullAddress,
         language: document.getElementById('language').value.trim(),
         preferredTime: times,
         consent: document.getElementById('consent').checked,
         sellerCode: refCode
       };
 
-      if (!data.fullName || !data.dob || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.address || !data.language || !times.length || !data.consent) {
+      if (!data.fullName || !data.dob || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !street || !city || !state || !zip || !data.language || !times.length || !data.consent) {
         var t = T[currentLang];
         var missing = [];
         if (!data.fullName) missing.push(t.fName);
         if (!data.dob) missing.push(t.fDob);
         if (!document.getElementById('phone').value.trim()) missing.push(t.fPhone);
         if (!data.email) missing.push(t.fEmail);
-        if (!data.address) missing.push(t.fAddress);
+        if (!street || !city || !state || !zip) missing.push(t.fAddress);
         if (!data.language) missing.push(t.fLang);
         if (!times.length) missing.push(t.fTime);
         if (!data.consent) missing.push(t.fConsent);
