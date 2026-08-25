@@ -43,7 +43,8 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   const { request, env } = context;
   const session = await verifyToken(request, env);
-  if (!session || session.role !== 'owner') return json({ error: 'Unauthorized' }, 401);
+  if (!session) return json({ error: 'Unauthorized' }, 401);
+  if (!(await canManageSellers(session, env))) return json({ error: 'Unauthorized' }, 401);
 
   const { name, code, email, phone, password } = await request.json();
   if (!name || !code) return json({ error: 'Name and code are required' }, 400);
@@ -69,7 +70,8 @@ export async function onRequestPost(context) {
 export async function onRequestPatch(context) {
   const { request, env } = context;
   const session = await verifyToken(request, env);
-  if (!session || session.role !== 'owner') return json({ error: 'Unauthorized' }, 401);
+  if (!session) return json({ error: 'Unauthorized' }, 401);
+  if (!(await canManageSellers(session, env))) return json({ error: 'Unauthorized' }, 401);
 
   const { id, name, email, phone, active, password } = await request.json();
   if (!id) return json({ error: 'Missing seller id' }, 400);
@@ -100,13 +102,21 @@ export async function onRequestPatch(context) {
 export async function onRequestDelete(context) {
   const { request, env } = context;
   const session = await verifyToken(request, env);
-  if (!session || session.role !== 'owner') return json({ error: 'Unauthorized' }, 401);
+  if (!session) return json({ error: 'Unauthorized' }, 401);
+  if (!(await canManageSellers(session, env))) return json({ error: 'Unauthorized' }, 401);
 
   const { id } = await request.json();
   if (!id) return json({ error: 'Missing seller id' }, 400);
 
   await env.DB.prepare('DELETE FROM sellers WHERE id = ?').bind(id).run();
   return json({ status: 'ok' });
+}
+
+async function canManageSellers(session, env) {
+  if (session.role === 'owner') return true;
+  if (session.role !== 'admin') return false;
+  const admin = await env.DB.prepare('SELECT can_manage_sellers FROM admin_users WHERE email = ?').bind(session.email).first();
+  return Boolean(admin?.can_manage_sellers);
 }
 
 async function verifyToken(request, env) {

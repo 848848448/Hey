@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS submissions (
 CREATE TABLE IF NOT EXISTS admin_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  can_manage_sellers INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS admin_sessions (

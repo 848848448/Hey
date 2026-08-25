@@ -298,9 +298,10 @@
       <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;margin-bottom:20px;">Manage Team</h2>
       <div class="admin-list" id="adminList"></div>
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-secondary);">Add New Admin</h3>
-      <form class="add-admin-form" id="addAdminForm">
+      <form class="add-admin-form" id="addAdminForm" style="flex-wrap:wrap;gap:10px;align-items:center;">
         <input type="email" id="newAdminEmail" placeholder="Email address" required>
         <input type="password" id="newAdminPass" placeholder="Password" required>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;white-space:nowrap;"><input type="checkbox" id="newAdminSellerPerm"> Can manage sellers</label>
         <button type="submit" class="btn btn-accent">Add Admin</button>
       </form>
       <p id="adminMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
@@ -416,7 +417,7 @@
   <div id="toast" style="display:none"></div>
 
   <script>
-    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentSellerCode = '', currentDetailId = null, sellerNameMap = {};
+    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentSellerCode = '', currentCanManageSellers = false, currentDetailId = null, sellerNameMap = {};
 
     // TABS
     document.querySelectorAll('.tab').forEach(function(tab) {
@@ -453,7 +454,8 @@
         currentRole = result.data.role;
         currentEmail = email;
         currentSellerCode = result.data.sellerCode || '';
-        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail, sellerCode: currentSellerCode }));
+        currentCanManageSellers = result.data.canManageSellers || false;
+        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail, sellerCode: currentSellerCode, canManageSellers: currentCanManageSellers }));
         showDashboard();
       })
       .catch(function() {
@@ -466,7 +468,7 @@
     // AUTO-LOGIN
     (function() {
       var saved = sessionStorage.getItem('auth');
-      if (saved) { var d = JSON.parse(saved); authToken = d.token; currentRole = d.role; currentEmail = d.email; currentSellerCode = d.sellerCode || ''; showDashboard(); }
+      if (saved) { var d = JSON.parse(saved); authToken = d.token; currentRole = d.role; currentEmail = d.email; currentSellerCode = d.sellerCode || ''; currentCanManageSellers = d.canManageSellers || false; showDashboard(); }
     })();
 
     function showDashboard() {
@@ -495,7 +497,7 @@
         fetch('/api/logout', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
       }
       sessionStorage.removeItem('auth');
-      authToken = ''; currentRole = ''; currentEmail = ''; currentSellerCode = '';
+      authToken = ''; currentRole = ''; currentEmail = ''; currentSellerCode = ''; currentCanManageSellers = false;
       document.querySelector('.dash-title h1').textContent = 'GoldsteinCare';
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginWrap').style.display = 'flex';
@@ -797,11 +799,29 @@
           var isOwner = a.role === 'owner';
           h += '<div class="admin-item' + (isOwner ? ' owner' : '') + '">';
           h += '<div class="admin-info"><span class="admin-email">' + esc(a.email) + '</span>';
-          h += '<span>' + (isOwner ? '<span class="badge badge-owner">Owner</span>' : '<span class="badge badge-admin">Admin</span>') + '</span></div>';
-          if (!isOwner) h += '<button class="btn btn-danger btn-sm" onclick="removeAdmin(\'' + esc(a.email) + '\')">Remove</button>';
+          h += '<span>' + (isOwner ? '<span class="badge badge-owner">Owner</span>' : '<span class="badge badge-admin">Admin</span>');
+          if (!isOwner && a.canManageSellers) h += ' <span class="badge badge-yes" style="font-size:10px;">Sellers</span>';
+          h += '</span></div>';
+          if (!isOwner) {
+            h += '<div style="display:flex;gap:6px;align-items:center;">';
+            h += '<button class="btn btn-sm" onclick="toggleAdminSellerPerm(\'' + esc(a.email) + '\',' + (a.canManageSellers ? 'false' : 'true') + ')">' + (a.canManageSellers ? 'Remove seller access' : 'Allow seller access') + '</button>';
+            h += '<button class="btn btn-danger btn-sm" onclick="removeAdmin(\'' + esc(a.email) + '\')">Remove</button>';
+            h += '</div>';
+          }
           h += '</div>';
         });
         document.getElementById('adminList').innerHTML = h;
+      });
+    }
+
+    function toggleAdminSellerPerm(email, allow) {
+      fetch('/api/admins', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ email: email, canManageSellers: allow })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (!d.error) { loadAdmins(); showToast(allow ? 'Seller access granted' : 'Seller access removed'); }
+        else showToast('Error: ' + d.error);
       });
     }
 
@@ -809,18 +829,19 @@
       e.preventDefault();
       var email = document.getElementById('newAdminEmail').value.trim();
       var pass = document.getElementById('newAdminPass').value;
+      var sellerPerm = document.getElementById('newAdminSellerPerm').checked;
       var msg = document.getElementById('adminMsg');
       fetch('/api/admins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify({ email: email, password: pass })
+        body: JSON.stringify({ email: email, password: pass, canManageSellers: sellerPerm })
       })
       .then(function(r) { return r.json(); })
       .then(function(d) {
         msg.style.display = 'block';
         msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
         msg.textContent = d.error || 'Admin added successfully.';
-        if (!d.error) { document.getElementById('newAdminEmail').value = ''; document.getElementById('newAdminPass').value = ''; loadAdmins(); }
+        if (!d.error) { document.getElementById('newAdminEmail').value = ''; document.getElementById('newAdminPass').value = ''; document.getElementById('newAdminSellerPerm').checked = false; loadAdmins(); }
       });
     });
 
@@ -978,11 +999,11 @@
           '<div class="stat-card"><div class="stat-label">Active</div><div class="stat-value">' + sellers.filter(function(s){return s.active;}).length + '</div></div>' +
           '<div class="stat-card"><div class="stat-label">Total Referrals</div><div class="stat-value">' + totalSubs + '</div></div>';
 
-        var isOwner = currentRole === 'owner';
-        document.getElementById('addSellerSection').style.display = isOwner ? '' : 'none';
+        var canManage = currentRole === 'owner' || currentCanManageSellers;
+        document.getElementById('addSellerSection').style.display = canManage ? '' : 'none';
 
         if (!sellers.length) {
-          document.getElementById('sellerList').innerHTML = '<div class="state-msg"><h3>No sellers yet</h3><p>' + (isOwner ? 'Add your first seller below to generate referral links.' : 'No sellers have been added yet.') + '</p></div>';
+          document.getElementById('sellerList').innerHTML = '<div class="state-msg"><h3>No sellers yet</h3><p>' + (canManage ? 'Add your first seller below to generate referral links.' : 'No sellers have been added yet.') + '</p></div>';
           return;
         }
 
@@ -998,7 +1019,7 @@
           h += '</span></div>';
           h += '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
           h += '<button class="btn btn-sm" onclick="viewSellerSubs(\'' + esc(s.code) + '\')" title="View submissions">View</button>';
-          if (isOwner) {
+          if (canManage) {
             h += '<button class="btn btn-sm" onclick="copySellerLink(\'' + esc(s.code) + '\')" title="Copy link">Copy Link</button>';
             h += '<button class="btn btn-sm" onclick="resetSellerPass(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Reset Password</button>';
             h += '<button class="btn btn-sm" onclick="toggleSeller(\'' + esc(s.id) + '\',' + (s.active ? 'false' : 'true') + ')">' + (s.active ? 'Deactivate' : 'Activate') + '</button>';

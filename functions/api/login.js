@@ -26,7 +26,7 @@ export async function onRequestPost(context) {
       role = 'owner';
     } else {
       const admin = await env.DB.prepare(
-        'SELECT email, password FROM admin_users WHERE email = ?'
+        'SELECT email, password, can_manage_sellers FROM admin_users WHERE email = ?'
       ).bind(normalEmail).first();
       if (admin) {
         if (admin.password.length === 64 && admin.password.indexOf(':') === -1) {
@@ -83,7 +83,15 @@ export async function onRequestPost(context) {
       'INSERT INTO admin_sessions (token, email, role, expiry, seller_code) VALUES (?, ?, ?, ?, ?)'
     ).bind(token, normalEmail, role, expiry, sellerCode).run();
 
-    return json({ token, role, sellerCode });
+    let canManageSellers = false;
+    if (role === 'owner') {
+      canManageSellers = true;
+    } else if (role === 'admin') {
+      const adminRow = await env.DB.prepare('SELECT can_manage_sellers FROM admin_users WHERE email = ?').bind(normalEmail).first();
+      canManageSellers = Boolean(adminRow?.can_manage_sellers);
+    }
+
+    return json({ token, role, sellerCode, canManageSellers });
   } catch (e) {
     return json({ error: 'Server error' }, 500);
   }

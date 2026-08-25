@@ -24,6 +24,7 @@ export async function onRequestPost(context) {
     "ALTER TABLE sellers ADD COLUMN password TEXT DEFAULT ''",
     "ALTER TABLE admin_sessions ADD COLUMN seller_code TEXT DEFAULT ''",
     "ALTER TABLE submissions ADD COLUMN dob TEXT DEFAULT ''",
+    "ALTER TABLE admin_users ADD COLUMN can_manage_sellers INTEGER DEFAULT 0",
   ];
 
   const results = [];

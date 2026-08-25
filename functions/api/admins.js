@@ -6,10 +6,10 @@ export async function onRequestGet(context) {
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
   const ownerEmail = (env.SUPER_ADMIN_EMAIL || '').trim().toLowerCase();
-  const { results } = await env.DB.prepare('SELECT email FROM admin_users').all();
+  const { results } = await env.DB.prepare('SELECT email, can_manage_sellers FROM admin_users').all();
 
-  const list = [{ email: ownerEmail, role: 'owner' }];
-  results.forEach(a => list.push({ email: a.email, role: 'admin' }));
+  const list = [{ email: ownerEmail, role: 'owner', canManageSellers: true }];
+  results.forEach(a => list.push({ email: a.email, role: 'admin', canManageSellers: Boolean(a.can_manage_sellers) }));
 
   return json(list);
 }
@@ -19,7 +19,7 @@ export async function onRequestPost(context) {
   const session = await verifyOwner(request, env);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
-  const { email, password } = await request.json();
+  const { email, password, canManageSellers } = await request.json();
   if (!email || !password) return json({ error: 'Email and password are required.' }, 400);
   if (password.length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400);
 
@@ -43,8 +43,24 @@ export async function onRequestPost(context) {
 
   const hashed = await hashPassword(password, normalEmail);
   await env.DB.prepare(
-    'INSERT INTO admin_users (email, password) VALUES (?, ?)'
-  ).bind(normalEmail, hashed).run();
+    'INSERT INTO admin_users (email, password, can_manage_sellers) VALUES (?, ?, ?)'
+  ).bind(normalEmail, hashed, canManageSellers ? 1 : 0).run();
+
+  return json({ status: 'ok' });
+}
+
+export async function onRequestPatch(context) {
+  const { request, env } = context;
+  const session = await verifyOwner(request, env);
+  if (!session) return json({ error: 'Unauthorized' }, 401);
+
+  const { email, canManageSellers } = await request.json();
+  const normalEmail = (email || '').trim().toLowerCase();
+  if (!normalEmail) return json({ error: 'Missing email' }, 400);
+
+  await env.DB.prepare(
+    'UPDATE admin_users SET can_manage_sellers = ? WHERE email = ?'
+  ).bind(canManageSellers ? 1 : 0, normalEmail).run();
 
   return json({ status: 'ok' });
 }
