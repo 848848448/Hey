@@ -3,24 +3,62 @@ export async function onRequestGet(context) {
   const session = await verifyToken(request, env);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
+  const url = new URL(request.url);
+  const page = Math.max(1, parseInt(url.searchParams.get('page')) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get('limit')) || 50));
+  const search = (url.searchParams.get('search') || '').trim();
+  const statusFilter = (url.searchParams.get('status') || '').trim();
+  let sellerFilter = (url.searchParams.get('seller') || '').trim();
+  const offset = (page - 1) * limit;
+
+  if (session.role === 'seller' && session.seller_code) {
+    sellerFilter = session.seller_code;
+  }
+
+  const conditions = [];
+  const binds = [];
+
+  if (search) {
+    conditions.push('(full_name LIKE ? OR email LIKE ? OR phone LIKE ? OR address LIKE ?)');
+    binds.push('%' + search + '%', '%' + search + '%', '%' + search + '%', '%' + search + '%');
+  }
+  if (statusFilter) {
+    conditions.push('status = ?');
+    binds.push(statusFilter);
+  }
+  if (sellerFilter) {
+    conditions.push('seller_code = ?');
+    binds.push(sellerFilter);
+  }
+
+  const whereClause = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+
+  const countResult = await env.DB.prepare(
+    'SELECT COUNT(*) as total FROM submissions ' + whereClause
+  ).bind(...binds).first();
+  const total = countResult?.total || 0;
+
   const { results } = await env.DB.prepare(
-    'SELECT * FROM submissions ORDER BY timestamp DESC'
-  ).all();
+    'SELECT * FROM submissions ' + whereClause + ' ORDER BY timestamp DESC LIMIT ? OFFSET ?'
+  ).bind(...binds, limit, offset).all();
 
   const submissions = results.map(row => ({
     id: row.id,
     fullName: row.full_name,
+    dob: row.dob || '',
     phone: row.phone,
     email: row.email,
+    address: row.address || '',
     language: row.language,
     preferredTime: JSON.parse(row.preferred_time || '[]'),
     consent: Boolean(row.consent),
     timestamp: row.timestamp,
     status: row.status || 'new',
     notes: row.notes || '',
+    sellerCode: row.seller_code || '',
   }));
 
-  return json(submissions);
+  return json({ submissions, total, page, limit, pages: Math.ceil(total / limit) });
 }
 
 export async function onRequestPatch(context) {
