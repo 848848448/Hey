@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- D1 database backend -->
   <title>GoldsteinCare — Screening Call</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
   <style>
     :root {
       --ground: #f7f3ef;
@@ -66,16 +67,24 @@
       min-height: 100vh;
       background: var(--ground);
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
     /* ========== WELCOME SCREEN ========== */
     .welcome-screen {
+      flex: 1;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 48px 24px;
       background: var(--hero-gradient);
+      transition: opacity 0.3s ease;
     }
 
     .welcome-inner {
@@ -86,7 +95,17 @@
     .hero-logo {
       width: 80px;
       height: 80px;
+      border-radius: 20px;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 32px;
+    }
+    .hero-logo .material-symbols-outlined {
+      font-size: 42px;
+      color: #fff;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
     }
 
     .welcome-inner h1 {
@@ -115,7 +134,9 @@
     }
 
     .start-btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 16px 64px;
       background: var(--accent);
       color: #fff;
@@ -127,8 +148,16 @@
       cursor: pointer;
       transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
     }
+    .start-btn .material-symbols-outlined { font-size: 20px; }
     .start-btn:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(217,68,48,0.3); transform: translateY(-2px); }
     .start-btn:active { transform: translateY(0); box-shadow: none; }
+
+    .welcome-branding {
+      margin-top: 48px;
+      font-size: 12px;
+      color: var(--text-light);
+      letter-spacing: 0.03em;
+    }
 
     @media (prefers-reduced-motion: no-preference) {
       .welcome-inner { animation: rise 0.6s cubic-bezier(0.22,1,0.36,1); }
@@ -136,6 +165,7 @@
 
     /* ========== FORM SECTION ========== */
     .form-section {
+      flex: 1;
       display: flex;
       justify-content: center;
       padding: 48px 24px 64px;
@@ -148,6 +178,34 @@
       border-radius: 20px;
       box-shadow: 0 1px 2px rgba(45,34,25,0.04), 0 8px 32px rgba(45,34,25,0.06);
       padding: 44px;
+      position: relative;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 8px 4px 0;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .back-btn:hover { color: var(--text); background: var(--option-bg); }
+    .back-btn .material-symbols-outlined { font-size: 20px; }
+
+    .step-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-light);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     @media (prefers-reduced-motion: no-preference) {
@@ -224,33 +282,6 @@
 
     .phone-row input[type="tel"] { border-bottom: none; flex: 1; }
 
-    /* Address grid */
-    .address-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
-    }
-    .address-grid input {
-      width: 100%;
-      padding: 12px 0;
-      border: none;
-      border-bottom: 1.5px solid var(--border);
-      font-family: inherit;
-      font-size: 16px;
-      color: var(--text);
-      background: transparent;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .address-grid input:focus { border-bottom-color: var(--accent); }
-    .address-grid input::placeholder { color: var(--text-light); }
-    .address-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 120px;
-      gap: 0 16px;
-    }
-    @media (max-width: 480px) { .address-row { grid-template-columns: 1fr; } }
-
     /* Time grid */
     .time-grid {
       display: grid;
@@ -282,19 +313,22 @@
 
     .slot-key {
       flex-shrink: 0;
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
       background: var(--check-bg);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-secondary);
       transition: all 0.18s ease;
     }
-    .time-slot input:checked + label .slot-key { background: var(--accent); color: #fff; }
+    .slot-key .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--text-secondary);
+      transition: color 0.18s ease;
+    }
+    .time-slot input:checked + label .slot-key { background: var(--accent); }
+    .time-slot input:checked + label .slot-key .material-symbols-outlined { color: #fff; }
 
     .slot-text { display: flex; flex-direction: column; }
     .slot-name { font-weight: 600; font-size: 14px; }
@@ -324,9 +358,15 @@
       transition: all 0.18s ease;
       margin-top: 1px;
     }
-    .check-box svg { opacity: 0; transform: scale(0.6); transition: all 0.18s ease; }
+    .check-box .material-symbols-outlined {
+      font-size: 16px;
+      color: #fff;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.18s ease;
+    }
     .consent-label input:checked ~ .check-box { background: var(--accent); border-color: var(--accent); }
-    .consent-label input:checked ~ .check-box svg { opacity: 1; transform: scale(1); }
+    .consent-label input:checked ~ .check-box .material-symbols-outlined { opacity: 1; transform: scale(1); }
     .consent-label input:focus-visible ~ .check-box { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .consent-copy { font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
@@ -344,7 +384,12 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
+    .submit-btn .material-symbols-outlined { font-size: 20px; }
     .submit-btn:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(217,68,48,0.25); transform: translateY(-1px); }
     .submit-btn:active { transform: translateY(0); box-shadow: none; }
     .submit-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
@@ -355,9 +400,15 @@
     /* Success */
     .done { display: none; text-align: center; padding: 48px 16px; }
     .done-icon {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: var(--accent); display: inline-flex;
-      align-items: center; justify-content: center; margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .done-icon .material-symbols-outlined {
+      font-size: 72px;
+      color: var(--accent);
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
     }
     .done h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 10px; }
     .done p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; max-width: 360px; margin: 0 auto; }
@@ -378,95 +429,25 @@
       color: var(--text-light);
       border-top: 1px solid var(--border);
     }
+    .site-footer .material-symbols-outlined {
+      font-size: 16px;
+      color: var(--text-light);
+      vertical-align: middle;
+    }
 
     .admin-link {
       color: var(--text-light);
       opacity: 0.4;
       transition: opacity 0.2s ease;
       line-height: 1;
+      display: inline-flex;
+      align-items: center;
     }
     .admin-link:hover { opacity: 1; }
-
-    /* Language toggle */
-    .lang-toggle-bar {
-      display: flex;
-      justify-content: center;
-      padding: 12px 0 0;
-    }
-    .lang-toggle {
-      display: inline-flex;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(45,34,25,0.08);
-    }
-    .lang-btn {
-      padding: 8px 14px;
-      border: none;
-      background: none;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-secondary);
-      transition: all 0.18s;
-    }
-    .lang-btn.active {
-      background: var(--accent);
-      color: #fff;
-    }
-    .lang-btn:not(.active):hover {
-      background: var(--option-hover);
-      color: var(--text);
-    }
-
-    /* Custom language dropdown */
-    .custom-dropdown { position: relative; }
-    .dropdown-input {
-      width: 100%;
-      padding: 12px 0;
-      border: none;
-      border-bottom: 1.5px solid var(--border);
-      font-family: inherit;
-      font-size: 16px;
-      color: var(--text);
-      background: transparent;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .dropdown-input:focus { border-bottom-color: var(--accent); }
-    .dropdown-input::placeholder { color: var(--text-light); }
-    .dropdown-list {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      max-height: 220px;
-      overflow-y: auto;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      box-shadow: 0 4px 16px rgba(45,34,25,0.1);
-      z-index: 30;
-      margin-top: 4px;
-    }
-    .custom-dropdown.open .dropdown-list { display: block; }
-    .dropdown-item {
-      padding: 12px 16px;
-      font-size: 15px;
-      cursor: pointer;
-      color: var(--text);
-      transition: background 0.12s;
-    }
-    .dropdown-item:hover { background: var(--option-hover); }
-    .dropdown-item.selected { color: var(--accent); font-weight: 600; }
-    .dropdown-no-results { padding: 12px 16px; font-size: 14px; color: var(--text-light); }
+    .admin-link .material-symbols-outlined { font-size: 16px; }
 
     @media (max-width: 560px) {
-      .hero { padding: 40px 20px 36px; }
-      .hero h1 { font-size: 26px; }
+      .welcome-inner h1 { font-size: 26px; }
       .form-card { padding: 32px 24px; border-radius: 16px; }
       .form-section { padding: 32px 16px 48px; }
     }
@@ -475,114 +456,108 @@
 <body>
 
   <!-- WELCOME SCREEN -->
-  <div class="welcome-screen" id="welcomeScreen">
+  <div class="welcome-screen" id="welcomeScreen" role="main" aria-label="Welcome">
     <div class="welcome-inner">
-      <div class="lang-toggle-bar" style="margin-bottom:24px;">
-        <div class="lang-toggle">
-          <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">English</button>
-          <button class="lang-btn" data-lang="es" onclick="switchLang('es')">Español</button>
-        </div>
+      <div class="hero-logo" id="heroLogo" aria-hidden="true">
+        <span class="material-symbols-outlined">ecg_heart</span>
       </div>
-      <svg class="hero-logo" id="heroLogo" viewBox="0 0 72 72" fill="none" aria-hidden="true">
-        <rect width="72" height="72" rx="20" fill="var(--accent)"/>
-        <circle cx="26" cy="28" r="4.5" fill="#fff"/>
-        <circle cx="46" cy="28" r="4.5" fill="#fff"/>
-        <path d="M21 40c4.5 9 24 9 30 0" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
-      </svg>
       <h1 id="heroTitle">GoldsteinCare</h1>
       <p id="heroDesc">Schedule your screening call. Fill out the form below and our team will reach out to confirm your eligibility and find a time that works for you.</p>
       <span class="welcome-time">Takes about 15 seconds</span>
-      <button class="start-btn" id="startBtn" onclick="showForm()">Start</button>
+      <button class="start-btn" id="startBtn" onclick="showForm()">Start <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
+      <div class="welcome-branding">Powered by <strong id="welcomeBrandName">GoldsteinCare</strong></div>
     </div>
   </div>
 
   <!-- FORM SCREEN (hidden initially) -->
-  <main class="form-section" id="formSection" style="display:none;">
+  <main class="form-section" id="formSection" role="main" aria-label="Screening form" hidden>
     <div class="form-card">
-      <div class="lang-toggle-bar" style="margin-bottom:24px;">
-        <div class="lang-toggle">
-          <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">English</button>
-          <button class="lang-btn" data-lang="es" onclick="switchLang('es')">Español</button>
-        </div>
-      </div>
+      <button class="back-btn" onclick="showWelcome()" aria-label="Back to welcome screen">
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Back
+      </button>
+      <span class="step-label">Step 1 of 1</span>
       <form id="screeningForm" novalidate>
         <p class="form-heading">Please provide the information below so we can confirm eligibility and schedule a screening call.<span class="req">*</span></p>
 
         <div class="field">
           <label class="field-q" for="fullName">What is your full name?<span class="req">*</span></label>
-          <input type="text" id="fullName" name="fullName" placeholder="Type your answer here..." required>
-        </div>
-
-        <div class="field">
-          <label class="field-q" for="dob">What is your date of birth?<span class="req">*</span></label>
-          <input type="date" id="dob" name="dob" required style="color:var(--text);">
-        </div>
-
-        <div class="field">
-          <label class="field-q" id="labelAddress">What is your home address?<span class="req">*</span></label>
-          <div class="address-grid">
-            <input type="text" id="street" name="street" placeholder="Street address" required>
-            <div class="address-row">
-              <input type="text" id="city" name="city" placeholder="City" required>
-              <input type="text" id="state" name="state" placeholder="State" required>
-              <input type="text" id="zip" name="zip" placeholder="ZIP code" required>
-            </div>
-          </div>
+          <input type="text" id="fullName" name="fullName" placeholder="Type your answer here..." required autocomplete="name">
         </div>
 
         <div class="field">
           <label class="field-q" for="phone">What is the best phone number to reach you?<span class="req">*</span></label>
           <div class="phone-row">
             <select class="country-select" id="countryCode" name="countryCode" aria-label="Country code">
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+972">🇮🇱 +972</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+33">🇫🇷 +33</option>
-              <option value="+61">🇦🇺 +61</option>
-              <option value="+81">🇯🇵 +81</option>
-              <option value="+86">🇨🇳 +86</option>
-              <option value="+91">🇮🇳 +91</option>
-              <option value="+52">🇲🇽 +52</option>
-              <option value="+55">🇧🇷 +55</option>
+              <option value="+1">&#x1f1fa;&#x1f1f8; +1</option>
+              <option value="+44">&#x1f1ec;&#x1f1e7; +44</option>
+              <option value="+972">&#x1f1ee;&#x1f1f1; +972</option>
+              <option value="+49">&#x1f1e9;&#x1f1ea; +49</option>
+              <option value="+33">&#x1f1eb;&#x1f1f7; +33</option>
+              <option value="+61">&#x1f1e6;&#x1f1fa; +61</option>
+              <option value="+81">&#x1f1ef;&#x1f1f5; +81</option>
+              <option value="+86">&#x1f1e8;&#x1f1f3; +86</option>
+              <option value="+91">&#x1f1ee;&#x1f1f3; +91</option>
+              <option value="+52">&#x1f1f2;&#x1f1fd; +52</option>
+              <option value="+55">&#x1f1e7;&#x1f1f7; +55</option>
             </select>
-            <input type="tel" id="phone" name="phone" placeholder="(201) 555-0123" required>
+            <input type="tel" id="phone" name="phone" placeholder="(201) 555-0123" required autocomplete="tel-national">
           </div>
         </div>
 
         <div class="field">
           <label class="field-q" for="email">What's your email address?<span class="req">*</span></label>
-          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required autocomplete="email">
         </div>
 
         <div class="field">
-          <label class="field-q" id="labelLang">What language do you prefer to communicate in?<span class="req">*</span></label>
-          <input type="hidden" id="language" name="language" value="">
-          <div class="custom-dropdown" id="langDropdown">
-            <input type="text" class="dropdown-input" id="langInput" placeholder="Select a language..." autocomplete="off" onfocus="openLangDropdown()" oninput="filterLangDropdown()">
-            <div class="dropdown-list" id="langList"></div>
-          </div>
+          <label class="field-q" for="language">What language do you prefer to communicate in?<span class="req">*</span></label>
+          <select id="language" name="language" class="country-select" required style="width:100%;padding:12px 0;border-bottom:1.5px solid var(--border);border-top:none;border-left:none;border-right:none;border-radius:0;font-size:16px;">
+            <option value="" disabled selected>Select a language...</option>
+            <option value="English">English</option>
+            <option value="Spanish">Spanish</option>
+            <option value="Russian">Russian</option>
+            <option value="French">French</option>
+            <option value="Arabic">Arabic</option>
+            <option value="Chinese (Mandarin)">Chinese (Mandarin)</option>
+            <option value="German">German</option>
+            <option value="Portuguese">Portuguese</option>
+            <option value="Italian">Italian</option>
+            <option value="Polish">Polish</option>
+            <option value="Hungarian">Hungarian</option>
+            <option value="Romanian">Romanian</option>
+            <option value="Ukrainian">Ukrainian</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Urdu">Urdu</option>
+            <option value="Turkish">Turkish</option>
+            <option value="Dutch">Dutch</option>
+            <option value="Farsi">Farsi</option>
+            <option value="Yiddish">Yiddish</option>
+            <option value="Hebrew">Hebrew</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
-        <div class="field">
-          <label class="field-q" id="labelTime">What is your preferred time of day for a screening call?<span class="req">*</span></label>
+        <div class="field" role="group" aria-labelledby="timeLabel">
+          <label class="field-q" id="timeLabel">What is your preferred time of day for a screening call?<span class="req">*</span></label>
           <span class="field-hint">Choose at least one</span>
           <div class="time-grid">
             <div class="time-slot">
-              <input type="checkbox" id="t-am" name="preferredTime" value="Morning (9–12)">
-              <label for="t-am"><span class="slot-key">A</span><span class="slot-text"><span class="slot-name">Morning</span><span class="slot-range">9:00 AM – 12:00 PM</span></span></label>
+              <input type="checkbox" id="t-am" name="preferredTime" value="Morning (9-12)">
+              <label for="t-am"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">light_mode</span></span><span class="slot-text"><span class="slot-name">Morning</span><span class="slot-range">9:00 AM - 12:00 PM</span></span></label>
             </div>
             <div class="time-slot">
-              <input type="checkbox" id="t-ea" name="preferredTime" value="Early Afternoon (12–3)">
-              <label for="t-ea"><span class="slot-key">B</span><span class="slot-text"><span class="slot-name">Early Afternoon</span><span class="slot-range">12:00 PM – 3:00 PM</span></span></label>
+              <input type="checkbox" id="t-ea" name="preferredTime" value="Early Afternoon (12-3)">
+              <label for="t-ea"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">sunny</span></span><span class="slot-text"><span class="slot-name">Early Afternoon</span><span class="slot-range">12:00 PM - 3:00 PM</span></span></label>
             </div>
             <div class="time-slot">
-              <input type="checkbox" id="t-la" name="preferredTime" value="Late Afternoon (3–6)">
-              <label for="t-la"><span class="slot-key">C</span><span class="slot-text"><span class="slot-name">Late Afternoon</span><span class="slot-range">3:00 PM – 6:00 PM</span></span></label>
+              <input type="checkbox" id="t-la" name="preferredTime" value="Late Afternoon (3-6)">
+              <label for="t-la"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">evening</span></span><span class="slot-text"><span class="slot-name">Late Afternoon</span><span class="slot-range">3:00 PM - 6:00 PM</span></span></label>
             </div>
             <div class="time-slot">
-              <input type="checkbox" id="t-ev" name="preferredTime" value="Evening (6–8)">
-              <label for="t-ev"><span class="slot-key">D</span><span class="slot-text"><span class="slot-name">Evening</span><span class="slot-range">6:00 PM – 8:00 PM</span></span></label>
+              <input type="checkbox" id="t-ev" name="preferredTime" value="Evening (6-8)">
+              <label for="t-ev"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></span><span class="slot-text"><span class="slot-name">Evening</span><span class="slot-range">6:00 PM - 8:00 PM</span></span></label>
             </div>
           </div>
         </div>
@@ -592,23 +567,19 @@
           <label class="consent-label">
             <input type="checkbox" id="consent" name="consent" required>
             <span class="check-box">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <path d="M2 6.5L5 9.5L11 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+              <span class="material-symbols-outlined" aria-hidden="true">check</span>
             </span>
             <span class="consent-copy">I agree to be contacted for a screening call regarding eligibility and services.</span>
           </label>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
-        <p class="error-msg" id="errorMsg"></p>
+        <button type="submit" class="submit-btn" id="submitBtn">Submit <span class="material-symbols-outlined" aria-hidden="true">send</span></button>
+        <p class="error-msg" id="errorMsg" role="alert"></p>
       </form>
 
-      <div class="done" id="done">
+      <div class="done" id="done" role="status">
         <div class="done-icon">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-            <path d="M7 15L12.5 20.5L23 9.5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
         </div>
         <h2>Thank you</h2>
         <p id="successMsg">Your information has been submitted successfully. We'll be in touch soon to schedule your screening call.</p>
@@ -616,191 +587,35 @@
     </div>
   </main>
 
-  <footer class="site-footer" id="siteFooter" style="display:none">
+  <footer class="site-footer" id="siteFooter">
+    <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
     <span>&copy; 2026 <span id="footerName">GoldsteinCare</span>. All rights reserved.</span>
     <a href="/admin.html" class="admin-link" aria-label="Admin">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a3 3 0 0 0-3 3v2H3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1V4a3 3 0 0 0-3-3zm-1.5 3a1.5 1.5 0 1 1 3 0v2h-3V4z" fill="currentColor"/></svg>
+      <span class="material-symbols-outlined">lock</span>
     </a>
   </footer>
 
   <script>
-    var currentLang = 'en';
-    var T = {
-      en: {
-        heroDesc: 'Schedule your screening call. Fill out the form below and our team will reach out to confirm your eligibility and find a time that works for you.',
-        welcomeTime: 'Takes about 15 seconds',
-        startBtn: 'Start',
-        formHeading: 'Please provide the information below so we can confirm eligibility and schedule a screening call.',
-        labelName: 'What is your full name?',
-        phName: 'Type your answer here...',
-        labelPhone: 'What is the best phone number to reach you?',
-        phPhone: '(201) 555-0123',
-        labelEmail: "What's your email address?",
-        phEmail: 'name@example.com',
-        labelAddress: 'What is your home address?',
-        phStreet: 'Street address',
-        phCity: 'City',
-        phState: 'State',
-        phZip: 'ZIP code',
-        labelDob: 'What is your date of birth?',
-        labelLang: 'What language do you prefer to communicate in?',
-        selectLang: 'Select a language...',
-        labelTime: 'What is your preferred time of day for a screening call?',
-        timeHint: 'Choose at least one',
-        morning: 'Morning', earlyAfternoon: 'Early Afternoon', lateAfternoon: 'Late Afternoon', evening: 'Evening',
-        consentTitle: 'Consent to Contact',
-        consentText: 'I agree to be contacted for a screening call regarding eligibility and services.',
-        submitBtn: 'Submit',
-        submitting: 'Submitting...',
-        thankYou: 'Thank you',
-        successDefault: "Your information has been submitted successfully. We'll be in touch soon to schedule your screening call.",
-        formClosed: 'This form is currently closed. Please check back later.',
-        errorPrefix: 'Please fill in: ',
-        errorGeneric: 'Something went wrong. Please try again.',
-        fName: 'Full Name', fDob: 'Date of Birth', fPhone: 'Phone Number', fEmail: 'Email', fAddress: 'Home Address', fLang: 'Language', fTime: 'Preferred Time', fConsent: 'Consent',
-        footerRights: 'All rights reserved.'
-      },
-      es: {
-        heroDesc: 'Programe su llamada de evaluación. Complete el formulario a continuación y nuestro equipo se comunicará con usted para confirmar su elegibilidad y encontrar un horario conveniente.',
-        welcomeTime: 'Toma unos 15 segundos',
-        startBtn: 'Comenzar',
-        formHeading: 'Por favor, proporcione la siguiente información para que podamos confirmar su elegibilidad y programar una llamada de evaluación.',
-        labelName: '¿Cuál es su nombre completo?',
-        phName: 'Escriba su respuesta aquí...',
-        labelPhone: '¿Cuál es el mejor número de teléfono para contactarlo?',
-        phPhone: '(201) 555-0123',
-        labelEmail: '¿Cuál es su dirección de correo electrónico?',
-        phEmail: 'nombre@ejemplo.com',
-        labelAddress: '¿Cuál es su dirección de domicilio?',
-        phStreet: 'Dirección',
-        phCity: 'Ciudad',
-        phState: 'Estado',
-        phZip: 'Código postal',
-        labelDob: '¿Cuál es su fecha de nacimiento?',
-        labelLang: '¿En qué idioma prefiere comunicarse?',
-        selectLang: 'Seleccione un idioma...',
-        labelTime: '¿Cuál es su horario preferido para la llamada de evaluación?',
-        timeHint: 'Elija al menos uno',
-        morning: 'Mañana', earlyAfternoon: 'Principio de la tarde', lateAfternoon: 'Final de la tarde', evening: 'Noche',
-        consentTitle: 'Consentimiento de contacto',
-        consentText: 'Acepto ser contactado para una llamada de evaluación sobre elegibilidad y servicios.',
-        submitBtn: 'Enviar',
-        submitting: 'Enviando...',
-        thankYou: 'Gracias',
-        successDefault: 'Su información se ha enviado correctamente. Nos pondremos en contacto pronto para programar su llamada de evaluación.',
-        formClosed: 'Este formulario está cerrado actualmente. Vuelva a intentarlo más tarde.',
-        errorPrefix: 'Por favor complete: ',
-        errorGeneric: 'Algo salió mal. Por favor inténtelo de nuevo.',
-        fName: 'Nombre completo', fDob: 'Fecha de nacimiento', fPhone: 'Teléfono', fEmail: 'Correo electrónico', fAddress: 'Dirección', fLang: 'Idioma', fTime: 'Horario preferido', fConsent: 'Consentimiento',
-        footerRights: 'Todos los derechos reservados.'
-      }
-    };
-
-    function switchLang(lang) {
-      currentLang = lang;
-      document.querySelectorAll('.lang-btn').forEach(function(b) {
-        b.classList.toggle('active', b.dataset.lang === lang);
-      });
-      document.documentElement.lang = lang;
-      var t = T[lang];
-      document.getElementById('heroDesc').textContent = t.heroDesc;
-      document.querySelector('.welcome-time').textContent = t.welcomeTime;
-      document.getElementById('startBtn').textContent = t.startBtn;
-      document.querySelector('.form-heading').innerHTML = t.formHeading + '<span class="req">*</span>';
-      document.querySelector('label[for="fullName"]').innerHTML = t.labelName + '<span class="req">*</span>';
-      document.getElementById('fullName').placeholder = t.phName;
-      document.querySelector('label[for="phone"]').innerHTML = t.labelPhone + '<span class="req">*</span>';
-      document.getElementById('phone').placeholder = t.phPhone;
-      document.querySelector('label[for="email"]').innerHTML = t.labelEmail + '<span class="req">*</span>';
-      document.getElementById('email').placeholder = t.phEmail;
-      document.querySelector('label[for="dob"]').innerHTML = t.labelDob + '<span class="req">*</span>';
-      document.getElementById('labelAddress').innerHTML = t.labelAddress + '<span class="req">*</span>';
-      document.getElementById('street').placeholder = t.phStreet;
-      document.getElementById('city').placeholder = t.phCity;
-      document.getElementById('state').placeholder = t.phState;
-      document.getElementById('zip').placeholder = t.phZip;
-      document.getElementById('labelLang').innerHTML = t.labelLang + '<span class="req">*</span>';
-      document.getElementById('langInput').placeholder = t.selectLang;
-      document.getElementById('labelTime').innerHTML = t.labelTime + '<span class="req">*</span>';
-      document.querySelector('.field-hint').textContent = t.timeHint;
-      var slotNames = document.querySelectorAll('.slot-name');
-      slotNames[0].textContent = t.morning;
-      slotNames[1].textContent = t.earlyAfternoon;
-      slotNames[2].textContent = t.lateAfternoon;
-      slotNames[3].textContent = t.evening;
-      document.querySelector('.consent-field .field-q').innerHTML = t.consentTitle + '<span class="req">*</span>';
-      document.querySelector('.consent-copy').textContent = t.consentText;
-      var btn = document.getElementById('submitBtn');
-      if (!btn.disabled) btn.textContent = t.submitBtn;
-      document.querySelector('.done h2').textContent = t.thankYou;
-      var footerSpan = document.querySelector('.site-footer span');
-      var compName = (document.getElementById('footerName')?.textContent || 'GoldsteinCare').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      footerSpan.innerHTML = '&copy; 2026 <span id="footerName">' + compName + '</span>. ' + t.footerRights;
-    }
-
-    // Custom language dropdown
-    var langOptions = ['English','Spanish','Russian','French','Arabic','Chinese (Mandarin)','German','Portuguese','Italian','Polish','Hungarian','Romanian','Ukrainian','Japanese','Korean','Hindi','Urdu','Turkish','Dutch','Farsi','Yiddish','Hebrew','Other'];
-
-    function renderLangOptions(filter) {
-      var list = document.getElementById('langList');
-      var q = (filter || '').toLowerCase();
-      var matches = langOptions.filter(function(l) { return !q || l.toLowerCase().indexOf(q) !== -1; });
-      if (!matches.length) {
-        list.innerHTML = '<div class="dropdown-no-results">No results</div>';
-        return;
-      }
-      var h = '';
-      var selected = document.getElementById('language').value;
-      matches.forEach(function(lang) {
-        h += '<div class="dropdown-item' + (lang === selected ? ' selected' : '') + '" data-value="' + lang + '" onmousedown="selectLangOption(\'' + lang.replace(/'/g,"\\'") + '\')">' + lang + '</div>';
-      });
-      list.innerHTML = h;
-    }
-    renderLangOptions();
-
-    function openLangDropdown() {
-      document.getElementById('langDropdown').classList.add('open');
-      renderLangOptions(document.getElementById('langInput').value);
-    }
-
-    function filterLangDropdown() {
-      document.getElementById('langDropdown').classList.add('open');
-      document.getElementById('language').value = '';
-      renderLangOptions(document.getElementById('langInput').value);
-    }
-
-    function selectLangOption(val) {
-      document.getElementById('language').value = val;
-      document.getElementById('langInput').value = val;
-      document.getElementById('langDropdown').classList.remove('open');
-    }
-
-    document.getElementById('langInput').addEventListener('blur', function() {
-      setTimeout(function() { document.getElementById('langDropdown').classList.remove('open'); }, 150);
-    });
-
-    document.addEventListener('click', function(e) {
-      var dd = document.getElementById('langDropdown');
-      if (!dd.contains(e.target)) dd.classList.remove('open');
-    });
-
     // Load dynamic settings from admin dashboard
     fetch('/api/settings').then(function(r) { return r.json(); }).then(function(s) {
       if (s.company_name) {
         document.getElementById('heroTitle').textContent = s.company_name;
         document.title = s.company_name + ' — Screening Call';
         document.getElementById('footerName').textContent = s.company_name;
+        document.getElementById('welcomeBrandName').textContent = s.company_name;
       }
       if (s.company_description) document.getElementById('heroDesc').textContent = s.company_description;
-      if (s.logo_data && s.logo_data.length > 20 && s.logo_data.indexOf('data:image') === 0) {
+      if (s.logo_data) {
         var logoImg = document.createElement('img');
         logoImg.src = s.logo_data;
         logoImg.alt = 'Logo';
-        logoImg.style.cssText = 'width:72px;height:72px;border-radius:20px;object-fit:contain;margin-bottom:28px;';
-        var svg = document.getElementById('heroLogo');
-        if (svg) svg.parentNode.replaceChild(logoImg, svg);
+        logoImg.style.cssText = 'width:72px;height:72px;border-radius:20px;object-fit:contain;';
+        var logoDiv = document.getElementById('heroLogo');
+        logoDiv.innerHTML = '';
+        logoDiv.style.background = 'none';
+        logoDiv.appendChild(logoImg);
       }
-      if (s.accent_color && /^#[0-9a-fA-F]{6}$/.test(s.accent_color)) {
+      if (s.accent_color) {
         document.documentElement.style.setProperty('--accent', s.accent_color);
         var r = parseInt(s.accent_color.slice(1,3),16), g = parseInt(s.accent_color.slice(3,5),16), b = parseInt(s.accent_color.slice(5,7),16);
         var darker = '#' + Math.max(0,r-20).toString(16).padStart(2,'0') + Math.max(0,g-20).toString(16).padStart(2,'0') + Math.max(0,b-20).toString(16).padStart(2,'0');
@@ -808,18 +623,35 @@
       }
       if (s.success_message) document.getElementById('successMsg').textContent = s.success_message;
       if (s.form_active === 'false') {
-        document.getElementById('screeningForm').innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-size:16px;color:var(--text-secondary);" id="formClosedMsg">' + T[currentLang].formClosed + '</p></div>';
+        document.getElementById('screeningForm').innerHTML = '<div style="text-align:center;padding:32px 0;"><p style="font-size:16px;color:var(--text-secondary);">This form is currently closed. Please check back later.</p></div>';
       }
     }).catch(function() {});
 
     function showForm() {
       var welcome = document.getElementById('welcomeScreen');
-      welcome.style.transition = 'opacity 0.3s ease';
       welcome.style.opacity = '0';
       setTimeout(function() {
-        welcome.style.display = 'none';
-        document.getElementById('formSection').style.display = '';
-        document.getElementById('siteFooter').style.display = '';
+        welcome.hidden = true;
+        var form = document.getElementById('formSection');
+        form.hidden = false;
+        form.querySelector('input, button').focus();
+      }, 300);
+    }
+
+    function showWelcome() {
+      var form = document.getElementById('formSection');
+      form.style.transition = 'opacity 0.3s ease';
+      form.style.opacity = '0';
+      setTimeout(function() {
+        form.hidden = true;
+        form.style.opacity = '';
+        form.style.transition = '';
+        var welcome = document.getElementById('welcomeScreen');
+        welcome.hidden = false;
+        welcome.style.opacity = '0';
+        requestAnimationFrame(function() {
+          welcome.style.opacity = '1';
+        });
       }, 300);
     }
 
@@ -842,47 +674,32 @@
         times.push(cb.value);
       });
 
-      var refCode = '';
-      var pathMatch = window.location.pathname.match(/^\/r\/([a-zA-Z0-9_-]+)/);
-      if (pathMatch) refCode = pathMatch[1];
-      else refCode = new URLSearchParams(window.location.search).get('ref') || '';
-
-      var street = document.getElementById('street').value.trim();
-      var city = document.getElementById('city').value.trim();
-      var state = document.getElementById('state').value.trim();
-      var zip = document.getElementById('zip').value.trim();
-      var fullAddress = [street, city, state, zip].filter(Boolean).join(', ');
+      var phoneDigits = document.getElementById('phone').value.replace(/\D/g, '');
 
       var data = {
         fullName: document.getElementById('fullName').value.trim(),
-        dob: document.getElementById('dob').value,
         phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.trim(),
         email: document.getElementById('email').value.trim(),
-        address: fullAddress,
         language: document.getElementById('language').value.trim(),
         preferredTime: times,
-        consent: document.getElementById('consent').checked,
-        sellerCode: refCode
+        consent: document.getElementById('consent').checked
       };
 
-      if (!data.fullName || !data.dob || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !street || !city || !state || !zip || !data.language || !times.length || !data.consent) {
-        var t = T[currentLang];
+      if (!data.fullName || phoneDigits.length < 7 || !data.email || !data.language || !times.length || !data.consent) {
         var missing = [];
-        if (!data.fullName) missing.push(t.fName);
-        if (!data.dob) missing.push(t.fDob);
-        if (!document.getElementById('phone').value.trim()) missing.push(t.fPhone);
-        if (!data.email) missing.push(t.fEmail);
-        if (!street || !city || !state || !zip) missing.push(t.fAddress);
-        if (!data.language) missing.push(t.fLang);
-        if (!times.length) missing.push(t.fTime);
-        if (!data.consent) missing.push(t.fConsent);
-        errEl.textContent = t.errorPrefix + missing.join(', ');
+        if (!data.fullName) missing.push('Full Name');
+        if (phoneDigits.length < 7) missing.push('Phone Number (at least 7 digits)');
+        if (!data.email) missing.push('Email');
+        if (!data.language) missing.push('Language');
+        if (!times.length) missing.push('Preferred Time');
+        if (!data.consent) missing.push('Consent');
+        errEl.textContent = 'Please fill in: ' + missing.join(', ');
         errEl.style.display = 'block';
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = T[currentLang].submitting;
+      btn.innerHTML = 'Submitting...';
 
       fetch('/api/submit', {
         method: 'POST',
@@ -895,19 +712,23 @@
       })
       .then(function() { showSuccess(); })
       .catch(function() {
-        errEl.textContent = T[currentLang].errorGeneric;
+        errEl.textContent = 'Something went wrong. Please try again.';
         errEl.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = T[currentLang].submitBtn;
+        btn.innerHTML = 'Submit <span class="material-symbols-outlined" aria-hidden="true">send</span>';
       });
     });
 
     function showSuccess() {
       var form = document.getElementById('screeningForm');
       var done = document.getElementById('done');
+      var backBtn = document.querySelector('.back-btn');
+      var stepLabel = document.querySelector('.step-label');
       form.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
       form.style.opacity = '0';
       form.style.transform = 'translateY(-8px)';
+      if (backBtn) backBtn.hidden = true;
+      if (stepLabel) stepLabel.hidden = true;
       setTimeout(function() { form.style.display = 'none'; done.style.display = 'block'; }, 260);
     }
   </script>
