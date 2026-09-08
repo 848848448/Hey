@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- D1 database backend -->
   <title>GoldsteinCare — Screening Call</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
   <style>
     :root {
       --ground: #f7f3ef;
@@ -66,16 +67,24 @@
       min-height: 100vh;
       background: var(--ground);
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
 
     /* ========== WELCOME SCREEN ========== */
     .welcome-screen {
+      flex: 1;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 48px 24px;
       background: var(--hero-gradient);
+      transition: opacity 0.3s ease;
     }
 
     .welcome-inner {
@@ -86,7 +95,17 @@
     .hero-logo {
       width: 80px;
       height: 80px;
+      border-radius: 20px;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 32px;
+    }
+    .hero-logo .material-symbols-outlined {
+      font-size: 42px;
+      color: #fff;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
     }
 
     .welcome-inner h1 {
@@ -115,7 +134,9 @@
     }
 
     .start-btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 16px 64px;
       background: var(--accent);
       color: #fff;
@@ -127,8 +148,16 @@
       cursor: pointer;
       transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
     }
+    .start-btn .material-symbols-outlined { font-size: 20px; }
     .start-btn:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(217,68,48,0.3); transform: translateY(-2px); }
     .start-btn:active { transform: translateY(0); box-shadow: none; }
+
+    .welcome-branding {
+      margin-top: 48px;
+      font-size: 12px;
+      color: var(--text-light);
+      letter-spacing: 0.03em;
+    }
 
     @media (prefers-reduced-motion: no-preference) {
       .welcome-inner { animation: rise 0.6s cubic-bezier(0.22,1,0.36,1); }
@@ -136,6 +165,7 @@
 
     /* ========== FORM SECTION ========== */
     .form-section {
+      flex: 1;
       display: flex;
       justify-content: center;
       padding: 48px 24px 64px;
@@ -148,6 +178,34 @@
       border-radius: 20px;
       box-shadow: 0 1px 2px rgba(45,34,25,0.04), 0 8px 32px rgba(45,34,25,0.06);
       padding: 44px;
+      position: relative;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px 8px 4px 0;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .back-btn:hover { color: var(--text); background: var(--option-bg); }
+    .back-btn .material-symbols-outlined { font-size: 20px; }
+
+    .step-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-light);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     @media (prefers-reduced-motion: no-preference) {
@@ -255,19 +313,22 @@
 
     .slot-key {
       flex-shrink: 0;
-      width: 26px;
-      height: 26px;
-      border-radius: 7px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
       background: var(--check-bg);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-secondary);
       transition: all 0.18s ease;
     }
-    .time-slot input:checked + label .slot-key { background: var(--accent); color: #fff; }
+    .slot-key .material-symbols-outlined {
+      font-size: 18px;
+      color: var(--text-secondary);
+      transition: color 0.18s ease;
+    }
+    .time-slot input:checked + label .slot-key { background: var(--accent); }
+    .time-slot input:checked + label .slot-key .material-symbols-outlined { color: #fff; }
 
     .slot-text { display: flex; flex-direction: column; }
     .slot-name { font-weight: 600; font-size: 14px; }
@@ -297,9 +358,15 @@
       transition: all 0.18s ease;
       margin-top: 1px;
     }
-    .check-box svg { opacity: 0; transform: scale(0.6); transition: all 0.18s ease; }
+    .check-box .material-symbols-outlined {
+      font-size: 16px;
+      color: #fff;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: all 0.18s ease;
+    }
     .consent-label input:checked ~ .check-box { background: var(--accent); border-color: var(--accent); }
-    .consent-label input:checked ~ .check-box svg { opacity: 1; transform: scale(1); }
+    .consent-label input:checked ~ .check-box .material-symbols-outlined { opacity: 1; transform: scale(1); }
     .consent-label input:focus-visible ~ .check-box { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .consent-copy { font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
@@ -317,7 +384,12 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
+    .submit-btn .material-symbols-outlined { font-size: 20px; }
     .submit-btn:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(217,68,48,0.25); transform: translateY(-1px); }
     .submit-btn:active { transform: translateY(0); box-shadow: none; }
     .submit-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
@@ -328,9 +400,15 @@
     /* Success */
     .done { display: none; text-align: center; padding: 48px 16px; }
     .done-icon {
-      width: 64px; height: 64px; border-radius: 50%;
-      background: var(--accent); display: inline-flex;
-      align-items: center; justify-content: center; margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .done-icon .material-symbols-outlined {
+      font-size: 72px;
+      color: var(--accent);
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48;
     }
     .done h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 10px; }
     .done p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; max-width: 360px; margin: 0 auto; }
@@ -351,18 +429,25 @@
       color: var(--text-light);
       border-top: 1px solid var(--border);
     }
+    .site-footer .material-symbols-outlined {
+      font-size: 16px;
+      color: var(--text-light);
+      vertical-align: middle;
+    }
 
     .admin-link {
       color: var(--text-light);
       opacity: 0.4;
       transition: opacity 0.2s ease;
       line-height: 1;
+      display: inline-flex;
+      align-items: center;
     }
     .admin-link:hover { opacity: 1; }
+    .admin-link .material-symbols-outlined { font-size: 16px; }
 
     @media (max-width: 560px) {
-      .hero { padding: 40px 20px 36px; }
-      .hero h1 { font-size: 26px; }
+      .welcome-inner h1 { font-size: 26px; }
       .form-card { padding: 32px 24px; border-radius: 16px; }
       .form-section { padding: 32px 16px 48px; }
     }
@@ -371,55 +456,57 @@
 <body>
 
   <!-- WELCOME SCREEN -->
-  <div class="welcome-screen" id="welcomeScreen">
+  <div class="welcome-screen" id="welcomeScreen" role="main" aria-label="Welcome">
     <div class="welcome-inner">
-      <svg class="hero-logo" id="heroLogo" viewBox="0 0 72 72" fill="none" aria-hidden="true">
-        <rect width="72" height="72" rx="20" fill="var(--accent)"/>
-        <circle cx="26" cy="28" r="4.5" fill="#fff"/>
-        <circle cx="46" cy="28" r="4.5" fill="#fff"/>
-        <path d="M21 40c4.5 9 24 9 30 0" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
-      </svg>
+      <div class="hero-logo" id="heroLogo" aria-hidden="true">
+        <span class="material-symbols-outlined">ecg_heart</span>
+      </div>
       <h1 id="heroTitle">GoldsteinCare</h1>
       <p id="heroDesc">Schedule your screening call. Fill out the form below and our team will reach out to confirm your eligibility and find a time that works for you.</p>
       <span class="welcome-time">Takes about 15 seconds</span>
-      <button class="start-btn" id="startBtn" onclick="showForm()">Start</button>
+      <button class="start-btn" id="startBtn" onclick="showForm()">Start <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></button>
+      <div class="welcome-branding">Powered by <strong id="welcomeBrandName">GoldsteinCare</strong></div>
     </div>
   </div>
 
   <!-- FORM SCREEN (hidden initially) -->
-  <main class="form-section" id="formSection" style="display:none">
+  <main class="form-section" id="formSection" role="main" aria-label="Screening form" hidden>
     <div class="form-card">
+      <button class="back-btn" onclick="showWelcome()" aria-label="Back to welcome screen">
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Back
+      </button>
+      <span class="step-label">Step 1 of 1</span>
       <form id="screeningForm" novalidate>
         <p class="form-heading">Please provide the information below so we can confirm eligibility and schedule a screening call.<span class="req">*</span></p>
 
         <div class="field">
           <label class="field-q" for="fullName">What is your full name?<span class="req">*</span></label>
-          <input type="text" id="fullName" name="fullName" placeholder="Type your answer here..." required>
+          <input type="text" id="fullName" name="fullName" placeholder="Type your answer here..." required autocomplete="name">
         </div>
 
         <div class="field">
           <label class="field-q" for="phone">What is the best phone number to reach you?<span class="req">*</span></label>
           <div class="phone-row">
             <select class="country-select" id="countryCode" name="countryCode" aria-label="Country code">
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+972">🇮🇱 +972</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+33">🇫🇷 +33</option>
-              <option value="+61">🇦🇺 +61</option>
-              <option value="+81">🇯🇵 +81</option>
-              <option value="+86">🇨🇳 +86</option>
-              <option value="+91">🇮🇳 +91</option>
-              <option value="+52">🇲🇽 +52</option>
-              <option value="+55">🇧🇷 +55</option>
+              <option value="+1">&#x1f1fa;&#x1f1f8; +1</option>
+              <option value="+44">&#x1f1ec;&#x1f1e7; +44</option>
+              <option value="+972">&#x1f1ee;&#x1f1f1; +972</option>
+              <option value="+49">&#x1f1e9;&#x1f1ea; +49</option>
+              <option value="+33">&#x1f1eb;&#x1f1f7; +33</option>
+              <option value="+61">&#x1f1e6;&#x1f1fa; +61</option>
+              <option value="+81">&#x1f1ef;&#x1f1f5; +81</option>
+              <option value="+86">&#x1f1e8;&#x1f1f3; +86</option>
+              <option value="+91">&#x1f1ee;&#x1f1f3; +91</option>
+              <option value="+52">&#x1f1f2;&#x1f1fd; +52</option>
+              <option value="+55">&#x1f1e7;&#x1f1f7; +55</option>
             </select>
-            <input type="tel" id="phone" name="phone" placeholder="(201) 555-0123" required>
+            <input type="tel" id="phone" name="phone" placeholder="(201) 555-0123" required autocomplete="tel-national">
           </div>
         </div>
 
         <div class="field">
           <label class="field-q" for="email">What's your email address?<span class="req">*</span></label>
-          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required autocomplete="email">
         </div>
 
         <div class="field">
@@ -452,25 +539,25 @@
           </select>
         </div>
 
-        <div class="field">
-          <label class="field-q">What is your preferred time of day for a screening call?<span class="req">*</span></label>
+        <div class="field" role="group" aria-labelledby="timeLabel">
+          <label class="field-q" id="timeLabel">What is your preferred time of day for a screening call?<span class="req">*</span></label>
           <span class="field-hint">Choose at least one</span>
           <div class="time-grid">
             <div class="time-slot">
-              <input type="checkbox" id="t-am" name="preferredTime" value="Morning (9–12)">
-              <label for="t-am"><span class="slot-key">A</span><span class="slot-text"><span class="slot-name">Morning</span><span class="slot-range">9:00 AM – 12:00 PM</span></span></label>
+              <input type="checkbox" id="t-am" name="preferredTime" value="Morning (9-12)">
+              <label for="t-am"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">light_mode</span></span><span class="slot-text"><span class="slot-name">Morning</span><span class="slot-range">9:00 AM - 12:00 PM</span></span></label>
             </div>
             <div class="time-slot">
-              <input type="checkbox" id="t-ea" name="preferredTime" value="Early Afternoon (12–3)">
-              <label for="t-ea"><span class="slot-key">B</span><span class="slot-text"><span class="slot-name">Early Afternoon</span><span class="slot-range">12:00 PM – 3:00 PM</span></span></label>
+              <input type="checkbox" id="t-ea" name="preferredTime" value="Early Afternoon (12-3)">
+              <label for="t-ea"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">sunny</span></span><span class="slot-text"><span class="slot-name">Early Afternoon</span><span class="slot-range">12:00 PM - 3:00 PM</span></span></label>
             </div>
             <div class="time-slot">
-              <input type="checkbox" id="t-la" name="preferredTime" value="Late Afternoon (3–6)">
-              <label for="t-la"><span class="slot-key">C</span><span class="slot-text"><span class="slot-name">Late Afternoon</span><span class="slot-range">3:00 PM – 6:00 PM</span></span></label>
+              <input type="checkbox" id="t-la" name="preferredTime" value="Late Afternoon (3-6)">
+              <label for="t-la"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">evening</span></span><span class="slot-text"><span class="slot-name">Late Afternoon</span><span class="slot-range">3:00 PM - 6:00 PM</span></span></label>
             </div>
             <div class="time-slot">
-              <input type="checkbox" id="t-ev" name="preferredTime" value="Evening (6–8)">
-              <label for="t-ev"><span class="slot-key">D</span><span class="slot-text"><span class="slot-name">Evening</span><span class="slot-range">6:00 PM – 8:00 PM</span></span></label>
+              <input type="checkbox" id="t-ev" name="preferredTime" value="Evening (6-8)">
+              <label for="t-ev"><span class="slot-key"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></span><span class="slot-text"><span class="slot-name">Evening</span><span class="slot-range">6:00 PM - 8:00 PM</span></span></label>
             </div>
           </div>
         </div>
@@ -480,23 +567,19 @@
           <label class="consent-label">
             <input type="checkbox" id="consent" name="consent" required>
             <span class="check-box">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <path d="M2 6.5L5 9.5L11 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+              <span class="material-symbols-outlined" aria-hidden="true">check</span>
             </span>
             <span class="consent-copy">I agree to be contacted for a screening call regarding eligibility and services.</span>
           </label>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
-        <p class="error-msg" id="errorMsg"></p>
+        <button type="submit" class="submit-btn" id="submitBtn">Submit <span class="material-symbols-outlined" aria-hidden="true">send</span></button>
+        <p class="error-msg" id="errorMsg" role="alert"></p>
       </form>
 
-      <div class="done" id="done">
+      <div class="done" id="done" role="status">
         <div class="done-icon">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-            <path d="M7 15L12.5 20.5L23 9.5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="material-symbols-outlined" aria-hidden="true">check_circle</span>
         </div>
         <h2>Thank you</h2>
         <p id="successMsg">Your information has been submitted successfully. We'll be in touch soon to schedule your screening call.</p>
@@ -504,10 +587,11 @@
     </div>
   </main>
 
-  <footer class="site-footer" id="siteFooter" style="display:none">
+  <footer class="site-footer" id="siteFooter">
+    <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
     <span>&copy; 2026 <span id="footerName">GoldsteinCare</span>. All rights reserved.</span>
     <a href="/admin.html" class="admin-link" aria-label="Admin">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1a3 3 0 0 0-3 3v2H3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-1V4a3 3 0 0 0-3-3zm-1.5 3a1.5 1.5 0 1 1 3 0v2h-3V4z" fill="currentColor"/></svg>
+      <span class="material-symbols-outlined">lock</span>
     </a>
   </footer>
 
@@ -518,15 +602,18 @@
         document.getElementById('heroTitle').textContent = s.company_name;
         document.title = s.company_name + ' — Screening Call';
         document.getElementById('footerName').textContent = s.company_name;
+        document.getElementById('welcomeBrandName').textContent = s.company_name;
       }
       if (s.company_description) document.getElementById('heroDesc').textContent = s.company_description;
       if (s.logo_data) {
         var logoImg = document.createElement('img');
         logoImg.src = s.logo_data;
         logoImg.alt = 'Logo';
-        logoImg.style.cssText = 'width:72px;height:72px;border-radius:20px;object-fit:contain;margin-bottom:28px;';
-        var svg = document.getElementById('heroLogo');
-        svg.parentNode.replaceChild(logoImg, svg);
+        logoImg.style.cssText = 'width:72px;height:72px;border-radius:20px;object-fit:contain;';
+        var logoDiv = document.getElementById('heroLogo');
+        logoDiv.innerHTML = '';
+        logoDiv.style.background = 'none';
+        logoDiv.appendChild(logoImg);
       }
       if (s.accent_color) {
         document.documentElement.style.setProperty('--accent', s.accent_color);
@@ -542,12 +629,29 @@
 
     function showForm() {
       var welcome = document.getElementById('welcomeScreen');
-      welcome.style.transition = 'opacity 0.3s ease';
       welcome.style.opacity = '0';
       setTimeout(function() {
-        welcome.style.display = 'none';
-        document.getElementById('formSection').style.display = '';
-        document.getElementById('siteFooter').style.display = '';
+        welcome.hidden = true;
+        var form = document.getElementById('formSection');
+        form.hidden = false;
+        form.querySelector('input, button').focus();
+      }, 300);
+    }
+
+    function showWelcome() {
+      var form = document.getElementById('formSection');
+      form.style.transition = 'opacity 0.3s ease';
+      form.style.opacity = '0';
+      setTimeout(function() {
+        form.hidden = true;
+        form.style.opacity = '';
+        form.style.transition = '';
+        var welcome = document.getElementById('welcomeScreen');
+        welcome.hidden = false;
+        welcome.style.opacity = '0';
+        requestAnimationFrame(function() {
+          welcome.style.opacity = '1';
+        });
       }, 300);
     }
 
@@ -570,6 +674,8 @@
         times.push(cb.value);
       });
 
+      var phoneDigits = document.getElementById('phone').value.replace(/\D/g, '');
+
       var data = {
         fullName: document.getElementById('fullName').value.trim(),
         phone: document.getElementById('countryCode').value + ' ' + document.getElementById('phone').value.trim(),
@@ -579,10 +685,10 @@
         consent: document.getElementById('consent').checked
       };
 
-      if (!data.fullName || !data.phone.replace(/\D/g,'').slice(-1) || !data.email || !data.language || !times.length || !data.consent) {
+      if (!data.fullName || phoneDigits.length < 7 || !data.email || !data.language || !times.length || !data.consent) {
         var missing = [];
         if (!data.fullName) missing.push('Full Name');
-        if (!document.getElementById('phone').value.trim()) missing.push('Phone Number');
+        if (phoneDigits.length < 7) missing.push('Phone Number (at least 7 digits)');
         if (!data.email) missing.push('Email');
         if (!data.language) missing.push('Language');
         if (!times.length) missing.push('Preferred Time');
@@ -593,7 +699,7 @@
       }
 
       btn.disabled = true;
-      btn.textContent = 'Submitting...';
+      btn.innerHTML = 'Submitting...';
 
       fetch('/api/submit', {
         method: 'POST',
@@ -609,16 +715,20 @@
         errEl.textContent = 'Something went wrong. Please try again.';
         errEl.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Submit';
+        btn.innerHTML = 'Submit <span class="material-symbols-outlined" aria-hidden="true">send</span>';
       });
     });
 
     function showSuccess() {
       var form = document.getElementById('screeningForm');
       var done = document.getElementById('done');
+      var backBtn = document.querySelector('.back-btn');
+      var stepLabel = document.querySelector('.step-label');
       form.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
       form.style.opacity = '0';
       form.style.transform = 'translateY(-8px)';
+      if (backBtn) backBtn.hidden = true;
+      if (stepLabel) stepLabel.hidden = true;
       setTimeout(function() { form.style.display = 'none'; done.style.display = 'block'; }, 260);
     }
   </script>
