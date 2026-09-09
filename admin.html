@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GoldsteinCare — Admin</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <title>GoldsteinCare — Admin</title>
   <style>
     :root {
       --ground: #f7f3ef; --card: #ffffff; --accent: #d94430; --accent-hover: #c13a28;
@@ -40,21 +40,17 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; background: var(--ground); color: var(--text); }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
 
     /* LOGIN */
     .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .login-card { width: 100%; max-width: 380px; background: var(--card); border-radius: 20px; box-shadow: 0 1px 2px rgba(45,34,25,0.04), 0 8px 32px rgba(45,34,25,0.06); padding: 44px 36px; text-align: center; }
-    .login-logo { width: 56px; height: 56px; border-radius: 14px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-    .login-logo .material-symbols-outlined { font-size: 32px; color: #fff; }
+    .login-card .logo { width: 56px; height: 56px; }
     .login-card h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 8px; }
     .login-card .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
-    .login-input-wrap { position: relative; margin-bottom: 12px; }
-    .login-input-wrap .material-symbols-outlined { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-light); pointer-events: none; }
-    .login-card input { width: 100%; padding: 14px 16px 14px 44px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; color: var(--text); background: var(--input-bg); outline: none; transition: border-color 0.2s; }
+    .login-card input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 15px; color: var(--text); background: var(--input-bg); outline: none; transition: border-color 0.2s; margin-bottom: 12px; }
     .login-card input:focus { border-color: var(--accent); }
     .login-card input::placeholder { color: var(--text-light); }
-    .login-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .login-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .login-btn:hover { background: var(--accent-hover); }
     .login-error { color: var(--accent); font-size: 13px; margin-top: 12px; display: none; }
 
@@ -62,31 +58,24 @@
     .dashboard { display: none; padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
     .dash-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
     .dash-title { display: flex; align-items: center; gap: 14px; }
-    .dash-logo { width: 36px; height: 36px; border-radius: 10px; background: var(--accent); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .dash-logo .material-symbols-outlined { font-size: 22px; color: #fff; }
+    .dash-logo { width: 36px; height: 36px; }
     .dash-title h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 400; }
-    .back-link { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text-secondary); text-decoration: none; margin-left: 12px; padding: 4px 10px; border-radius: 8px; transition: all 0.18s; }
-    .back-link:hover { color: var(--accent); background: var(--accent-soft); }
-    .back-link .material-symbols-outlined { font-size: 18px; }
     .dash-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .btn { padding: 10px 18px; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; border: 1.5px solid var(--border); background: var(--card); color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
-    .btn .material-symbols-outlined { font-size: 18px; }
+    .material-symbols-outlined { font-size: 18px; vertical-align: middle; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 10px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.18s; border: 1.5px solid var(--border); background: var(--card); color: var(--text); }
     .btn:hover { border-color: var(--accent); color: var(--accent); }
     .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
     .btn-accent:hover { background: var(--accent-hover); color: #fff; border-color: var(--accent-hover); }
-    .btn-accent .material-symbols-outlined { color: #fff; }
     .btn-logout { border: none; background: var(--accent-soft); color: var(--accent); }
     .btn-logout:hover { background: var(--accent); color: #fff; }
     .btn-danger { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
     .btn-danger:hover { background: var(--danger); color: #fff; }
     .btn-sm { padding: 6px 12px; font-size: 12px; }
-    .btn-sm .material-symbols-outlined { font-size: 16px; }
 
     /* Tabs */
     .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1.5px solid var(--border); overflow-x: auto; }
-    .tab { padding: 12px 20px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.18s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
-    .tab .material-symbols-outlined { font-size: 20px; }
+    .tab { display: inline-flex; align-items: center; padding: 12px 20px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--text-secondary); border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.18s; white-space: nowrap; }
     .tab:hover { color: var(--text); }
     .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
     .tab-panel { display: none; }
@@ -94,20 +83,15 @@
 
     /* Stats */
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 24px; }
-    .stat-card { background: var(--card); border-radius: 14px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(45,34,25,0.04); position: relative; overflow: hidden; }
-    .stat-icon { font-size: 20px; color: var(--text-light); margin-bottom: 6px; display: block; }
+    .stat-card { background: var(--card); border-radius: 14px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(45,34,25,0.04); }
     .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 4px; }
     .stat-value { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; font-variant-numeric: tabular-nums; }
 
     /* Filter bar */
     .toolbar { margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .search-wrap { position: relative; flex: 1; min-width: 200px; max-width: 360px; }
-    .search-wrap input { width: 100%; padding: 12px 38px 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); outline: none; }
-    .search-wrap input:focus { border-color: var(--accent); }
-    .search-wrap input::placeholder { color: var(--text-light); }
-    .search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-light); padding: 2px; border-radius: 50%; display: none; line-height: 1; }
-    .search-clear:hover { color: var(--text); background: var(--border); }
-    .search-clear .material-symbols-outlined { font-size: 20px; }
+    .toolbar input { flex: 1; min-width: 200px; max-width: 360px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); outline: none; }
+    .toolbar input:focus { border-color: var(--accent); }
+    .toolbar input::placeholder { color: var(--text-light); }
     .filter-select { padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 13px; color: var(--text); background: var(--card); cursor: pointer; outline: none; }
 
     /* Table */
@@ -118,8 +102,7 @@
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: var(--row-hover); }
     .name-cell { font-weight: 600; white-space: nowrap; }
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 500; margin: 2px 2px 2px 0; }
-    .badge .material-symbols-outlined { font-size: 14px; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 500; margin: 2px 2px 2px 0; }
     .badge-time { background: var(--badge-bg); color: var(--text-secondary); }
     .badge-yes { background: var(--green-bg); color: var(--green); }
     .badge-new { background: var(--blue-bg); color: var(--blue); }
@@ -136,13 +119,11 @@
     .detail-overlay.open { display: flex; }
     .detail-panel { width: 100%; max-width: 440px; background: var(--card); height: 100%; overflow-y: auto; padding: 32px 28px; box-shadow: -4px 0 24px rgba(45,34,25,0.1); animation: slideIn 0.25s ease; }
     @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-    .detail-close { background: none; border: none; cursor: pointer; color: var(--text-secondary); float: right; padding: 4px; line-height: 1; border-radius: 6px; transition: all 0.15s; }
-    .detail-close:hover { color: var(--text); background: var(--border); }
-    .detail-close .material-symbols-outlined { font-size: 24px; }
+    .detail-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); float: right; padding: 4px; line-height: 1; }
+    .detail-close:hover { color: var(--text); }
     .detail-panel h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 20px; font-weight: 400; margin-bottom: 20px; padding-right: 32px; }
     .detail-field { margin-bottom: 18px; }
-    .detail-field dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-    .detail-field dt .material-symbols-outlined { font-size: 16px; }
+    .detail-field dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 4px; }
     .detail-field dd { font-size: 15px; line-height: 1.5; }
     .detail-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
     .detail-select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 14px; color: var(--text); background: var(--input-bg); outline: none; }
@@ -155,8 +136,7 @@
     .note-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
     .note-meta { font-size: 11px; color: var(--text-light); }
     .note-actions { display: flex; gap: 4px; }
-    .note-action-btn { background: none; border: none; font-size: 12px; cursor: pointer; padding: 2px 6px; border-radius: 4px; color: var(--text-light); transition: all 0.15s; display: inline-flex; align-items: center; gap: 3px; }
-    .note-action-btn .material-symbols-outlined { font-size: 16px; }
+    .note-action-btn { background: none; border: none; font-size: 12px; cursor: pointer; padding: 2px 6px; border-radius: 4px; color: var(--text-light); transition: all 0.15s; }
     .note-action-btn:hover { background: var(--border); color: var(--text); }
     .note-action-btn.del:hover { background: var(--danger-bg); color: var(--danger); }
     .note-text { font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
@@ -202,20 +182,15 @@
     .toggle-label { font-size: 14px; }
 
     /* Toast */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--ground); padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 200; animation: toastIn 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
-    .toast .material-symbols-outlined { font-size: 20px; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--ground); padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 200; animation: toastIn 0.3s ease; }
     @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(16px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
     /* States */
     .state-msg { text-align: center; padding: 56px 24px; color: var(--text-secondary); }
-    .state-msg .material-symbols-outlined { font-size: 48px; color: var(--text-light); display: block; margin: 0 auto 12px; }
     .state-msg h3 { font-family: Georgia, 'Times New Roman', serif; font-size: 18px; font-weight: 400; color: var(--text); margin-bottom: 6px; }
     .state-msg p { font-size: 14px; }
     .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Footer */
-    .site-footer { text-align: center; padding: 32px 24px 24px; font-size: 12px; color: var(--text-light); border-top: 1px solid var(--border); margin-top: 40px; }
 
     @media (max-width: 600px) {
       .dashboard { padding: 20px 12px; }
@@ -223,7 +198,6 @@
       .detail-panel { max-width: 100%; }
       .setting-row { flex-direction: column; }
       .setting-row label { flex: none; padding-top: 0; }
-      .back-link { margin-left: 0; }
     }
   </style>
 </head>
@@ -232,19 +206,15 @@
   <!-- LOGIN -->
   <div class="login-wrap" id="loginWrap">
     <div class="login-card">
-      <div class="login-logo"><span class="material-symbols-outlined">health_and_safety</span></div>
+      <div class="logo" style="width:56px;height:56px;border-radius:16px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;" aria-hidden="true">
+        <span class="material-symbols-outlined" style="font-size:32px;color:#fff;">health_and_safety</span>
+      </div>
       <h1>GoldsteinCare Admin</h1>
       <p class="subtitle">Sign in with your admin credentials</p>
       <form id="loginForm">
-        <div class="login-input-wrap">
-          <span class="material-symbols-outlined">email</span>
-          <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email" required>
-        </div>
-        <div class="login-input-wrap">
-          <span class="material-symbols-outlined">lock</span>
-          <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required>
-        </div>
-        <button type="submit" class="login-btn"><span class="material-symbols-outlined">login</span> Sign In</button>
+        <input type="text" id="loginEmail" placeholder="Email or username" autocomplete="email" required>
+        <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required>
+        <button type="submit" class="login-btn">Sign In</button>
         <p class="login-error" id="loginError"></p>
       </form>
     </div>
@@ -254,11 +224,13 @@
   <div class="dashboard" id="dashboard">
     <div class="dash-header">
       <div class="dash-title">
-        <div class="dash-logo"><span class="material-symbols-outlined">health_and_safety</span></div>
+        <div class="dash-logo" style="width:36px;height:36px;border-radius:10px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;" aria-hidden="true">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#fff;">health_and_safety</span>
+        </div>
         <h1>GoldsteinCare</h1>
-        <a href="/index.html" class="back-link"><span class="material-symbols-outlined">arrow_back</span> Back to Form</a>
       </div>
       <div class="dash-actions">
+        <a href="/index.html" class="btn" style="text-decoration:none;color:var(--text-secondary);border-color:transparent;"><span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> Back to Form</a>
         <button class="btn" onclick="loadData()"><span class="material-symbols-outlined">refresh</span> Refresh</button>
         <button class="btn" onclick="exportCSV()"><span class="material-symbols-outlined">download</span> Export CSV</button>
         <button class="btn btn-logout" onclick="logout()"><span class="material-symbols-outlined">logout</span> Log out</button>
@@ -266,34 +238,56 @@
     </div>
 
     <div class="tabs" id="tabBar">
-      <button class="tab active" data-tab="submissions"><span class="material-symbols-outlined">inbox</span> Submissions</button>
-      <button class="tab" data-tab="team" id="teamTab" style="display:none"><span class="material-symbols-outlined">group</span> Team</button>
-      <button class="tab" data-tab="settings" id="settingsTab" style="display:none"><span class="material-symbols-outlined">settings</span> Settings</button>
+      <button class="tab active" data-tab="submissions"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">inbox</span>Submissions</button>
+      <button class="tab" data-tab="sellers" id="sellersTab" style="display:none"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">storefront</span>Sellers</button>
+      <button class="tab" data-tab="team" id="teamTab" style="display:none"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">group</span>Team</button>
+      <button class="tab" data-tab="settings" id="settingsTab" style="display:none"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">settings</span>Settings</button>
     </div>
 
     <!-- SUBMISSIONS TAB -->
     <div class="tab-panel active" id="panel-submissions">
       <div class="stats-row">
-        <div class="stat-card"><span class="material-symbols-outlined stat-icon">summarize</span><div class="stat-label">Total</div><div class="stat-value" id="statTotal">&mdash;</div></div>
-        <div class="stat-card"><span class="material-symbols-outlined stat-icon">today</span><div class="stat-label">Today</div><div class="stat-value" id="statToday">&mdash;</div></div>
-        <div class="stat-card"><span class="material-symbols-outlined stat-icon">date_range</span><div class="stat-label">This week</div><div class="stat-value" id="statWeek">&mdash;</div></div>
-        <div class="stat-card"><span class="material-symbols-outlined stat-icon">fiber_new</span><div class="stat-label">New</div><div class="stat-value" id="statNew">&mdash;</div></div>
-        <div class="stat-card"><span class="material-symbols-outlined stat-icon">phone_callback</span><div class="stat-label">Contacted</div><div class="stat-value" id="statContacted">&mdash;</div></div>
-        <div class="stat-card"><span class="material-symbols-outlined stat-icon">check_circle</span><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">&mdash;</div></div>
+        <div class="stat-card"><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-light);display:block;margin-bottom:2px;">summarize</span><div class="stat-label">Total</div><div class="stat-value" id="statTotal">—</div></div>
+        <div class="stat-card"><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-light);display:block;margin-bottom:2px;">today</span><div class="stat-label">Today</div><div class="stat-value" id="statToday">—</div></div>
+        <div class="stat-card"><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-light);display:block;margin-bottom:2px;">date_range</span><div class="stat-label">This week</div><div class="stat-value" id="statWeek">—</div></div>
+        <div class="stat-card"><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-light);display:block;margin-bottom:2px;">fiber_new</span><div class="stat-label">New</div><div class="stat-value" id="statNew">—</div></div>
+        <div class="stat-card"><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-light);display:block;margin-bottom:2px;">phone_in_talk</span><div class="stat-label">Contacted</div><div class="stat-value" id="statContacted">—</div></div>
+        <div class="stat-card"><span class="material-symbols-outlined" style="font-size:16px;color:var(--text-light);display:block;margin-bottom:2px;">check_circle</span><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">—</div></div>
       </div>
       <div class="toolbar">
-        <div class="search-wrap">
-          <input type="text" id="searchInput" placeholder="Search name, email, phone..." oninput="filterTable(); toggleSearchClear();">
-          <button class="search-clear" id="searchClear" onclick="clearSearch()"><span class="material-symbols-outlined">close</span></button>
-        </div>
+        <input type="text" id="searchInput" placeholder="Search name, email, phone..." oninput="filterTable()">
         <select class="filter-select" id="statusFilter" onchange="filterTable()">
           <option value="">All statuses</option>
           <option value="new">New</option>
           <option value="contacted">Contacted</option>
           <option value="completed">Completed</option>
         </select>
+        <select class="filter-select" id="sellerFilter" onchange="filterTable()">
+          <option value="">All sellers</option>
+        </select>
       </div>
       <div class="table-wrap" id="tableContent"><div class="state-msg"><div class="spinner"></div><p>Loading...</p></div></div>
+      <div id="pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <!-- SELLERS TAB -->
+    <div class="tab-panel" id="panel-sellers">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;">Manage Sellers</h2>
+      </div>
+      <div class="stats-row" id="sellerStats"></div>
+      <div class="admin-list" id="sellerList"></div>
+      <div id="addSellerSection">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;margin-top:24px;color:var(--text-secondary);">Add New Seller</h3>
+        <form class="add-admin-form" id="addSellerForm" style="flex-wrap:wrap;gap:10px;">
+          <input type="text" id="newSellerName" placeholder="Seller name" required style="min-width:180px;">
+          <input type="text" id="newSellerEmail" placeholder="Email / Username" required style="min-width:160px;">
+          <input type="password" id="newSellerPass" placeholder="Password" required minlength="4" style="min-width:120px;">
+          <input type="tel" id="newSellerPhone" placeholder="Phone (optional)" style="min-width:120px;">
+          <button type="submit" class="btn btn-accent"><span class="material-symbols-outlined" style="font-size:16px;">person_add</span> Add Seller</button>
+        </form>
+        <p id="sellerMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
+      </div>
     </div>
 
     <!-- TEAM TAB -->
@@ -301,10 +295,11 @@
       <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;margin-bottom:20px;">Manage Team</h2>
       <div class="admin-list" id="adminList"></div>
       <h3 style="font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text-secondary);">Add New Admin</h3>
-      <form class="add-admin-form" id="addAdminForm">
+      <form class="add-admin-form" id="addAdminForm" style="flex-wrap:wrap;gap:10px;align-items:center;">
         <input type="email" id="newAdminEmail" placeholder="Email address" required>
         <input type="password" id="newAdminPass" placeholder="Password" required>
-        <button type="submit" class="btn btn-accent"><span class="material-symbols-outlined">person_add</span> Add Admin</button>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;white-space:nowrap;"><input type="checkbox" id="newAdminSellerPerm"> Can manage sellers</label>
+        <button type="submit" class="btn btn-accent"><span class="material-symbols-outlined" style="font-size:16px;">person_add</span> Add Admin</button>
       </form>
       <p id="adminMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
     </div>
@@ -318,10 +313,10 @@
           <div class="logo-upload-area">
             <img class="logo-preview" id="logoPreview" src="" alt="Logo" style="display:none">
             <div class="btn logo-upload-btn">
-              <span class="material-symbols-outlined">upload</span> Upload Logo
+              <span class="material-symbols-outlined" style="font-size:16px;">upload</span> Upload Logo
               <input type="file" id="logoFile" accept="image/*" onchange="handleLogoUpload(this)">
             </div>
-            <button class="btn btn-sm btn-danger" id="removeLogo" style="display:none" onclick="removeLogo()"><span class="material-symbols-outlined">close</span> Remove</button>
+            <button class="btn btn-sm btn-danger" id="removeLogo" style="display:none" onclick="removeLogo()"><span class="material-symbols-outlined" style="font-size:15px;">delete</span> Remove</button>
           </div>
         </div>
         <div class="setting-row">
@@ -363,47 +358,63 @@
           <input class="setting-input" type="email" id="setNotifEmail" placeholder="email@example.com">
         </div>
         <p class="setting-hint" style="margin-left:156px;margin-top:-8px;margin-bottom:8px;">Each new registration will be sent to this email address. Requires RESEND_API_KEY env variable in Cloudflare.</p>
+        <div class="setting-row">
+          <label></label>
+          <div>
+            <button class="btn btn-sm" onclick="testEmail()"><span class="material-symbols-outlined" style="font-size:15px;">send</span> Send Test Email</button>
+            <span id="testEmailResult" style="font-size:13px;margin-left:10px;"></span>
+          </div>
+        </div>
       </div>
 
-      <button class="btn btn-accent" onclick="saveSettings()" style="padding:14px 32px;font-size:15px;"><span class="material-symbols-outlined">save</span> Save All Settings</button>
+      <div class="settings-section">
+        <h3>Google Sheets</h3>
+        <div class="setting-row">
+          <label>Sheet URL</label>
+          <input class="setting-input" type="url" id="setSheetUrl" placeholder="https://script.google.com/macros/s/...">
+        </div>
+        <p class="setting-hint" style="margin-left:156px;margin-top:-8px;margin-bottom:8px;">Each new registration will be automatically added to your Google Sheet.</p>
+      </div>
+
+      <button class="btn btn-accent" onclick="saveSettings()" style="padding:14px 32px;font-size:15px;"><span class="material-symbols-outlined" style="font-size:18px;">save</span> Save All Settings</button>
       <p id="settingsMsg" style="font-size:13px;margin-top:10px;display:none;"></p>
     </div>
-
-    <footer class="site-footer">&copy; 2026 GoldsteinCare. All rights reserved.</footer>
   </div>
 
   <!-- DETAIL PANEL -->
   <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
-    <div class="detail-panel" id="detailPanel" onclick="event.stopPropagation()">
+    <div class="detail-panel" id="detailPanel">
       <button class="detail-close" onclick="closeDetail()"><span class="material-symbols-outlined">close</span></button>
       <h2 id="detailName"></h2>
       <dl id="detailBody"></dl>
       <hr class="detail-divider">
-      <div class="detail-field">
-        <dt>Status</dt>
-        <dd><select class="detail-select" id="detailStatus" onchange="updateSubmissionStatus()">
-          <option value="new">New</option>
-          <option value="contacted">Contacted</option>
-          <option value="completed">Completed</option>
-        </select></dd>
-      </div>
-      <div class="detail-field">
-        <dt>Notes</dt>
-        <div class="notes-log" id="notesLog"></div>
-        <textarea class="detail-textarea" id="newNoteText" placeholder="Write a new note..." style="min-height:80px;margin-top:8px;"></textarea>
-        <div class="detail-actions" style="margin-top:8px;">
-          <button class="btn btn-accent btn-sm" onclick="addNote()"><span class="material-symbols-outlined">add_comment</span> Add Note</button>
-          <button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="deleteSubmission()"><span class="material-symbols-outlined">delete</span> Delete Submission</button>
+      <div id="detailAdminControls">
+        <div class="detail-field">
+          <dt>Status</dt>
+          <dd><select class="detail-select" id="detailStatus" onchange="updateSubmissionStatus()">
+            <option value="new">New</option>
+            <option value="contacted">Contacted</option>
+            <option value="completed">Completed</option>
+          </select></dd>
+        </div>
+        <div class="detail-field">
+          <dt>Notes</dt>
+          <div class="notes-log" id="notesLog"></div>
+          <textarea class="detail-textarea" id="newNoteText" placeholder="Write a new note..." style="min-height:80px;margin-top:8px;"></textarea>
+          <div class="detail-actions" style="margin-top:8px;">
+            <button class="btn btn-accent btn-sm" onclick="addNote()"><span class="material-symbols-outlined" style="font-size:16px;">add_comment</span> Add Note</button>
+            <button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="deleteSubmission()"><span class="material-symbols-outlined" style="font-size:16px;">delete</span> Delete Submission</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- TOAST -->
-  <div id="toast" style="display:none" class="toast"></div>
+  <div id="toast" style="display:none"></div>
 
   <script>
-    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentDetailId = null;
+    var allData = [], authToken = '', currentRole = '', currentEmail = '', currentSellerCode = '', currentCanManageSellers = false, currentDetailId = null, sellerNameMap = {};
 
     // TABS
     document.querySelectorAll('.tab').forEach(function(tab) {
@@ -412,32 +423,11 @@
         document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
         tab.classList.add('active');
         document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        if (tab.dataset.tab === 'sellers') loadSellers();
         if (tab.dataset.tab === 'team') loadAdmins();
         if (tab.dataset.tab === 'settings') loadSettings();
       });
     });
-
-    // ESCAPE KEY
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        var overlay = document.getElementById('detailOverlay');
-        if (overlay.classList.contains('open')) {
-          overlay.classList.remove('open');
-          currentDetailId = null;
-        }
-      }
-    });
-
-    // SEARCH CLEAR
-    function toggleSearchClear() {
-      var btn = document.getElementById('searchClear');
-      btn.style.display = document.getElementById('searchInput').value ? 'block' : 'none';
-    }
-    function clearSearch() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('searchClear').style.display = 'none';
-      filterTable();
-    }
 
     // LOGIN
     document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -460,7 +450,9 @@
         authToken = result.data.token;
         currentRole = result.data.role;
         currentEmail = email;
-        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail }));
+        currentSellerCode = result.data.sellerCode || '';
+        currentCanManageSellers = result.data.canManageSellers || false;
+        sessionStorage.setItem('auth', JSON.stringify({ token: authToken, role: currentRole, email: currentEmail, sellerCode: currentSellerCode, canManageSellers: currentCanManageSellers }));
         showDashboard();
       })
       .catch(function() {
@@ -473,97 +465,126 @@
     // AUTO-LOGIN
     (function() {
       var saved = sessionStorage.getItem('auth');
-      if (saved) { var d = JSON.parse(saved); authToken = d.token; currentRole = d.role; currentEmail = d.email; showDashboard(); }
+      if (saved) { var d = JSON.parse(saved); authToken = d.token; currentRole = d.role; currentEmail = d.email; currentSellerCode = d.sellerCode || ''; currentCanManageSellers = d.canManageSellers || false; showDashboard(); }
     })();
 
     function showDashboard() {
       document.getElementById('loginWrap').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       if (currentRole === 'owner') {
+        document.getElementById('sellersTab').style.display = '';
         document.getElementById('teamTab').style.display = '';
         document.getElementById('settingsTab').style.display = '';
+        document.getElementById('sellerFilter').style.display = '';
+        fetch('/api/migrate', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
+        loadSellerFilter();
+      } else if (currentRole === 'admin') {
+        document.getElementById('sellersTab').style.display = '';
+        document.getElementById('sellerFilter').style.display = '';
+        loadSellerFilter();
+      } else if (currentRole === 'seller') {
+        document.getElementById('sellerFilter').style.display = 'none';
+        document.querySelector('.dash-title h1').textContent = 'My Referrals';
       }
       loadData();
     }
 
     function logout() {
+      if (authToken) {
+        fetch('/api/logout', { method:'POST', headers:{'Authorization':'Bearer '+authToken} }).catch(function(){});
+      }
       sessionStorage.removeItem('auth');
-      authToken = ''; currentRole = ''; currentEmail = '';
+      authToken = ''; currentRole = ''; currentEmail = ''; currentSellerCode = ''; currentCanManageSellers = false;
+      document.querySelector('.dash-title h1').textContent = 'GoldsteinCare';
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('loginWrap').style.display = 'flex';
       document.getElementById('loginEmail').value = '';
       document.getElementById('loginPass').value = '';
       document.getElementById('loginError').style.display = 'none';
+      document.getElementById('sellersTab').style.display = 'none';
       document.getElementById('teamTab').style.display = 'none';
       document.getElementById('settingsTab').style.display = 'none';
     }
 
     // TOAST
-    function showToast(msg, isError) {
+    function showToast(msg) {
       var t = document.getElementById('toast');
-      var icon = isError ? 'error' : 'check_circle';
-      t.innerHTML = '<span class="material-symbols-outlined">' + icon + '</span> ' + esc(msg);
-      t.style.display = 'inline-flex';
+      t.textContent = msg; t.style.display = 'block';
       setTimeout(function() { t.style.display = 'none'; }, 2500);
     }
 
     // SUBMISSIONS
-    function loadData() {
+    var currentPage = 1;
+    var totalPages = 1;
+    var totalCount = 0;
+    var searchTimer = null;
+
+    function loadData(page) {
+      if (page !== undefined) currentPage = page;
       document.getElementById('tableContent').innerHTML = '<div class="state-msg"><div class="spinner"></div><p>Loading...</p></div>';
-      fetch('/api/submissions', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      var q = (document.getElementById('searchInput').value || '').trim();
+      var sf = (document.getElementById('statusFilter').value || '');
+      var selF = (document.getElementById('sellerFilter').value || '');
+      var url = '/api/submissions?page=' + currentPage + '&limit=50';
+      if (q) url += '&search=' + encodeURIComponent(q);
+      if (sf) url += '&status=' + encodeURIComponent(sf);
+      if (selF) url += '&seller=' + encodeURIComponent(selF);
+      fetch(url, { headers: { 'Authorization': 'Bearer ' + authToken } })
       .then(function(r) { if (r.status === 401) { logout(); throw new Error('Unauth'); } return r.json(); })
-      .then(function(data) { allData = data; updateStats(); filterTable(); })
-      .catch(function(e) { if (e.message !== 'Unauth') document.getElementById('tableContent').innerHTML = '<div class="state-msg"><span class="material-symbols-outlined">cloud_off</span><h3>Could not load data</h3><p>Check your connection.</p></div>'; });
+      .then(function(resp) {
+        allData = resp.submissions || [];
+        totalCount = resp.total || 0;
+        totalPages = resp.pages || 1;
+        currentPage = resp.page || 1;
+        updateStats();
+        renderTable(allData);
+        renderPagination();
+      })
+      .catch(function(e) { if (e.message !== 'Unauth') document.getElementById('tableContent').innerHTML = '<div class="state-msg"><h3>Could not load data</h3><p>Check your connection.</p></div>'; });
     }
 
     function updateStats() {
+      document.getElementById('statTotal').textContent = totalCount;
+      var els = {statToday:0, statWeek:0, statNew:0, statContacted:0, statCompleted:0};
       var now = new Date(), todayStr = now.toISOString().slice(0,10);
       var weekAgo = new Date(now.getTime()-7*864e5);
-      var today=0, week=0, newC=0, contacted=0, completed=0;
       allData.forEach(function(r) {
         var d = new Date(r.timestamp||'');
-        if ((r.timestamp||'').slice(0,10)===todayStr) today++;
-        if (d>=weekAgo) week++;
-        if (r.status==='new') newC++;
-        else if (r.status==='contacted') contacted++;
-        else if (r.status==='completed') completed++;
+        if ((r.timestamp||'').slice(0,10)===todayStr) els.statToday++;
+        if (d>=weekAgo) els.statWeek++;
+        if (r.status==='new') els.statNew++;
+        else if (r.status==='contacted') els.statContacted++;
+        else if (r.status==='completed') els.statCompleted++;
       });
-      document.getElementById('statTotal').textContent = allData.length;
-      document.getElementById('statToday').textContent = today;
-      document.getElementById('statWeek').textContent = week;
-      document.getElementById('statNew').textContent = newC;
-      document.getElementById('statContacted').textContent = contacted;
-      document.getElementById('statCompleted').textContent = completed;
+      Object.keys(els).forEach(function(k) { var e=document.getElementById(k); if(e) e.textContent=els[k]; });
     }
 
     function filterTable() {
-      var q = document.getElementById('searchInput').value.toLowerCase();
-      var sf = document.getElementById('statusFilter').value;
-      var filtered = allData.filter(function(r) {
-        var matchSearch = !q || (r.fullName||'').toLowerCase().indexOf(q)!==-1 || (r.email||'').toLowerCase().indexOf(q)!==-1 || (r.phone||'').toLowerCase().indexOf(q)!==-1 || (r.language||'').toLowerCase().indexOf(q)!==-1;
-        var matchStatus = !sf || r.status === sf;
-        return matchSearch && matchStatus;
-      });
-      renderTable(filtered);
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function() { loadData(1); }, 300);
+    }
+
+    function renderPagination() {
+      var el = document.getElementById('pagination');
+      if (!el) return;
+      if (totalPages <= 1) { el.innerHTML = '<span style="color:var(--text-secondary);font-size:13px;">' + totalCount + ' total</span>'; return; }
+      var h = '<span style="color:var(--text-secondary);font-size:13px;">' + totalCount + ' total &mdash; Page ' + currentPage + ' of ' + totalPages + '</span><span style="display:flex;gap:6px;">';
+      h += '<button class="btn btn-sm" onclick="loadData(1)" ' + (currentPage<=1?'disabled':'') + '>&laquo;</button>';
+      h += '<button class="btn btn-sm" onclick="loadData('+(currentPage-1)+')" ' + (currentPage<=1?'disabled':'') + '>&lsaquo; Prev</button>';
+      h += '<button class="btn btn-sm" onclick="loadData('+(currentPage+1)+')" ' + (currentPage>=totalPages?'disabled':'') + '>Next &rsaquo;</button>';
+      h += '<button class="btn btn-sm" onclick="loadData('+totalPages+')" ' + (currentPage>=totalPages?'disabled':'') + '>&raquo;</button>';
+      h += '</span>';
+      el.innerHTML = h;
     }
 
     function renderTable(data) {
-      if (!data.length) {
-        var emptyIcon = '<span class="material-symbols-outlined">inbox</span>';
-        var emptyMsg = !allData.length ? 'They\'ll appear here once people fill out the form.' : 'Try adjusting your search or filter.';
-        var emptyTitle = !allData.length ? 'No submissions yet' : 'No submissions found';
-        document.getElementById('tableContent').innerHTML='<div class="state-msg">' + emptyIcon + '<h3>' + emptyTitle + '</h3><p>' + emptyMsg + '</p></div>';
-        return;
-      }
-      var statusIcons = { 'new': 'fiber_new', 'contacted': 'phone_in_talk', 'completed': 'check_circle' };
-      var h='<table><thead><tr><th>Date</th><th>Name</th><th>Phone</th><th>Email</th><th>Language</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
+      if (!data.length) { document.getElementById('tableContent').innerHTML='<div class="state-msg"><h3>No submissions found</h3><p>'+(!allData.length?'They\'ll appear here once people fill out the form.':'Try adjusting your search or filter.')+'</p></div>'; return; }
+      var h='<table><thead><tr><th>Date</th><th>Name</th><th>DOB</th><th>Phone</th><th>Email</th><th>Address</th><th>Language</th><th>Seller</th><th>Status</th><th>Notes</th><th>Time</th></tr></thead><tbody>';
       data.forEach(function(row) {
         var d=row.timestamp?new Date(row.timestamp):null;
         var ds=d?d.toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
         var ts=d?d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}):'';
-        var st = row.status||'new';
-        var stIcon = statusIcons[st] || 'fiber_new';
-        var statusBadge='<span class="badge badge-'+esc(st)+'"><span class="material-symbols-outlined">'+stIcon+'</span>'+esc(st.charAt(0).toUpperCase()+st.slice(1))+'</span>';
+        var statusBadge='<span class="badge badge-'+esc(row.status||'new')+'">'+esc((row.status||'new').charAt(0).toUpperCase()+(row.status||'new').slice(1))+'</span>';
         var times=(row.preferredTime||[]);
         var tb=times.length?times.map(function(t){return'<span class="badge badge-time">'+esc(t)+'</span>';}).join(' '):'—';
         var noteCount=0;
@@ -572,9 +593,13 @@
         h+='<tr style="cursor:pointer" onclick="openDetail(\''+esc(row.id)+'\')">';
         h+='<td><span class="timestamp">'+ds+'<br>'+ts+'</span></td>';
         h+='<td class="name-cell">'+esc(row.fullName||'—')+'</td>';
+        h+='<td>'+esc(row.dob||'—')+'</td>';
         h+='<td><a class="cell-link" href="tel:'+esc(row.phone||'')+'">'+esc(row.phone||'—')+'</a></td>';
         h+='<td><a class="cell-link" href="mailto:'+esc(row.email||'')+'">'+esc(row.email||'—')+'</a></td>';
+        h+='<td>'+esc(row.address||'—')+'</td>';
         h+='<td>'+esc(row.language||'—')+'</td>';
+        var sellerDisplay = row.sellerCode ? (sellerNameMap[row.sellerCode] || row.sellerCode) : '—';
+        h+='<td>'+(row.sellerCode ? '<span class="badge badge-time">'+esc(sellerDisplay)+'</span>' : '—')+'</td>';
         h+='<td>'+statusBadge+'</td>';
         h+='<td>'+notesBadge+'</td>';
         h+='<td>'+tb+'</td></tr>';
@@ -584,39 +609,31 @@
     }
 
     // DETAIL PANEL
-    var detailFieldIcons = {
-      'Submitted': 'calendar_today',
-      'Phone': 'phone',
-      'Email': 'email',
-      'Language': 'translate',
-      'Preferred Time': 'schedule',
-      'Consent': 'verified_user'
-    };
-
     function openDetail(id) {
       var row = allData.find(function(r) { return r.id === id; });
       if (!row) return;
       currentDetailId = id;
       document.getElementById('detailName').textContent = row.fullName || 'Unknown';
       var d = row.timestamp ? new Date(row.timestamp) : null;
+      var sellerDisplay = row.sellerCode ? (sellerNameMap[row.sellerCode] || row.sellerCode) : '';
       var fields = [
         ['Submitted', d ? d.toLocaleString('en-US', {dateStyle:'long', timeStyle:'short'}) : '—'],
+        ['Date of Birth', row.dob || '—'],
         ['Phone', row.phone || '—'],
         ['Email', row.email || '—'],
+        ['Address', row.address || '—'],
         ['Language', row.language || '—'],
         ['Preferred Time', (row.preferredTime || []).join(', ') || '—'],
         ['Consent', row.consent ? 'Yes' : 'No']
       ];
+      if (sellerDisplay) fields.push(['Referred By', sellerDisplay]);
       var h = '';
-      fields.forEach(function(f) {
-        var icon = detailFieldIcons[f[0]] || '';
-        var iconHtml = icon ? '<span class="material-symbols-outlined">' + icon + '</span> ' : '';
-        h += '<div class="detail-field"><dt>' + iconHtml + f[0] + '</dt><dd>' + esc(f[1]) + '</dd></div>';
-      });
+      fields.forEach(function(f) { h += '<div class="detail-field"><dt>' + f[0] + '</dt><dd>' + esc(f[1]) + '</dd></div>'; });
       document.getElementById('detailBody').innerHTML = h;
       document.getElementById('detailStatus').value = row.status || 'new';
       document.getElementById('newNoteText').value = '';
       renderNotes(row.notes || '[]');
+      document.getElementById('detailAdminControls').style.display = (currentRole === 'seller') ? 'none' : '';
       document.getElementById('detailOverlay').classList.add('open');
     }
 
@@ -626,6 +643,12 @@
       currentDetailId = null;
     }
 
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('detailOverlay').classList.contains('open')) {
+        closeDetail();
+      }
+    });
+
     function updateSubmissionStatus() {
       if (!currentDetailId) return;
       var status = document.getElementById('detailStatus').value;
@@ -634,12 +657,12 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId, status: status })
       }).then(function(r) { return r.json(); }).then(function(d) {
-        if (d.error) { showToast('Error: ' + d.error, true); return; }
+        if (d.error) { showToast('Error: ' + d.error); return; }
         var row = allData.find(function(r) { return r.id === currentDetailId; });
         if (row) row.status = status;
         updateStats(); filterTable();
         showToast('Status updated');
-      }).catch(function() { showToast('Connection error', true); });
+      }).catch(function() { showToast('Connection error'); });
     }
 
     function renderNotes(notesStr) {
@@ -654,7 +677,7 @@
         var timeStr = n.time ? new Date(n.time).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
         h += '<div class="note-item" id="note-' + i + '">';
         h += '<div class="note-header"><span class="note-meta">' + (timeStr ? esc(timeStr) : '') + (n.author ? ' — ' + esc(n.author) : '') + '</span>';
-        h += '<span class="note-actions"><button class="note-action-btn" onclick="editNote(' + i + ')" title="Edit"><span class="material-symbols-outlined">edit</span></button><button class="note-action-btn del" onclick="deleteNote(' + i + ')" title="Delete"><span class="material-symbols-outlined">delete</span></button></span></div>';
+        h += '<span class="note-actions"><button class="note-action-btn" onclick="editNote(' + i + ')" title="Edit"><span class="material-symbols-outlined" style="font-size:14px;">edit</span></button><button class="note-action-btn del" onclick="deleteNote(' + i + ')" title="Delete"><span class="material-symbols-outlined" style="font-size:14px;">delete</span></button></span></div>';
         h += '<div class="note-text" id="note-text-' + i + '">' + esc(n.text) + '</div></div>';
       });
       el.innerHTML = h;
@@ -677,26 +700,26 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId, notes: notesStr })
       }).then(function(r) { return r.json(); }).then(function(d) {
-        if (d.error) { showToast('Error: ' + d.error, true); return false; }
+        if (d.error) { showToast('Error: ' + d.error); return false; }
         var row = allData.find(function(r) { return r.id === currentDetailId; });
         if (row) row.notes = notesStr;
         renderNotes(notesStr);
         filterTable();
         return true;
-      }).catch(function() { showToast('Connection error', true); return false; });
+      }).catch(function() { showToast('Connection error'); return false; });
     }
 
     function editNote(i) {
       var notes = getNotesList();
       if (!notes[i]) return;
       var el = document.getElementById('note-text-' + i);
-      el.innerHTML = '<textarea class="note-edit-area" id="note-edit-' + i + '">' + esc(notes[i].text) + '</textarea><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn btn-accent btn-sm" onclick="saveEditNote(' + i + ')"><span class="material-symbols-outlined">save</span> Save</button><button class="btn btn-sm" onclick="renderNotes(allData.find(function(r){return r.id===currentDetailId}).notes||\'[]\')">Cancel</button></div>';
+      el.innerHTML = '<textarea class="note-edit-area" id="note-edit-' + i + '">' + esc(notes[i].text) + '</textarea><div style="margin-top:6px;display:flex;gap:6px;"><button class="btn btn-accent btn-sm" onclick="saveEditNote(' + i + ')">Save</button><button class="btn btn-sm" onclick="renderNotes(allData.find(function(r){return r.id===currentDetailId}).notes||\'[]\')">Cancel</button></div>';
       document.getElementById('note-edit-' + i).focus();
     }
 
     function saveEditNote(i) {
       var text = document.getElementById('note-edit-' + i).value.trim();
-      if (!text) { showToast('Note cannot be empty', true); return; }
+      if (!text) { showToast('Note cannot be empty'); return; }
       var notes = getNotesList();
       notes[i].text = text;
       saveNotesToServer(notes).then(function(ok) { if (ok) showToast('Note updated'); });
@@ -712,7 +735,7 @@
     function addNote() {
       if (!currentDetailId) return;
       var text = document.getElementById('newNoteText').value.trim();
-      if (!text) { showToast('Write something first', true); return; }
+      if (!text) { showToast('Write something first'); return; }
       var row = allData.find(function(r) { return r.id === currentDetailId; });
       if (!row) return;
       var notes = [];
@@ -726,12 +749,12 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId, notes: notesStr })
       }).then(function(r) { return r.json(); }).then(function(d) {
-        if (d.error) { showToast('Error: ' + d.error, true); return; }
+        if (d.error) { showToast('Error: ' + d.error); return; }
         row.notes = notesStr;
         renderNotes(notesStr);
         document.getElementById('newNoteText').value = '';
         showToast('Note added');
-      }).catch(function() { showToast('Connection error', true); });
+      }).catch(function() { showToast('Connection error'); });
     }
 
     function deleteSubmission() {
@@ -741,7 +764,7 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ id: currentDetailId })
       }).then(function(r) { return r.json(); }).then(function(d) {
-        if (d.error) { showToast('Error: ' + d.error, true); return; }
+        if (d.error) { showToast('Error: ' + d.error); return; }
         allData = allData.filter(function(r) { return r.id !== currentDetailId; });
         closeDetail(); updateStats(); filterTable();
         showToast('Submission deleted');
@@ -749,16 +772,24 @@
     }
 
     function exportCSV() {
-      if (!allData.length) return;
-      var hd = ['Timestamp','Full Name','Phone','Email','Language','Preferred Time','Consent','Status','Notes'];
-      var csv = hd.join(',') + '\n';
-      allData.forEach(function(r) {
-        csv += [r.timestamp,r.fullName,r.phone,r.email,r.language,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
-      });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-      a.download = 'submissions-'+new Date().toISOString().slice(0,10)+'.csv';
-      a.click();
+      showToast('Exporting all data...');
+      fetch('/api/submissions?page=1&limit=100000', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        var rows = resp.submissions || [];
+        if (!rows.length) { showToast('No data to export'); return; }
+        var hd = ['Timestamp','Full Name','Date of Birth','Phone','Email','Address','Language','Seller','Preferred Time','Consent','Status','Notes'];
+        var csv = hd.join(',') + '\n';
+        rows.forEach(function(r) {
+          var sellerDisplay = r.sellerCode ? (sellerNameMap[r.sellerCode] || r.sellerCode) : '';
+          csv += [r.timestamp,r.fullName,r.dob||'',r.phone,r.email,r.address||'',r.language,sellerDisplay,(r.preferredTime||[]).join('; '),r.consent?'Yes':'No',r.status||'new',r.notes||''].map(function(v) { return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',') + '\n';
+        });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+        a.download = 'submissions-'+new Date().toISOString().slice(0,10)+'.csv';
+        a.click();
+        showToast('Exported ' + rows.length + ' rows');
+      }).catch(function() { showToast('Export failed'); });
     }
 
     // TEAM MANAGEMENT
@@ -771,11 +802,29 @@
           var isOwner = a.role === 'owner';
           h += '<div class="admin-item' + (isOwner ? ' owner' : '') + '">';
           h += '<div class="admin-info"><span class="admin-email">' + esc(a.email) + '</span>';
-          h += '<span>' + (isOwner ? '<span class="badge badge-owner">Owner</span>' : '<span class="badge badge-admin">Admin</span>') + '</span></div>';
-          if (!isOwner) h += '<button class="btn btn-danger btn-sm" onclick="removeAdmin(\'' + esc(a.email) + '\')"><span class="material-symbols-outlined">person_remove</span> Remove</button>';
+          h += '<span>' + (isOwner ? '<span class="badge badge-owner">Owner</span>' : '<span class="badge badge-admin">Admin</span>');
+          if (!isOwner && a.canManageSellers) h += ' <span class="badge badge-yes" style="font-size:10px;">Sellers</span>';
+          h += '</span></div>';
+          if (!isOwner) {
+            h += '<div style="display:flex;gap:6px;align-items:center;">';
+            h += '<button class="btn btn-sm" onclick="toggleAdminSellerPerm(\'' + esc(a.email) + '\',' + (a.canManageSellers ? 'false' : 'true') + ')">' + (a.canManageSellers ? 'Remove seller access' : 'Allow seller access') + '</button>';
+            h += '<button class="btn btn-danger btn-sm" onclick="removeAdmin(\'' + esc(a.email) + '\')"><span class="material-symbols-outlined" style="font-size:15px;">person_remove</span> Remove</button>';
+            h += '</div>';
+          }
           h += '</div>';
         });
         document.getElementById('adminList').innerHTML = h;
+      });
+    }
+
+    function toggleAdminSellerPerm(email, allow) {
+      fetch('/api/admins', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ email: email, canManageSellers: allow })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (!d.error) { loadAdmins(); showToast(allow ? 'Seller access granted' : 'Seller access removed'); }
+        else showToast('Error: ' + d.error);
       });
     }
 
@@ -783,18 +832,19 @@
       e.preventDefault();
       var email = document.getElementById('newAdminEmail').value.trim();
       var pass = document.getElementById('newAdminPass').value;
+      var sellerPerm = document.getElementById('newAdminSellerPerm').checked;
       var msg = document.getElementById('adminMsg');
       fetch('/api/admins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify({ email: email, password: pass })
+        body: JSON.stringify({ email: email, password: pass, canManageSellers: sellerPerm })
       })
       .then(function(r) { return r.json(); })
       .then(function(d) {
         msg.style.display = 'block';
         msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
         msg.textContent = d.error || 'Admin added successfully.';
-        if (!d.error) { document.getElementById('newAdminEmail').value = ''; document.getElementById('newAdminPass').value = ''; loadAdmins(); }
+        if (!d.error) { document.getElementById('newAdminEmail').value = ''; document.getElementById('newAdminPass').value = ''; document.getElementById('newAdminSellerPerm').checked = false; loadAdmins(); }
       });
     });
 
@@ -828,6 +878,7 @@
         document.getElementById('formActiveLabel').textContent = active ? 'Form is open' : 'Form is closed';
         document.getElementById('setSuccessMsg').value = s.success_message || '';
         document.getElementById('setNotifEmail').value = s.notification_email || '';
+        document.getElementById('setSheetUrl').value = s.google_sheet_url || '';
       });
     }
 
@@ -870,6 +921,7 @@
         form_active: document.getElementById('setFormActive').checked ? 'true' : 'false',
         success_message: document.getElementById('setSuccessMsg').value,
         notification_email: document.getElementById('setNotifEmail').value,
+        google_sheet_url: document.getElementById('setSheetUrl').value,
       };
       var msg = document.getElementById('settingsMsg');
       fetch('/api/settings', {
@@ -883,8 +935,207 @@
         msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
         msg.textContent = d.error || 'Settings saved successfully!';
         if (!d.error) showToast('Settings saved');
-        else showToast(d.error, true);
         setTimeout(function() { msg.style.display = 'none'; }, 3000);
+      });
+    }
+
+    function testEmail() {
+      var el = document.getElementById('testEmailResult');
+      el.textContent = 'Sending...';
+      el.style.color = 'var(--text-secondary)';
+      fetch('/api/test-email', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + authToken }
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.success) {
+          el.style.color = 'var(--green)';
+          el.textContent = 'Test email sent to ' + (d.checks.notification_email || '');
+        } else {
+          el.style.color = 'var(--danger)';
+          var msg = d.message || '';
+          var extra = '';
+          if (d.checks) {
+            if (d.checks.api_key && d.checks.api_key.indexOf('MISSING') === 0) msg = 'RESEND_API_KEY is not set in Cloudflare';
+            else if (d.checks.notification_email && d.checks.notification_email.indexOf('MISSING') === 0) msg = 'Set notification email above and save first';
+            else if (d.checks.resend_response) msg = d.checks.resend_response.message || msg;
+            if (d.checks.api_key) extra += ' | Key: ' + d.checks.api_key;
+            if (d.checks.notification_email && d.checks.notification_email.indexOf('MISSING') !== 0) extra += ' | To: ' + d.checks.notification_email;
+          }
+          el.textContent = (msg || 'Error sending email') + extra;
+        }
+      }).catch(function() {
+        el.style.color = 'var(--danger)';
+        el.textContent = 'Connection error';
+      });
+    }
+
+    // SELLERS
+    function loadSellerFilter() {
+      fetch('/api/sellers', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(sellers) {
+        if (!Array.isArray(sellers)) return;
+        sellerNameMap = {};
+        sellers.forEach(function(s) { sellerNameMap[s.code] = s.name; });
+        var sel = document.getElementById('sellerFilter');
+        var current = sel.value;
+        sel.innerHTML = '<option value="">All sellers</option>';
+        sellers.forEach(function(s) {
+          sel.innerHTML += '<option value="' + esc(s.code) + '">' + esc(s.name) + ' (' + s.submissions + ')</option>';
+        });
+        sel.value = current;
+      }).catch(function(){});
+    }
+
+    function loadSellers() {
+      fetch('/api/sellers', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r) { return r.json(); })
+      .then(function(sellers) {
+        if (!Array.isArray(sellers)) { document.getElementById('sellerList').innerHTML = '<div class="state-msg"><p>Could not load sellers</p></div>'; return; }
+        sellerNameMap = {};
+        sellers.forEach(function(s) { sellerNameMap[s.code] = s.name; });
+
+        var totalSubs = 0;
+        sellers.forEach(function(s) { totalSubs += s.submissions; });
+        document.getElementById('sellerStats').innerHTML =
+          '<div class="stat-card"><div class="stat-label">Total Sellers</div><div class="stat-value">' + sellers.length + '</div></div>' +
+          '<div class="stat-card"><div class="stat-label">Active</div><div class="stat-value">' + sellers.filter(function(s){return s.active;}).length + '</div></div>' +
+          '<div class="stat-card"><div class="stat-label">Total Referrals</div><div class="stat-value">' + totalSubs + '</div></div>';
+
+        var canManage = currentRole === 'owner' || currentCanManageSellers;
+        document.getElementById('addSellerSection').style.display = canManage ? '' : 'none';
+
+        if (!sellers.length) {
+          document.getElementById('sellerList').innerHTML = '<div class="state-msg"><h3>No sellers yet</h3><p>' + (canManage ? 'Add your first seller below to generate referral links.' : 'No sellers have been added yet.') + '</p></div>';
+          return;
+        }
+
+        var h = '';
+        sellers.forEach(function(s) {
+          h += '<div class="admin-item" style="flex-wrap:wrap;gap:8px;">';
+          h += '<div class="admin-info" style="flex:1;min-width:180px;">';
+          h += '<span class="admin-email">' + esc(s.name) + '</span>';
+          h += '<span style="font-size:12px;color:var(--text-secondary);">' + esc(s.code) + (s.email ? ' &middot; ' + esc(s.email) : '') + (s.phone ? ' &middot; ' + esc(s.phone) : '') + '</span>';
+          h += '<span style="margin-top:2px;">';
+          h += '<span class="badge ' + (s.active ? 'badge-yes' : 'badge-time') + '">' + (s.active ? 'Active' : 'Inactive') + '</span>';
+          h += '<span class="badge badge-time">' + s.submissions + ' referrals</span>';
+          h += '</span></div>';
+          h += '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">';
+          h += '<button class="btn btn-sm" onclick="viewSellerSubs(\'' + esc(s.code) + '\')" title="View submissions">View</button>';
+          if (canManage) {
+            h += '<button class="btn btn-sm" onclick="copySellerLink(\'' + esc(s.code) + '\')" title="Copy link">Copy Link</button>';
+            h += '<button class="btn btn-sm" onclick="resetSellerPass(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')">Reset Password</button>';
+            h += '<button class="btn btn-sm" onclick="toggleSeller(\'' + esc(s.id) + '\',' + (s.active ? 'false' : 'true') + ')">' + (s.active ? 'Deactivate' : 'Activate') + '</button>';
+            h += '<button class="btn btn-danger btn-sm" onclick="deleteSeller(\'' + esc(s.id) + '\',\'' + esc(s.name) + '\')"><span class="material-symbols-outlined" style="font-size:15px;">delete</span> Delete</button>';
+          }
+          h += '</div></div>';
+        });
+        document.getElementById('sellerList').innerHTML = h;
+      }).catch(function() { document.getElementById('sellerList').innerHTML = '<div class="state-msg"><p>Could not load sellers</p></div>'; });
+    }
+
+    function copySellerLink(code) {
+      var url = window.location.origin + '/r/' + code;
+      navigator.clipboard.writeText(url).then(function() { showToast('Link copied: ' + url); }).catch(function() {
+        prompt('Copy this link:', url);
+      });
+    }
+
+    function viewSellerSubs(code) {
+      document.getElementById('sellerFilter').value = code;
+      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelector('[data-tab="submissions"]').classList.add('active');
+      document.getElementById('panel-submissions').classList.add('active');
+      filterTable();
+    }
+
+    function toggleSeller(id, active) {
+      fetch('/api/sellers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: id, active: active })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
+        showToast(active ? 'Seller activated' : 'Seller deactivated');
+        loadSellers();
+        loadSellerFilter();
+      });
+    }
+
+    function deleteSeller(id, name) {
+      if (!confirm('Delete seller "' + name + '"? Existing submissions will keep their referral tag.')) return;
+      fetch('/api/sellers', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: id })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
+        showToast('Seller deleted');
+        loadSellers();
+        loadSellerFilter();
+      });
+    }
+
+    function nameToCode(name) {
+      var code = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 30);
+      if (code.length < 2) code = 'seller' + Math.floor(Math.random() * 9000 + 1000);
+      return code;
+    }
+
+    document.getElementById('addSellerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('newSellerName').value.trim();
+      var code = nameToCode(name);
+      var email = document.getElementById('newSellerEmail').value.trim();
+      var pass = document.getElementById('newSellerPass').value;
+      var phone = document.getElementById('newSellerPhone').value.trim();
+      var msg = document.getElementById('sellerMsg');
+      if (!email) { msg.style.display='block'; msg.style.color='var(--danger)'; msg.textContent='Email/username is required for seller login'; return; }
+      if (!pass || pass.length < 4) { msg.style.display='block'; msg.style.color='var(--danger)'; msg.textContent='Password must be at least 4 characters'; return; }
+      fetch('/api/sellers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ name: name, code: code, email: email, phone: phone, password: pass })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.error && d.error.indexOf('already taken') !== -1) {
+          code = code + Math.floor(Math.random() * 900 + 100);
+          return fetch('/api/sellers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+            body: JSON.stringify({ name: name, code: code, email: email, phone: phone, password: pass })
+          }).then(function(r2) { return r2.json(); });
+        }
+        return d;
+      })
+      .then(function(d) {
+        msg.style.display = 'block';
+        msg.style.color = d.error ? 'var(--danger)' : 'var(--green)';
+        msg.textContent = d.error || 'Seller added! They log in with: ' + email + ' + password. Link: ' + window.location.origin + '/r/' + d.code;
+        if (!d.error) {
+          document.getElementById('newSellerName').value = '';
+          document.getElementById('newSellerEmail').value = '';
+          document.getElementById('newSellerPass').value = '';
+          document.getElementById('newSellerPhone').value = '';
+          loadSellers();
+          loadSellerFilter();
+        }
+        setTimeout(function() { msg.style.display = 'none'; }, 8000);
+      });
+    });
+
+    function resetSellerPass(id, name) {
+      var newPass = prompt('Enter new password for ' + name + ' (min 4 characters):');
+      if (!newPass || newPass.length < 4) { if (newPass !== null) showToast('Password must be at least 4 characters'); return; }
+      fetch('/api/sellers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ id: id, password: newPass })
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (d.error) { showToast('Error: ' + d.error); return; }
+        showToast('Password reset for ' + name);
       });
     }
 
